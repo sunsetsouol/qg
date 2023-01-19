@@ -703,7 +703,7 @@ String被称为不可变字符串类型，对象在创建后不能被修改 +=�
 
 String在sout时做了优化，会直接输出String所指向的内容
 
-##### String对象的创建
+### String对象的创建
 
 1. 直接定义  String 变量名 = "xxxxx";
 2. 通过构造器创建
@@ -723,7 +723,7 @@ String在sout时做了优化，会直接输出String所指向的内容
 
 变量运算结果会放在堆内存，如果是确定的字符运算会优化
 
-##### String类常用的API
+### String类常用的API
 
 **字符串比较**
 
@@ -761,7 +761,7 @@ String在sout时做了优化，会直接输出String所指向的内容
 | Public boolean add(E e)               | 将指定的元素追加到集合末尾     |
 | public void add(int index, E element) | 在集合中指定的位置插入指定元素 |
 
-##### 泛类约束
+### 泛类约束
 
 ArrayList < E > 可以在编译阶段约束集合对象只能操作某种数据类型
 
@@ -773,7 +773,7 @@ ArrayList< Integer >: 只能操作整数类型元素
 
 * 集合中只能存储引用类型，不支持基本数据类型
 
-##### 常用API
+### 常用API
 
 | 方法名称                          | 说明                                 |
 | --------------------------------- | ------------------------------------ |
@@ -925,11 +925,11 @@ public static Calendar getInstance()
 
 ![image-20230114224646450](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230114224646450.png)
 
-### 	Instance
+### 	Instant
 
 ![image-20230115153905080](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230115153905080.png)
 
-### DAteTimeFormatter
+### DateTimeFormatter
 
 ![image-20230115154033622](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230115154033622.png)
 
@@ -1690,3 +1690,190 @@ FileUtils方法
 
 * 优点：线程任务类只是实现接口，可以继续继承类和实现接口，扩展性强，可以在线程执行完毕后去获取线程执行的结果
 * 缺点：编码复杂一点
+
+### 线程常用方法
+
+String getName()						获得当前线程名称
+
+void setName(String name)	改线程名
+
+**构造器**
+
+public Thread(String name)
+
+public Thread(Runnable target)
+
+public Thread(Runnable target, String name)
+
+**hread类线程休眠方法**
+
+public static void sleep(long time)	让线程休眠指定时间
+
+### 线程安全
+
+多个线程同时操作同一个共享资源，修改共享资源时可能会出现业务安全问题
+
+### 线程同步
+
+核心思想：加锁，把共享资源上锁，每次只能一个线程进入访问完毕后解锁，然后其他线程才能进来
+
+#### 同步代码块
+
+作用：把出现线程安全的核心**代码**上锁
+
+***
+
+synchronized(同步锁对象){
+
+​		操作共享资源的代码（核心代码）
+
+}
+
+***
+
+锁对象的规范：建议使用共享资源作为锁对象，实例方法建议使用this作为锁对象，静态方法建议使用字节码（类名.class）对象做锁对象
+
+#### 同步方法
+
+作用：把出现线程安全的核心**方法**上锁
+
+***
+
+修饰符 synchronized 返回值类型 方法名称(形参列表){
+
+​			操作共享资源的代码
+
+}
+
+***
+
+同步方法底层也是隐式锁对象，不过范围是整个方法，如果方法是实例方法，同步方法默认用this作为锁对象，如果是静态方法，同步方法默认用类名.class作锁对象
+
+#### Lock锁
+
+为了更清晰的表达如何加锁和释放锁，JDK5后提供锁对象Lock
+
+Lock是接口不能实例化，使用实现类ReentrantLock来构建锁对象
+
+public ReentrantLock()			获得Lock锁的实现类对象
+
+***
+
+Lock的API
+
+void lock()									获得锁
+
+void unlock()								释放锁
+
+***
+
+可以加final修饰锁，确保不会被修改
+
+解锁要放在try finally 里， 否则如果出错就打不开锁了
+
+### 线程通信
+
+线程通信就是线程间相互发送数据，线程通信通常通过共享一个数据的方式实现
+
+线程间会根据共享数据的情况决定自己该怎么做每一集通知其他线程该怎么做
+
+线程通信的前提：线程通信通常是在多个线程操作同一个共享资源的时候进行通信，且要保证线程安全
+
+Object类的等待和唤醒方法，用同步锁对象调用
+
+void wait()				让当前线程等待并释放所占锁，知道另一个线程调用notify()或notifyAll()
+
+void notify()			唤醒正在等待的单个线程
+
+void notifyAll()		唤醒正在等待的所有线程
+
+### 线程池
+
+#### 概述
+
+可以复用线程的技术
+
+固定几个线程，有任务时等前面线程先解决完再执行后面任务
+
+线程池的接口：ExecutorService
+
+得到线程池对象
+
+- 使用ExecutorService实现类ThreadPoolExecutor创建一个线程池对象
+- 使用Executors调用方法返回不同特点的线程池对象
+
+
+
+![image-20230119173750835](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230119173750835.png)
+
+**新任务提交时发现核心线程都在忙，任务队列也满了，并且还可以创建临时线程才会创建临时线程**
+
+**核心线程和临时线程都在忙，任务队列也满了，新的任务过来的时候开始拒绝任务**
+
+![image-20230119180006460](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230119180006460.png)
+
+Runnable通过线程池的execute方法执行线程
+
+Callable通过线程池的submit方法执行线程并返回未来对象
+
+#### Executors工具类
+
+![image-20230119193925914](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230119193925914.png)
+
+2、3允许请求的任务队列长度是Interger.MAX_VALUE，可能会出现内存溢出现象；1、4创建线程最大数量是Interger.MAX_VALUE，线程数可能随任务1：1增长，也可能出现内存溢出现象
+
+### 并发、并行
+
+正在运行的程序就是一个独立的进程，线程是属于进程的，多个线程是并发与并行同时进行的
+
+#### 并发
+
+* CPU同时处理线程的数量有限
+* CPU会轮询为系统的每个线程服务，由于CPU切换的速度很快，给我们的感觉这些线程在同时执行，这是并发
+
+#### 并行
+
+* 在同一个时刻，同时又多个线程被CPU处理并执行
+
+### 线程的生命周期
+
+线程的状态：就是线程从生到死的过程，以及中间经历各种状态及状态切换
+
+| 线程状态                | 描述                                                         |
+| ----------------------- | ------------------------------------------------------------ |
+| NEW(新建)               | 线程刚被创建，但是并未启动。                                 |
+| Runnable(可运行)        | 线程已经调用了start()等待CPU调度                             |
+| Blocked(锁阻塞)         | 线程在执行的时候未竞争到锁对象，则该线程进入Blocked状态；。  |
+| Waiting(无限等待)       | 一个线程进入Waiting状态，另一个线程调用notify或者notifyAll方法才能够唤醒 |
+| Timed Waiting(计时等待) | 同waiting状态，有几个方法有超时参数，调用他们将进入Timed Waiting状态。带有超时参数的常用方法有Thread.sleep 、Object.wait。 |
+| Teminated(被终止)       | 因为run方法正常退出而死亡，或者因为没有捕获的异常终止了run方法而死亡。 |
+
+
+
+## 定时器
+
+控制任务延时调用，或者周期调用技术
+
+实现方式：Timer、ScheduledExecutorService
+
+### Timer
+
+构造器:public Timer()
+
+方法： public void schedule(TimerTask task,long delay,long period)
+
+***
+
+问题：
+
+* Timer是单线程，处理多个任务按照顺序执行，存在延时与设置计时器的时间有出入
+* 可能因为其中的某个任务的异常使Timer线程死掉，影响后续任务执行
+
+### ScheduledExecutorService
+
+ScheduledExecutorServicen内部为线程池，某个任务的执行情况不会影响其他任务的执行
+
+public static ScheduleExecutorService newScheduledThreadPool(int corePoolsize)		获得线程池对象
+
+public ScheduledFuture<?> scheduleAtFixedRate(Runnable command, long initialDelay, long period, TimeUnit unit)	周期调度方法
+
