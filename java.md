@@ -1755,6 +1755,8 @@ synchronized(同步锁对象){
 
 Lock是接口不能实例化，使用实现类ReentrantLock来构建锁对象
 
+***
+
 public ReentrantLock()			获得Lock锁的实现类对象
 
 ***
@@ -1781,13 +1783,13 @@ void unlock()								释放锁
 
 Object类的等待和唤醒方法，用同步锁对象调用
 
-void wait()				让当前线程等待并释放所占锁，知道另一个线程调用notify()或notifyAll()
+void wait()				让当前线程等待并释放所占锁，直到另一个线程调用notify()或notifyAll()
 
 void notify()			唤醒正在等待的单个线程
 
 void notifyAll()		唤醒正在等待的所有线程
 
-### 线程池
+### 线程池（ExecutorService）
 
 #### 概述
 
@@ -1795,7 +1797,7 @@ void notifyAll()		唤醒正在等待的所有线程
 
 固定几个线程，有任务时等前面线程先解决完再执行后面任务
 
-线程池的接口：ExecutorService
+线程池的接口：ExecutorService	
 
 得到线程池对象
 
@@ -1816,7 +1818,7 @@ Runnable通过线程池的execute方法执行线程
 
 Callable通过线程池的submit方法执行线程并返回未来对象
 
-#### Executors工具类
+#### Executors工具类构建线程池
 
 ![image-20230119193925914](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230119193925914.png)
 
@@ -1871,9 +1873,196 @@ Callable通过线程池的submit方法执行线程并返回未来对象
 
 ### ScheduledExecutorService
 
-ScheduledExecutorServicen内部为线程池，某个任务的执行情况不会影响其他任务的执行
+ScheduledExecutorService内部为线程池，某个任务的执行情况不会影响其他任务的执行
 
 public static ScheduleExecutorService newScheduledThreadPool(int corePoolsize)		获得线程池对象
 
 public ScheduledFuture<?> scheduleAtFixedRate(Runnable command, long initialDelay, long period, TimeUnit unit)	周期调度方法
+
+## 网络通信
+
+常见的两种同i性能模式：Client-Server(CS)（客户端）、Browser/Server(BS)（网页端）
+
+### 三要素
+
+* IP地址：设备再网络中的地址，是唯一标识
+
+* 端口：应用程序再设备中的唯一标识
+* 协议：数据再网络中传输的规则，常见的协议有UDP协议和TCP协议
+
+#### IP地址
+
+IPv4：32bit（4字节）		
+
+点分十进制表示法：每个字节用 . 分开
+
+IPv6：128bit（16个字节）
+
+分成8个整数，每个整数用四个16进制位表示，数之间用 ： 分开
+
+![image-20230120151941827](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230120151941827.png)
+
+![image-20230120152506619](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230120152506619.png)
+
+#### IP地址操作类(InerAddress)
+
+![image-20230120155820911](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230120155820911.png)
+
+#### 端口号
+
+表示正在计算机设备上运行的进程，被规定为一个16位的二进制，范围0-65535
+
+![image-20230120160235267](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230120160235267.png)
+
+#### 协议
+
+连接和通信数据的规则被称为网络通信协议
+
+两套参考模型：
+
+![image-20230120160458310](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230120160458310.png)
+
+​	![image-20230120160628150](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230120160628150.png)
+
+**TCP三次握手**
+
+![image-20230120160724364](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230120160724364.png)
+
+**TCP四次挥手断开连接**
+
+![image-20230120160846725](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230120160846725.png)
+
+![image-20230120161017961](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230120161017961.png)
+
+### UDP通信
+
+#### DatagramPacket
+
+数据包对象
+
+![image-20230120161341620](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230120161341620.png)
+
+#### DatagramSocket
+
+发送端和接收端对象
+
+![image-20230120162722669](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230120162722669.png)
+
+用完了要把socket对象close
+
+调用packet.getLength()得到发送信息长度
+
+发送端的packet构造时指定端口，接收端socket对象指定端口
+
+#### UDP通信
+
+三种通信方式
+
+![image-20230120171515476](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230120171515476.png)
+
+![image-20230120172443258](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230120172443258.png)
+
+**先运行服务端，在运行客户端**
+
+### TCP通信
+
+在java中只要是使用java.net.Socket类实现通信，底层即是使用了TCP协议
+
+#### 客户端
+
+![image-20230120181137605](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230120181137605.png)
+
+![image-20230120194124121](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230120194124121.png)
+
+#### 服务端
+
+![image-20230120194758572](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230120194758572.png)
+
+![image-20230120200910374](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230120200910374.png)
+
+如果要与多个客户端进行通信，服务器要有多个线程
+
+#### 线程池优化
+
+将socket变量封装到实现Runnable的类中重写run方法执行服务端和客户端的连接，在服务端中定义静态变量线程池，每次连接开始一个线程
+
+#### 及时通信
+
+* 即时通信，是指一个客户端的消息发出去，其他客户端可以接收到。
+
+* 即时通信需要进行端口转发的设计思想。
+* 服务端需要把在线的Socket管道存储起来
+* 一旦收到一个消息要推送给其他管道
+
+### BS结构
+
+之前的客户端都是CS框架，客户端需要自己开发实现，BS结构用浏览器访问服务端，不需要开发客户端
+
+![image-20230120231706467](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230120231706467.png)
+
+![image-20230120231729794](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230120231729794.png)
+
+## 单元测试
+
+单元测试是针对最小的功能单元编写测试代码，Java程序最小的功能单元是方法，因此，单元测试就是针对Java方法的测试，进而检查方法的正确性
+
+### Junit
+
+![image-20230121100253751](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230121100253751.png)
+
+#### Junit4常用注解
+
+![image-20230121102223796](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230121102223796.png)
+
+Junit5后变成 @Test @BeforeEach @Aftereach @BeforeAll @AfterAll
+
+## 反射
+
+![image-20230121102913696](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230121102913696.png)
+
+### 反射获取类对象
+
+![image-20230121104001334](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230121104001334.png)
+
+* 方式一：Class c1 = Class.forName(“全类名”)
+* 方式二：Class c2 = 类名.class
+* 方式三：Class c3 = 对象.getClass();
+
+### 反射获取构造器对象
+
+![image-20230121104447239](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230121104447239.png)
+
+返回单个构造器要在后面指定参数， example： String.class, int.class
+
+### 使用构造器创建对象
+
+![image-20230121110819362](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230121110819362.png)
+
+![image-20230121110746429](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230121110746429.png)
+
+如果构造器是私有的可以加 构造器名.Accessible(true) 破坏封装性
+
+### 反射获取成员变量对象
+
+![image-20230121115818005](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230121115818005.png)
+
+![image-20230121115826217](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230121115826217.png)
+
+正常是对象调用成员变量，在反射中成员变量传入对象参数
+
+成员对象是私有的可以用field调用 setAccessible(true)破坏封装性
+
+### 反射获取方法对象
+
+![image-20230121120631599](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230121120631599.png)
+
+![image-20230121121014426](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230121121014426.png)
+
+调用方法： 方法名.invoke(类的对象，参数)
+
+私有方法用method调用setAccessible(true)破坏封装性
+
+### 反射的作用
+
+绕过编译阶段为集合添加数据
 
