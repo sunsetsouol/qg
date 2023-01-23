@@ -4,7 +4,7 @@
 
 ### JDK组成
 
-![1673233300864](C:\Users\28246\AppData\Roaming\Typora\typora-user-images\1673233300864.png)  
+![1673233300864](https://souln.oss-cn-guangzhou.aliyuncs.com/java/1673233300864.png)  
 
 ### **window命令行窗口常用命令**
 
@@ -65,11 +65,11 @@ project	-	module	-	package	-	class
 * 计算机最小组成单元：8个二进制位一组，称为一个字节（byte，大B）
 * 每个二进制位为一位（bit，小b）1byte=8bit
 
-![1673313867594](C:\Users\28246\AppData\Roaming\Typora\typora-user-images\1673313867594.png)
+![1673313867594](https://souln.oss-cn-guangzhou.aliyuncs.com/java/1673313867594.png)
 
 字符在计算机中以ASCII编码表形式存储，规定了现代英语，数学字符和西欧字符的数字编号
 
-![1673312989736](C:\Users\28246\AppData\Roaming\Typora\typora-user-images\1673312989736.png)
+![1673312989736](https://souln.oss-cn-guangzhou.aliyuncs.com/java/1673312989736.png)
 
 **图片数据**
 
@@ -100,7 +100,7 @@ project	-	module	-	package	-	class
 
 ***基本数据类型***
 
-![1673314046597](C:\Users\28246\AppData\Roaming\Typora\typora-user-images\1673314046597.png)
+![1673314046597](https://souln.oss-cn-guangzhou.aliyuncs.com/java/1673314046597.png)
 
 * 手写的整数和小数默认是int 和double
 * 手写的整数在int和long范围之间会报错，可在数字后加 L | l 使其代表long型数据
@@ -116,7 +116,7 @@ string 同c string （函数可能不同
 
 不能做类名和变量名
 
-![1673314839973](C:\Users\28246\AppData\Roaming\Typora\typora-user-images\1673314839973.png)
+![1673314839973](https://souln.oss-cn-guangzhou.aliyuncs.com/java/1673314839973.png)
 
 ***标识符***
 
@@ -135,7 +135,7 @@ string 同c string （函数可能不同
 * 窄变宽，范围小可以**直接**赋值给范围大
 * 运算规则与c基本一致，范围小的遇到范围大的自动转换为范围大的，在遇到范围大的数据之前还未转换
 
-![1673315475427](C:\Users\28246\AppData\Roaming\Typora\typora-user-images\1673315475427.png)
+![1673315475427](https://souln.oss-cn-guangzhou.aliyuncs.com/java/1673315475427.png)
 
 * 表达式的最终结果由最高类型决定
 * 表达式中byte、short、char**直接转换成int**参与运算
@@ -166,17 +166,19 @@ string 同c string （函数可能不同
 * 自增： ++ 当前值加+，在++i表示i+1并将结果用作计算，i++表示i+1但是用i+1之前的值做计算
 * 自减： -- 同自增 
 
-#### 扩展赋值运算符![1673317664002](C:\Users\28246\AppData\Roaming\Typora\typora-user-images\1673317664002.png)
+扩展赋值运算符
+
+![1673317664002](https://souln.oss-cn-guangzhou.aliyuncs.com/java/1673317664002.png)
 
 #### 关系运算符
 
-![1673317860772](C:\Users\28246\AppData\Roaming\Typora\typora-user-images\1673317860772.png)
+![1673317860772](https://souln.oss-cn-guangzhou.aliyuncs.com/java/1673317860772.png)
 
 * Java中0和非0不能代表true 和false ，true 和false也不代表0和1
 
 #### 逻辑运算符
 
-![1673318070804](C:\Users\28246\AppData\Roaming\Typora\typora-user-images\1673318070804.png)
+![1673318070804](https://souln.oss-cn-guangzhou.aliyuncs.com/java/1673318070804.png)
 
 * 与 ，或也可写作 && 和 ||  ，&& 和  || 用法跟C一致
 * 用&& 时前一个结果为false，后一个语句不执行， & 还会执行下一个语句
@@ -208,7 +210,7 @@ string 同c string （函数可能不同
 
 ##### if、 switch case（同c）
 
-![1673320770832](C:\Users\28246\AppData\Roaming\Typora\typora-user-images\1673320770832.png)
+![1673320770832](https://souln.oss-cn-guangzhou.aliyuncs.com/java/1673320770832.png)
 
 ![1673320925807](C:\Users\28246\AppData\Roaming\Typora\typora-user-images\1673320925807.png)
 
@@ -221,7 +223,7 @@ string 同c string （函数可能不同
 
 ##### for
 
-![1673334645834](C:\Users\28246\AppData\Roaming\Typora\typora-user-images\1673334645834.png)
+![1673334645834](https://souln.oss-cn-guangzhou.aliyuncs.com/java/1673334645834.png)
 
 ##### while
 
@@ -231,15 +233,15 @@ string 同c string （函数可能不同
 
 ##### do while
 
-##### ![1673334824131](C:\Users\28246\AppData\Roaming\Typora\typora-user-images\1673334824131.png)
+![1673334824131](https://souln.oss-cn-guangzhou.aliyuncs.com/java/1673334824131.png)
 
 do while 相较while 一定会执行一次
 
 ##### 死循环、break、continue
 
-![1673334900441](C:\Users\28246\AppData\Roaming\Typora\typora-user-images\1673334900441.png)
+![1673334900441](https://souln.oss-cn-guangzhou.aliyuncs.com/java/1673334900441.png)
 
-![1673334974497](C:\Users\28246\AppData\Roaming\Typora\typora-user-images\1673334974497.png)
+![1673334974497](https://souln.oss-cn-guangzhou.aliyuncs.com/java/1673334974497.png)
 
 **break 可以当goto 使用**
 
@@ -2028,6 +2030,8 @@ Junit5后变成 @Test @BeforeEach @Aftereach @BeforeAll @AfterAll
 * 方式二：Class c2 = 类名.class
 * 方式三：Class c3 = 对象.getClass();
 
+c1.getName()获取全限名，c1.getSimpleName()获取当前类名
+
 ### 反射获取构造器对象
 
 ![image-20230121104447239](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230121104447239.png)
@@ -2064,5 +2068,202 @@ Junit5后变成 @Test @BeforeEach @Aftereach @BeforeAll @AfterAll
 
 ### 反射的作用
 
-绕过编译阶段为集合添加数据
+#### 绕过编译阶段为集合添加数据
 
+反射为何可以给约定了泛型的集合存入其他类型的元素？
+
+* 编译成Class文件进入运行阶段的时候，泛型会自动擦除。
+
+* 反射是作用在运行时的技术，此时已经不存在泛型了。
+
+一个bug：ArrayList list2=list1 可以突破list1的泛型约束
+
+#### 通用框架的底层原理
+
+![image-20230121163112878](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230121163112878.png)
+
+![image-20230121163049780](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230121163049780.png)
+
+反射的作用？
+
+* 可以在运行时得到一个类的全部成分然后操作。
+* 可以破坏封装性。（很突出）
+* 也可以破坏泛型的约束性。（很突出）
+* 更重要的用途是适合：做Java高级框架
+* 基本上主流框架都会基于反射设计一些通用技术功能。
+
+## 注解
+
+### 概述
+
+![image-20230121163712100](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230121163712100.png)
+
+### 自定义注解
+
+![image-20230121163854824](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230121163854824.png)
+
+![image-20230121164229165](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230121164229165.png)
+
+### 元注解
+
+元注解：就是注解注解的注解
+
+元注解有：
+
+* @Target：约束自定义注解只能在哪些地方使用
+* @Retention：申明注解的生命周期
+
+![image-20230121165350810](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230121165350810.png)
+
+### 注解解析
+
+![image-20230121165746404](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230121165746404.png)
+
+![image-20230121171229459](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230121171229459.png)
+
+### 注解应用场景：Junit框架
+
+![image-20230121172031313](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230121172031313.png)
+
+## 动态代理
+
+![image-20230122092824695](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230122092824695.png)
+
+![image-20230122153522386](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230122153522386.png)
+
+动态代理优点
+
+* 非常的灵活，支持任意接口类型的实现类对象做代理，也可以直接为接本身做代理。
+* 可以为被代理对象的所有方法做代理。
+* 可以在不改变方法源码的情况下，实现对方法功能的增强。
+* 不仅简化了编程工作、提高了软件系统的可扩展性，同时也提高了开发效率。
+
+可以用泛型代替具体类型，实现任一接口的代理
+
+public statiuc < T > T getpoxy(T t){
+
+​	return (T) Proxy................
+
+}
+
+## XML
+
+### XML概述
+
+![image-20230122164658396](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230122164658396.png)
+
+### XML的创建和语法规则
+
+![image-20230122170224937](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230122170224937.png)
+
+![image-20230122170322982](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230122170322982.png)
+
+![image-20230122170332195](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230122170332195.png)
+
+![image-20230122170345722](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230122170345722.png)
+
+### XML文档约束
+
+由于XML文件可以自定义标签，导致XML文件可以随意定义，程序在解析时可能会出现问题
+
+* 文档约束是用来限定XML文件中的标签以及属性应该怎么写，以此强制约束程序员必须按照文档约束的规定来编写xml文件
+
+#### DTD
+
+![image-20230122173226731](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230122173226731.png)
+
+* DTD约束文档后缀必须是.dtd
+
+* 在需要编写XML文件中导入该DTD约束文档
+* DTD不能约束具体的数据类型
+
+#### schema
+
+* 可以约束具体数据类型，约束能力更强
+
+本身也是一个xml文件，受到	其他约束文件的要求，所以编写的更加严谨
+
+* schema约束文档后缀是.xsd
+
+### XML解析
+
+XML可以存储数据，做配置信息、进行数据传输，最终需要被程序进行读取，解析里面的信息
+
+常见的解析方式有SAX解析和DOM解析
+
+#### DOM解析
+
+![image-20230122190910346](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230122190910346.png)
+
+![image-20230122190926429](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230122190926429.png)
+
+#### Dom4J解析XML文件
+
+* 下载Dom4j框架，官网下载。
+* 在项目中创建一个文件夹：lib
+* 将dom4j-2.1.1.jar文件复制到 lib 文件夹
+* 在jar文件上点右键，选择 Add as Library -> 点击OK
+* 在类中导包使用
+
+![image-20230122191157676](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230122191157676.png)
+
+![image-20230122193026219](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230122193026219.png)
+
+#### 解析文件中各节点
+
+![image-20230122194803625](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230122194803625.png)
+
+![image-20230122194706280](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230122194706280.png)
+
+![image-20230122200556979](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230122200556979.png)
+
+### XML检索技术：Xpath
+
+Xpath使用路径表达式来定位XML文档中的元素节点或属性节点
+
+Xpath技术依赖Dom4J
+
+* /元素/子元素/孙元素
+* //子元素//孙元素
+
+
+
+![image-20230122201958885](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230122201958885.png)
+
+#### Xpath四大检索方案
+
+* 绝对路径
+* 相对路径
+* 全文检索
+* 属性查找
+
+![image-20230122202226994](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230122202226994.png)
+
+![image-20230122202244020](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230122202244020.png)
+
+//元素1 在全文找元素1
+
+//元素1/元素2	在全文找元素1下面一级的元素2（不包括下多级）
+
+//元素1//元素2	在全文找元素1下的全部元素2
+
+
+
+![image-20230122202255827](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230122202255827.png)
+
+## 工厂设计模式
+
+工厂模式（Factory Pattern）是 Java 中最常用的设计模式之一，  这种类型的设计模式属于创建型模式，它提供了一种获取对象的方式。
+
+作用
+
+* 工厂的方法可以封装对象的创建细节，比如：为该对象进行加工和数据注入。
+* 可以实现类与类之间的解耦操作（核心思想）。
+
+## 装饰模式
+
+创建一个新类，包装原始类，从而在心累中提升原来类的功能
+
+![image-20230122211213492](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230122211213492.png)
+
+原始类先实现父类的抽象方法，然后修饰类继承父类，在重写抽象方法时引用原始类重写的抽象方法，并拓展功能或增强性能

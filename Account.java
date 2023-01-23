@@ -1,19 +1,12 @@
 package atmSystem;
 
 public class Account {
-    //账户名
     private String name;
-    //密码
     private String password;
-    //卡号
     private String cardId;
-    //余额
     private double money;
-    //提现上限
     private double limitWithdrawals;
-    //判断是否被封
     private boolean signFlag;
-    //判断转账是否被封
     private boolean transferFlag;
 
     public Account(String name, String password, String cardId, double money, double limitWithdrawals) {
@@ -28,7 +21,7 @@ public class Account {
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public void setName(String name) {
@@ -36,7 +29,7 @@ public class Account {
     }
 
     public String getPassword() {
-        return password;
+        return this.password;
     }
 
     public void setPassword(String password) {
@@ -44,7 +37,7 @@ public class Account {
     }
 
     public String getCardId() {
-        return cardId;
+        return this.cardId;
     }
 
     public void setCardId(String cardId) {
@@ -52,7 +45,7 @@ public class Account {
     }
 
     public double getMoney() {
-        return money;
+        return this.money;
     }
 
     public void setMoney(double money) {
@@ -60,7 +53,7 @@ public class Account {
     }
 
     public double getLimitWithdrawals() {
-        return limitWithdrawals;
+        return this.limitWithdrawals;
     }
 
     public void setLimitWithdrawals(double limitWithdrawals) {
@@ -68,7 +61,7 @@ public class Account {
     }
 
     public boolean isSignFlag() {
-        return signFlag;
+        return this.signFlag;
     }
 
     public void setSignFlag(boolean flag) {
@@ -76,7 +69,7 @@ public class Account {
     }
 
     public boolean isTransferFlag() {
-        return transferFlag;
+        return this.transferFlag;
     }
 
     public void setTransferFlag(boolean transferFlag) {
