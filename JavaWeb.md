@@ -637,3 +637,196 @@ pom.xml中package要改成war包
 ### Tomcat的Maven插件
 
 ![image-20230130133236088](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230130133236088.png)
+
+## Servlet
+
+Java提供的**动态**web资源开发技术（不同用户访问都不一样）
+
+![image-20230131111218592](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230131111218592.png)
+
+provided只在编译和测试环境存在，运行的时候没有，打成war包的时候没有，因为tomcat自带了Servlet
+
+### 执行流程
+
+![image-20230131124137485](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230131124137485.png)
+
+### 生命周期
+
+![image-20230131125301302](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230131125301302.png)
+
+### 方法介绍
+
+![image-20230131125700365](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230131125700365.png)
+
+### 体系结构
+
+![image-20230131133856720](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230131133856720.png)
+
+HttpServlet先获取请求方式，再根据不同的请求方式，调用不同的doXxxx方法
+
+1. 继承HttpServlet
+2. 重写doGet和doPost方法
+
+### urlPattern配置
+
+一个Servlet可以配置多个urlPattern
+
+@WebServlet(urlPatterns = {"/demo1","/demo2"})
+
+![image-20230131143505479](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230131143505479.png)
+
+### XML配置Servlet
+
+![image-20230131144451115](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230131144451115.png)
+
+## Request&Respone
+
+![image-20230131145051021](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230131145051021.png)
+
+### Request
+
+#### 继承体系
+
+![image-20230131150507002](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230131150507002.png)
+
+#### Request获取请求数据
+
+![image-20230131151215405](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230131151215405.png)
+
+##### 通用方式获取请求参数
+
+![image-20230131152843332](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230131152843332.png)
+
+![image-20230131152858402](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230131152858402.png)
+
+##### 请求参数中文乱码处理
+
+![image-20230131180003681](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230131180003681.png)
+
+注意引用StandardCharsets的包是import java.nio.charset.StandardCharsets
+
+#### Request请求转发
+
+![image-20230131180829651](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230131180829651.png)
+
+### Response
+
+#### Response设置响应数据功能
+
+![image-20230131181608991](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230131181608991.png)
+
+#### Response完成重定向
+
+![image-20230131183851564](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230131183851564.png)
+
+resp.sendRedirect()是前面两个语句的简化版
+
+**路径问题**
+
+![image-20230131184614598](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230131184614598.png)
+
+可以动态获取虚拟路径：request.getContextPath()
+
+#### Response响应字符数据
+
+![image-20230131185249012](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230131185249012.png)
+
+![image-20230131185156638](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230131185156638.png)
+
+#### Response响应字节数据
+
+![image-20230131185318251](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230131185318251.png)
+
+![image-20230131201007129](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230131201007129.png)
+
+## JSP
+
+一种动态网页技术，既可以定义HTML、JS、CSS等静态内容，还可以定义Java代码的动态内容
+
+![image-20230201113721255](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230201113721255.png)
+
+### JSP原理
+
+![image-20230201114259517](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230201114259517.png)
+
+### JSP脚本
+
+![image-20230201115249589](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230201115249589.png)
+
+### JSP缺点
+
+![image-20230201121439026](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230201121439026.png)
+
+### EL表达式
+
+![image-20230201122017973](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230201122017973.png)
+
+### JSTL标签
+
+![image-20230201150622883](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230201150622883.png)
+
+![image-20230201151348113](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230201151348113.png)
+
+![image-20230201151426144](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230201151426144.png)
+
+c:forEach中可以用varStatus=”名字“，status.count代替编号
+
+## MVC模式和三层架构
+
+![image-20230201152657034](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230201152657034.png)
+
+![image-20230201153244526](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230201153244526.png)
+
+![image-20230201153405677](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230201153405677.png)
+
+## 会话跟踪技术
+
+![image-20230201162050350](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230201162050350.png)
+
+### Cookie
+
+#### 基本使用
+
+![image-20230203141221812](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230203141221812.png)
+
+#### 原理
+
+![image-20230203142757857](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230203142757857.png)
+
+#### 使用细节
+
+ ![image-20230203143550447](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230203143550447.png)
+
+转码：URLEncoder.encode(value,"UTF-8")
+
+解码：URLDecoder.decode(value,"UTF-8")
+
+### Session
+
+#### 基本使用
+
+![image-20230203145005891](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230203145005891.png)
+
+#### 原理
+
+![image-20230203151948878](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230203151948878.png)
+
+cookie携带session的id保证访问的都是同一个session
+
+#### 使用细节
+
+![image-20230203153242677](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230203153242677.png)
+
+### 小结
+
+![image-20230203154140957](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230203154140957.png)
+
+![image-20230203200115938](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230203200115938.png)
+
+## Filter
+
+![image-20230204100812523](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230204100812523.png)
+
+![image-20230204101141683](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230204101141683.png)
+
+Filter是javax.servlet包下的servlet
