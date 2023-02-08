@@ -1,4 +1,4 @@
-# JavaWeb
+# 	JavaWeb
 
 ## JDBC（Java DataBase Connectivity）
 
@@ -830,3 +830,115 @@ cookie携带session的id保证访问的都是同一个session
 ![image-20230204101141683](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230204101141683.png)
 
 Filter是javax.servlet包下的servlet
+
+#### 执行流程
+
+![image-20230204102826815](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230204102826815.png)
+
+### 使用细节
+
+![image-20230204103049931](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230204103049931.png)
+
+![image-20230204104537899](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230204104537899.png)
+
+​	
+
+### 登录验证
+
+![image-20230204110721786](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230204110721786.png)
+
+![image-20230204112811454](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230204112811454.png)
+
+## Listener
+
+![image-20230204115219793](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230204115219793.png)
+
+### ServletContextListener
+
+![image-20230204115421494](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230204115421494.png)
+
+## AJAX
+
+![image-20230204121307565](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230204121307565.png)
+
+![image-20230204121227322](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230204121227322.png)
+
+### 基本使用
+
+![image-20230204143248797](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230204143248797.png)
+
+### Axios
+
+对原生的AJAX进行封装，简化书写
+
+#### 基本使用
+
+![image-20230204161307574](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230204161307574.png)
+
+#### 请求方式别名
+
+![image-20230204163516388](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230204163516388.png)
+
+### JSON
+
+JavaScript Object Notation，JavaScript对象表示法
+
+语法简单，层次结构鲜明，多用于作为数据载体，在网络中进行数据传输
+
+key值要带引号
+
+#### 基础语法
+
+![image-20230204170219312](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230204170219312.png)
+
+#### JSON数据和Java对象转换
+
+请求数据：JSON字符串转为Java对象
+
+相应数据：Java对象转为JSON字符串
+
+![image-20230204171152659](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230204171152659.png)
+
+servlet读取axious的数据
+
+```java
+BufferedReader reader = request.getReader();
+String line = reader.readLine();
+Brand brand = JSON.parseObject(line, Brand.class);
+service.addBrand(brand);
+response.getWriter().write("success");
+```
+
+## Vue
+
+### 基本使用
+
+![image-20230204195147657](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230204195147657.png)
+
+el后的值跟div的id一致，v-model的值跟return的key一致
+
+### 常用指令
+
+![image-20230204202347195](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230204202347195.png)
+
+![image-20230204202408592](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230204202408592.png)
+
+![image-20230204202430157](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230204202430157.png)
+
+![image-20230204202454557](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230204202454557.png)
+
+![image-20230204202526595](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230204202526595.png)
+
+### 生命周期
+
+![image-20230204202702253](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230204202702253.png)
+
+## Element
+
+![image-20230205122538923](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230205122538923.png)
+
+### 布局
+
+![image-20230205123159470](https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230205123159470.png)
+
+​	
