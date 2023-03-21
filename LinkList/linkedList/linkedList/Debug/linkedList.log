@@ -1,0 +1,7 @@
+﻿  main.c
+C:\Users\28246\Desktop\linkList\linkedList\linkedList\main.c(119,29): warning C4047: “函数”:“ElemType *”与“int”的间接级别不同
+C:\Users\28246\Desktop\linkList\linkedList\linkedList\main.c(119,26): warning C4024: “DeleteList”: 形参和实参 2 的类型不同
+C:\Users\28246\Desktop\linkList\linkedList\linkedList\main.c(136,29): warning C4047: “函数”:“void (__cdecl *)(ElemType)”与“void *(__cdecl *)(ElemType)”的间接级别不同
+C:\Users\28246\Desktop\linkList\linkedList\linkedList\main.c(136,24): warning C4024: “TraverseList”: 形参和实参 2 的类型不同
+C:\Users\28246\Desktop\linkList\linkedList\linkedList\main.c(8): warning C4716: “visit”: 必须返回一个值
+  linkedList.vcxproj -> C:\Users\28246\Desktop\linkList\linkedList\Debug\linkedList.exe

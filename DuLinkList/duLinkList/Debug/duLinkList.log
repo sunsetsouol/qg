@@ -1,0 +1,7 @@
+﻿  main.c
+C:\Users\28246\Desktop\duLinkList\duLinkList\duLinkList\main.c(162,33): warning C4047: “函数”:“ElemType *”与“int”的间接级别不同
+C:\Users\28246\Desktop\duLinkList\duLinkList\duLinkList\main.c(162,30): warning C4024: “DeleteList_DuL”: 形参和实参 2 的类型不同
+C:\Users\28246\Desktop\duLinkList\duLinkList\duLinkList\main.c(180,33): warning C4047: “函数”:“void (__cdecl *)(ElemType)”与“void *(__cdecl *)(ElemType)”的间接级别不同
+C:\Users\28246\Desktop\duLinkList\duLinkList\duLinkList\main.c(180,28): warning C4024: “TraverseList_DuL”: 形参和实参 2 的类型不同
+C:\Users\28246\Desktop\duLinkList\duLinkList\duLinkList\main.c(8): warning C4716: “visit”: 必须返回一个值
+  duLinkList.vcxproj -> C:\Users\28246\Desktop\duLinkList\duLinkList\Debug\duLinkList.exe
