@@ -20,12 +20,12 @@ int main() {
 		int i = 0;
 		double tem = 0;
 		int mins = 0;
-		int Mins = 0;
 		double num1, num2;
 		int cnt = 0;
 		if (exp[0] == '-') {
 			if (exp[1] == '(') {
-				Mins = -1;
+				i++;
+				pushLStack(&s_opt, '?');
 			}
 			else
 			{
@@ -76,15 +76,7 @@ int main() {
 						}
 						else
 						{
-							if (exp[i] == '-' && exp[i + 1] == '(') {
-								Mins = -1;
-								i++;
-								pushLStack(&s_opt, exp[i]);
-							}
-							else
-							{
-								pushLStack(&s_opt, exp[i]);
-							}
+							pushLStack(&s_opt, exp[i]);
 						}
 						i++;
 					}
@@ -134,12 +126,6 @@ int main() {
 						if (exp[i] == ')') {
 							getTopLStack(&s_opt, &top);
 							if (top == '(') {
-								if (Mins == -1) {
-									popLStack(&s_num, &num1);
-									num1 = -num1;
-									pushLStack(&s_num, num1);
-									Mins = 0;
-								}
 								popLStack(&s_opt, &top);
 							}
 							else
