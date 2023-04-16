@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 80031
 File Encoding         : 65001
 
-Date: 2023-04-16 21:44:26
+Date: 2023-04-16 22:53:17
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -22,7 +22,7 @@ DROP TABLE IF EXISTS `cart`;
 CREATE TABLE `cart` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'id',
   `good_id` bigint DEFAULT NULL COMMENT '商品id',
-  `cnt` int DEFAULT NULL COMMENT '商品数量',
+  `number` int DEFAULT NULL COMMENT '商品数量',
   `user_id` int NOT NULL COMMENT '用户id',
   PRIMARY KEY (`id`),
   KEY `fk_cart_good_id` (`good_id`),
