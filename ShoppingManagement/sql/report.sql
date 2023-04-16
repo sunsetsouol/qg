@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 80031
 File Encoding         : 65001
 
-Date: 2023-04-16 22:53:51
+Date: 2023-04-16 23:01:51
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -20,7 +20,7 @@ SET FOREIGN_KEY_CHECKS=0;
 -- ----------------------------
 DROP TABLE IF EXISTS `report`;
 CREATE TABLE `report` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'id',
   `goods_id` bigint DEFAULT NULL COMMENT '举报商品',
   `user_id` int DEFAULT NULL COMMENT '举报用户的id',
   `status` int DEFAULT NULL COMMENT '举报状态 0审核中 1举报成功 2举报失败',
