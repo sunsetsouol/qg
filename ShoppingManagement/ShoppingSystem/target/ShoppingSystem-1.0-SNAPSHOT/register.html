@@ -37,7 +37,7 @@
 <script src="js/axios-0.18.0.js"></script>
 
 <div id="app">
-    <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="loginForm">
+    <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="loginForm" enctype="multipart/form-data">
         <h1 class="title">注册</h1>
         <el-form-item label="用户名" prop="userName">
             <el-input v-model="ruleForm.userName"></el-input>
@@ -53,25 +53,25 @@
         </el-form-item>
         <el-form-item label="头像" prop="headshot">
             <el-upload
-                    :action="uploadImgUrl"
-                    list-type="picture-card"
-                    :before-upload="handleBeforeUpload"
-                    name="file"
-                    :show-file-list="false"
-                    :headers="headers"
-                    accept="image/jpg,image/jpeg,image/png"
-                    style="display: inline-block; vertical-align: top"
-            >
+                    class="upload-demo upload-tip"
+                    ref="upload"
+
+                    :auto-upload="false"
+                    :on-change="onUploadChange"
+                    multiple>
+                <i class="el-icon-upload"></i>
+                <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
             </el-upload>
 
         </el-form-item>
 
         <el-form-item label="地址" prop="address">
-            <el-input type="text" v-model="ruleForm.text" autocomplete="off"></el-input>
+            <el-input type="text" v-model="ruleForm.address" autocomplete="off"></el-input>
         </el-form-item>
 
-        <el-form-item label="个人信息" prop="priviate">
-            <el-switch v-model="private" active-text="私密" :active-value="1" inactive-text="公开" :inactive-value="0"></el-switch>
+        <el-form-item label="个人信息" prop="isPrivate">
+            <el-switch v-model="ruleForm.isPrivate" active-text="私密" :active-value="1" inactive-text="公开" :inactive-value="0"></el-switch>
         </el-form-item>
 
 
@@ -88,10 +88,10 @@
         data() {
             var checkName = (rule, value, callback) => {
                 if (!value) {
-                    return callback(new Error('账号不能为空'));
+                    return callback(new Error('用户名不能为空'));
                 }
                 if(value.length>20){
-                    return callback(new Error('账号长度不能超过20个字符'));
+                    return callback(new Error('用户名长度不能超过20个字符'));
                 }
                 setTimeout(() => {
                     callback();
@@ -127,28 +127,22 @@
                     callback(new Error('请输入正确的手机号'));
                 }
             };
-            var checkCardId = (rule, value, callback) => {
-                let reg = /^[0-9]{17}[0-9x]$/;
-
-                if(value.length == 18){
-                    if(reg.test(value))   {
-                        callback();
-                    }else{
-                        callback(new Error('请输入正确的身份证号1'));
-                    }
+            var checkAddress = (rule, value, callback) => {
+                if(value.length >= 50){
+                    callback(new Error('地址长度不能超过五十个字符'));
                 }else {
-                    callback(new Error('请输入正确的身份证号'));
+                    callback();
                 }
             };
             return {
-                private:false,
                 ruleForm: {
                     password: '',
                     checkPassword: '',
                     userName: '',
                     headshot:'',
                     phone:'',
-                    address:''
+                    address:'',
+                    isPrivate:''
                 },
                 rules: {
                     password: [
@@ -162,27 +156,25 @@
                     ],
                     phone: [
                         {validator: checkPhone, trigger: 'blur'}
+                    ],
+                    address: [
+                        {validator: checkAddress, trigger: 'blur'}
                     ]
                 }
             };
         },
         methods:{
-            handleBeforeUpload(file) {
-                var img = file.name.substring(file.name.lastIndexOf('.') + 1)
-                const suffix = img === 'jpg'
-                const suffix2 = img === 'png'
-                const suffix3 = img === 'jpeg'
-                if (!suffix && !suffix2) {
-                    this.$message.error(this.l("Upload file can only be JPG, JPEG, PNG format!"));
-                    return false
-                }
-                return suffix || suffix2 || suffix3
+            onUploadChange(file){
+                const that = this
+                const _file = file.raw;
+                let blob = new Blob([_file], { type: "audio/wav"});
+                console.log('blob:', blob);
             },
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
                     var _this = this;
                     if (valid) {
-                        axios.post("http://localhost:8080/Week4/user/register",this.ruleForm).then(function (resp){
+                        axios.post("http://localhost:8080/ShoppingSystem/user/register",this.ruleForm).then(function (resp){
                             if(resp.data.code==1){
                                 _this.$alert('你已注册成功，快去登录吧！', '注册成功', {
                                     confirmButtonText: '确定'

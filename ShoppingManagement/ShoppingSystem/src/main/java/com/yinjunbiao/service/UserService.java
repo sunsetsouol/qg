@@ -6,4 +6,6 @@ import com.yinjunbiao.pojo.ResultSet;
 public interface UserService {
 
     ResultSet login(User user);
+
+    ResultSet register(User user);
 }

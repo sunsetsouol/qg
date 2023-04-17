@@ -46,5 +46,25 @@ public class UserServlet extends BaseServlet {
         response.getWriter().write(JSON.toJSONString(resultSet));
     }
 
+    //注册
+    public void register(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        //读取json数据转换成user，并判断是否为空
+        BufferedReader reader = request.getReader();
+        String s = reader.readLine();
+        System.out.println(s);
+        if(s == null || s.length() == 0){
+            response.setStatus(200);
+            response.setContentType("application/json;charset=utf-8");
+            response.getWriter().write(JSON.toJSONString(ResultSet.error("user","参数传递失败")));
+            return;
+        }
+        User user = JSON.parseObject(s, User.class);
+
+        ResultSet resultSet = service.register(user);
+        response.setStatus(200);
+        response.setContentType("application/json;charset=utf-8");
+        response.getWriter().write(JSON.toJSONString(resultSet));
+
+    }
 
 }
