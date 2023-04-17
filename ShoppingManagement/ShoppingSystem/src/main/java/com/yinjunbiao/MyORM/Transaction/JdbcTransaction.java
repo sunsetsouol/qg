@@ -83,6 +83,16 @@ public class JdbcTransaction implements Transaction {
 
     @Override
     public Connection getConnection() {
+        Connection connection;
+        if (THREAD.get() == null){
+            try {
+                connection = dataSource.getConnection();
+                connection.setAutoCommit(autoCommit);
+                THREAD.set(connection);
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
         return THREAD.get();
     }
 }

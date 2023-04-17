@@ -9,7 +9,7 @@ public class TestMapper {
     public void testMapper(){
         SqlSession sqlSession = SqlSessionUtil.getSqlSession();
         UserMapper mapper = sqlSession.getMapper(UserMapper.class);
-        User select = mapper.select();
-        System.out.println(select);
+//        User select = mapper.select();
+//        System.out.println(select);
     }
 }

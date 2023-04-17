@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .el-table .warning-row {
+            background: oldlace;
+        }
+
+        .el-table .success-row {
+            background: #f0f9eb;
+        }
+
+        .loginForm{
+            border-radius: 10px;
+            margin: 0px auto;
+            width: 350px;
+            padding: 30px 35px 15px 35px;
+            background: #fff;
+            border: 1px solid #eaeaea;
+            text-align: left;
+            box-shadow: 0 0 20px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .title {
+            margin: 0px auto 40px auto;
+            text-align: center;
+            color: #505458
+        }
+    </style>
+</head>
+<body>
+<script src="js/vue.js"></script>
+<script src="element-ui/lib/index.js"></script>
+<link rel="stylesheet" href="element-ui/lib/theme-chalk/index.css">
+<script src="js/axios-0.18.0.js"></script>
+
+<div id="app">
+    <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="loginForm">
+        <h1 class="title">注册</h1>
+        <el-form-item label="用户名" prop="userName">
+            <el-input v-model="ruleForm.userName"></el-input>
+        </el-form-item>
+        <el-form-item label="密码" prop="password">
+            <el-input type="password" v-model="ruleForm.password" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="确认密码" prop="checkPassword">
+            <el-input type="password" v-model="ruleForm.checkPassword" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="手机号" prop="phone">
+            <el-input type="text" v-model="ruleForm.phone" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="头像" prop="headshot">
+            <el-upload
+                    :action="uploadImgUrl"
+                    list-type="picture-card"
+                    :before-upload="handleBeforeUpload"
+                    name="file"
+                    :show-file-list="false"
+                    :headers="headers"
+                    accept="image/jpg,image/jpeg,image/png"
+                    style="display: inline-block; vertical-align: top"
+            >
+            </el-upload>
+
+        </el-form-item>
+
+        <el-form-item label="地址" prop="address">
+            <el-input type="text" v-model="ruleForm.text" autocomplete="off"></el-input>
+        </el-form-item>
+
+        <el-form-item label="个人信息" prop="priviate">
+            <el-switch v-model="private" active-text="私密" :active-value="1" inactive-text="公开" :inactive-value="0"></el-switch>
+        </el-form-item>
+
+
+        <el-form-item>
+            <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
+            <el-button @click="resetForm('ruleForm')">重置</el-button>
+        </el-form-item>
+    </el-form>
+</div>
+<script>
+
+    new Vue ({
+        el:"#app",
+        data() {
+            var checkName = (rule, value, callback) => {
+                if (!value) {
+                    return callback(new Error('账号不能为空'));
+                }
+                if(value.length>20){
+                    return callback(new Error('账号长度不能超过20个字符'));
+                }
+                setTimeout(() => {
+                    callback();
+                }, 1000);
+            };
+            var validatePass = (rule, value, callback) => {
+                if (value === '') {
+                    callback(new Error('请输入密码'));
+                } else {
+                    if (this.ruleForm.checkPassword !== '') {
+                        this.$refs.ruleForm.validateField('checkPassword');
+                    }
+                    if(value.length>20){
+                        callback(new Error('密码长度不能超过20个字符'));
+                    }
+                    callback();
+                }
+            };
+            var validatePass2 = (rule, value, callback) => {
+                if (value === '') {
+                    callback(new Error('请再次输入密码'));
+                } else if (value !== this.ruleForm.password) {
+                    callback(new Error('两次输入密码不一致!'));
+                } else {
+                    callback();
+                }
+            };
+            var checkPhone = (rule, value, callback) => {
+                let reg = /^[0-9]{11}$/;
+                if(reg.test(value)){
+                    callback();
+                }else {
+                    callback(new Error('请输入正确的手机号'));
+                }
+            };
+            var checkCardId = (rule, value, callback) => {
+                let reg = /^[0-9]{17}[0-9x]$/;
+
+                if(value.length == 18){
+                    if(reg.test(value))   {
+                        callback();
+                    }else{
+                        callback(new Error('请输入正确的身份证号1'));
+                    }
+                }else {
+                    callback(new Error('请输入正确的身份证号'));
+                }
+            };
+            return {
+                private:false,
+                ruleForm: {
+                    password: '',
+                    checkPassword: '',
+                    userName: '',
+                    headshot:'',
+                    phone:'',
+                    address:''
+                },
+                rules: {
+                    password: [
+                        {validator: validatePass, trigger: 'blur'}
+                    ],
+                    checkPassword: [
+                        {validator: validatePass2, trigger: 'blur'}
+                    ],
+                    userName: [
+                        {validator: checkName, trigger: 'blur'}
+                    ],
+                    phone: [
+                        {validator: checkPhone, trigger: 'blur'}
+                    ]
+                }
+            };
+        },
+        methods:{
+            handleBeforeUpload(file) {
+                var img = file.name.substring(file.name.lastIndexOf('.') + 1)
+                const suffix = img === 'jpg'
+                const suffix2 = img === 'png'
+                const suffix3 = img === 'jpeg'
+                if (!suffix && !suffix2) {
+                    this.$message.error(this.l("Upload file can only be JPG, JPEG, PNG format!"));
+                    return false
+                }
+                return suffix || suffix2 || suffix3
+            },
+            submitForm(formName) {
+                this.$refs[formName].validate((valid) => {
+                    var _this = this;
+                    if (valid) {
+                        axios.post("http://localhost:8080/Week4/user/register",this.ruleForm).then(function (resp){
+                            if(resp.data.code==1){
+                                _this.$alert('你已注册成功，快去登录吧！', '注册成功', {
+                                    confirmButtonText: '确定'
+                                });
+                            }else{
+                                _this.$alert(resp.data.msg, '注册失败', {
+                                    confirmButtonText: '确定',
+                                    callback: action => {
+                                        this.$resp.data.data({
+                                            type: 'info',
+                                            message: `action: ${ action }`
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    } else {
+                        console.log('error submit!!');
+                        return false;
+                    }
+                });
+            },
+            resetForm(formName) {
+                this.$refs[formName].resetFields();
+            }
+        }
+    })
+</script>
+</body>
+</html>

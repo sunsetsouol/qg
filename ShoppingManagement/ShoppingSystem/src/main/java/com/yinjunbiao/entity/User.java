@@ -23,6 +23,8 @@ public class User {
 
     private Integer isPrivate;
 
+    private Integer cnt;
+
     @Override
     public String toString() {
         return "User{" +
@@ -34,6 +36,7 @@ public class User {
                 ", address='" + address + '\'' +
                 ", password='" + password + '\'' +
                 ", isPrivate=" + isPrivate +
+                ", cnt=" + cnt +
                 '}';
     }
 
@@ -101,10 +104,18 @@ public class User {
         this.isPrivate = isPrivate;
     }
 
+    public Integer getCnt() {
+        return cnt;
+    }
+
+    public void setCnt(Integer cnt) {
+        this.cnt = cnt;
+    }
+
     public User() {
     }
 
-    public User(Integer id, Integer identify, String phone, Blob headshot, String userName, String address, String password, Integer isPrivate) {
+    public User(Integer id, Integer identify, String phone, Blob headshot, String userName, String address, String password, Integer isPrivate, Integer cnt) {
         this.id = id;
         this.identify = identify;
         this.phone = phone;
@@ -113,5 +124,6 @@ public class User {
         this.address = address;
         this.password = password;
         this.isPrivate = isPrivate;
+        this.cnt = cnt;
     }
 }
