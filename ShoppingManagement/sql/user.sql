@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 80031
 File Encoding         : 65001
 
-Date: 2023-04-16 23:02:03
+Date: 2023-04-17 13:41:40
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -29,5 +29,7 @@ CREATE TABLE `user` (
   `password` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '密码',
   `isprivate` int DEFAULT '0' COMMENT '是否私密',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `phone` (`phone`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  UNIQUE KEY `phone` (`phone`),
+  UNIQUE KEY `phone_unique` (`phone`),
+  UNIQUE KEY `phone_2` (`phone`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

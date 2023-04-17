@@ -4,7 +4,7 @@ import com.mysql.cj.jdbc.Blob;
 
 /**
  * @author yinjunbiao
- * 用户pojo
+ * 与数据库对应的用户
  */
 public class User {
     private Integer id;

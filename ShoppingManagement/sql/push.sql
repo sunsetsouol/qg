@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 80031
 File Encoding         : 65001
 
-Date: 2023-04-16 23:01:42
+Date: 2023-04-17 11:13:33
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -24,5 +24,6 @@ CREATE TABLE `push` (
   `goods_name` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '商品名称',
   `price` int DEFAULT NULL COMMENT '商品价格',
   `status` int DEFAULT NULL COMMENT '申请状态 0申请中 1申请成功 2申请失败',
+  `picture` blob COMMENT '图片',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

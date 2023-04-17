@@ -1,5 +1,7 @@
 package com.yinjunbiao.entity;
 
+import com.mysql.cj.jdbc.Blob;
+
 /**
  * @author yinjunbiao
  * 申请的商品
@@ -13,6 +15,8 @@ public class PushGood {
 
     private Integer status;
 
+    private Blob picture;
+
     @Override
     public String toString() {
         return "PushGood{" +
@@ -20,7 +24,16 @@ public class PushGood {
                 ", goodsName='" + goodsName + '\'' +
                 ", price=" + price +
                 ", status=" + status +
+                ", picture=" + picture +
                 '}';
+    }
+
+    public Blob getPicture() {
+        return picture;
+    }
+
+    public void setPicture(Blob picture) {
+        this.picture = picture;
     }
 
     public Long getId() {
@@ -58,10 +71,11 @@ public class PushGood {
     public PushGood() {
     }
 
-    public PushGood(Long id, String goodsName, Integer price, Integer status) {
+    public PushGood(Long id, String goodsName, Integer price, Integer status, Blob picture) {
         this.id = id;
         this.goodsName = goodsName;
         this.price = price;
         this.status = status;
+        this.picture = picture;
     }
 }

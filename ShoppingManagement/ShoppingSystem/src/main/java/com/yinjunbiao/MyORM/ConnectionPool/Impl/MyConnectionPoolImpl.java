@@ -1,6 +1,8 @@
 package com.yinjunbiao.MyORM.ConnectionPool.Impl;
 
 import com.yinjunbiao.MyORM.ConnectionPool.MyConnectionPool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.sql.Connection;
@@ -50,6 +52,8 @@ public class MyConnectionPoolImpl implements MyConnectionPool {
     private AtomicInteger count = null;
 
 
+    private static final Logger LOGGER = LoggerFactory.getLogger("MyConnectionPoolImpl");
+
     /**
      * 构造函数 根据路径文件读取信息
      *
@@ -57,6 +61,7 @@ public class MyConnectionPoolImpl implements MyConnectionPool {
      */
     public MyConnectionPoolImpl(String path, String driverName, String url, String userName, String password) {
         try {
+            LOGGER.info("数据库连接池被创建");
             this.driverName = driverName;
             this.url = url;
             this.userName = userName;
@@ -82,7 +87,7 @@ public class MyConnectionPoolImpl implements MyConnectionPool {
      * 创建连接,添加到连接池中
      */
     private void addConnection(int num) {
-
+        LOGGER.info("添加连接到连接池中");
         for (int i = 0; i < num; i++) {
             Connection connection = newConnection();
             if (connection != null) {
@@ -96,6 +101,7 @@ public class MyConnectionPoolImpl implements MyConnectionPool {
      * 数据库连接池扩容
      */
     private void expand() {
+        LOGGER.info("连接池扩容");
         addConnection(maxConnections - coreConnections);
         queue = new LinkedBlockingQueue<>(maxConnections);
         synchronized (queue) {
@@ -109,6 +115,7 @@ public class MyConnectionPoolImpl implements MyConnectionPool {
      * 缩容
      */
     private void shrink() {
+        LOGGER.info("连接池缩容");
         synchronized (pool) {
             try {
                 for (int i = maxConnections - coreConnections; i > 0; i--) {
@@ -147,6 +154,7 @@ public class MyConnectionPoolImpl implements MyConnectionPool {
 
     @Override
     public Connection getConnection() {
+        LOGGER.info("获取连接");
         Connection connection = null;
         //如果当前线程数没有达到上限，如果空闲线程池中有空闲连接，则直接获取，如果没有则新建连接，如果达到上限，则加入阻塞队列等待
         if (pool.size() == 0 && queue.size() == coreConnections) {
@@ -194,6 +202,7 @@ public class MyConnectionPoolImpl implements MyConnectionPool {
      */
     @Override
     public synchronized void releaseConnection(Connection connection) {
+        LOGGER.info("连接池回收连接");
         //如果conncection不为空且未关闭，如果空闲连接队列没满则直接放进空闲队列，如果满了则关闭连接
         try {
             if (connection != null) {

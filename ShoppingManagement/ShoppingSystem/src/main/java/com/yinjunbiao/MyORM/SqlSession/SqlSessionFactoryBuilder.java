@@ -14,6 +14,8 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.io.InputStream;
@@ -29,8 +31,10 @@ import java.util.Map;
  */
 public class SqlSessionFactoryBuilder {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger("SqlSessionFactoryBuilder.class");
+
     public SqlSessionFactory build(InputStream inputStream){
-        System.out.println(inputStream);
+        LOGGER.info("build SqlSession");
         SqlSessionFactory sqlSessionFactory = null;
         try {
             SAXReader reader = new SAXReader();
@@ -52,7 +56,7 @@ public class SqlSessionFactoryBuilder {
                 sqlMapperPaths.add(resource);
             }
 
-            System.out.println(sqlMapperPaths);
+            LOGGER.info(String.valueOf(sqlMapperPaths));
             Map<String, MappedStatement> mappedStatementMaps = getMappedStatements(sqlMapperPaths);
 
             Map<String , ResultMap>maps = getResultMap(sqlMapperPaths);
@@ -120,7 +124,7 @@ public class SqlSessionFactoryBuilder {
                 e.printStackTrace();
             }
         }
-        System.out.println("mappedStatement="+mappedStatementMaps);
+        LOGGER.info(sqlMapperPaths.toString());
         return mappedStatementMaps;
     }
 

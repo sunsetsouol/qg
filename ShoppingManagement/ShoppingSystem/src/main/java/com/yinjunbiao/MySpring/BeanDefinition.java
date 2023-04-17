@@ -1,5 +1,9 @@
 package com.yinjunbiao.MySpring;
 
+/**
+ * bean对象的定义
+ * @author yinjunbiao
+ */
 public class BeanDefinition {
     private boolean isMapper;
 
