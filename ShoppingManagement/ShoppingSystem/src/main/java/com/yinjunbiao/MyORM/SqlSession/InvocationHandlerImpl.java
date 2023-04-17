@@ -17,6 +17,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 反射函数
+ * @author yinjunbiao
+ */
 public class InvocationHandlerImpl implements InvocationHandler {
     private Class mapper;
     private SqlSession sqlSession;
@@ -161,7 +165,7 @@ public class InvocationHandlerImpl implements InvocationHandler {
                 result.add(instance);
             }
         }
-
+        resultSet.close();
         //判断返回类型
         if(method.getReturnType().equals(List.class)){
             return result;

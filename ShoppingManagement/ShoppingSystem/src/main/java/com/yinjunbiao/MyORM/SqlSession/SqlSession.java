@@ -1,5 +1,6 @@
 package com.yinjunbiao.MyORM.SqlSession;
 
+import com.mysql.cj.jdbc.Blob;
 import com.yinjunbiao.MyORM.MappedStatement.MappedStatement;
 import com.yinjunbiao.MyORM.SqlSession.TypeHandler.*;
 
@@ -12,14 +13,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * SqlSession
  * @author yinjunbiao
+ * @version 1.0
  */
 public class SqlSession {
-
-    public static Map<Class, TypeHandler> getTypeHandlerMap() {
-        return typeHandlerMap;
-    }
 
     public SqlSessionFactory getSqlSessionFactory() {
         return sqlSessionFactory;
@@ -27,6 +24,10 @@ public class SqlSession {
 
     public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
         this.sqlSessionFactory = sqlSessionFactory;
+    }
+
+    public static Map<Class, TypeHandler> getTypeHandlerMap() {
+        return typeHandlerMap;
     }
 
     private SqlSessionFactory sqlSessionFactory;
@@ -45,6 +46,7 @@ public class SqlSession {
         typeHandlerMap.put(Double.class,new DoubleTypeHandler());
         typeHandlerMap.put(long.class,new LongTypeHandler());
         typeHandlerMap.put(Long.class,new LongTypeHandler());
+        typeHandlerMap.put(Blob.class,new BlobTypeHandler());
     }
 
 
@@ -61,7 +63,7 @@ public class SqlSession {
      * @param params 参数集
      * @return 返回结果对象
      */
-    public Object selectOne(String sqlId, Map<String,Object> params){
+    public Object selectOne(String sqlId, Map<String,Object>params){
         //初始化
         Object obj = null;
         //获取连接
@@ -195,7 +197,7 @@ public class SqlSession {
      * @return 代理对象
      */
     public <T>T getMapper(Class<T> mapper){
-        Object instance = Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class[]{mapper}, new InvocationHandlerImpl(mapper,this) );
+        Object instance = Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class[]{mapper}, new InvocationHandlerImpl(mapper,this));
         return (T) instance;
     }
 

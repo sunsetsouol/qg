@@ -10,7 +10,6 @@ import java.util.Map;
  * @author yinjunbiao
  * @version 1.0
  */
-
 public class SqlSessionFactory {
 
     private Transaction transaction;

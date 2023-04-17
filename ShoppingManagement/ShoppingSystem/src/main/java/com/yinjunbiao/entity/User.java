@@ -21,7 +21,7 @@ public class User {
 
     private String password;
 
-    private Integer isprivate;
+    private Integer isPrivate;
 
     @Override
     public String toString() {
@@ -33,7 +33,7 @@ public class User {
                 ", userName='" + userName + '\'' +
                 ", address='" + address + '\'' +
                 ", password='" + password + '\'' +
-                ", isprivate=" + isprivate +
+                ", isPrivate=" + isPrivate +
                 '}';
     }
 
@@ -93,18 +93,18 @@ public class User {
         this.password = password;
     }
 
-    public Integer getIsprivate() {
-        return isprivate;
+    public Integer getIsPrivate() {
+        return isPrivate;
     }
 
-    public void setIsprivate(Integer isprivate) {
-        this.isprivate = isprivate;
+    public void setIsPrivate(Integer isPrivate) {
+        this.isPrivate = isPrivate;
     }
 
     public User() {
     }
 
-    public User(Integer id, Integer identify, String phone, Blob headshot, String userName, String address, String password, Integer isprivate) {
+    public User(Integer id, Integer identify, String phone, Blob headshot, String userName, String address, String password, Integer isPrivate) {
         this.id = id;
         this.identify = identify;
         this.phone = phone;
@@ -112,6 +112,6 @@ public class User {
         this.userName = userName;
         this.address = address;
         this.password = password;
-        this.isprivate = isprivate;
+        this.isPrivate = isPrivate;
     }
 }
