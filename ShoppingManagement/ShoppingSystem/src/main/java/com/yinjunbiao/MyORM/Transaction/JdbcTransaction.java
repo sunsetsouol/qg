@@ -19,7 +19,7 @@ public class JdbcTransaction implements Transaction {
 
     private boolean autoCommit;
 
-    private static ThreadLocal<Connection> thread = new ThreadLocal<>();
+    private static ThreadLocal<Connection> THREAD = new ThreadLocal<>();
 
     public JdbcTransaction() {
     }
@@ -32,7 +32,7 @@ public class JdbcTransaction implements Transaction {
     @Override
     public void commit() {
         try {
-            thread.get().commit();
+            THREAD.get().commit();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -46,11 +46,11 @@ public class JdbcTransaction implements Transaction {
                 commit();
                 PooledDataSource pooledDataSource = (PooledDataSource) dataSource;
                 MyConnectionPool pool = pooledDataSource.getPool();
-                pool.releaseConnection(thread.get());
+                pool.releaseConnection(THREAD.get());
             }
             //非连接池
             if (dataSource instanceof UnPooledDataSource){
-                thread.get().close();
+                THREAD.get().close();
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -60,7 +60,7 @@ public class JdbcTransaction implements Transaction {
     @Override
     public void rollback() {
         try {
-            Connection connection = thread.get();
+            Connection connection = THREAD.get();
             connection.rollback();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -70,11 +70,11 @@ public class JdbcTransaction implements Transaction {
     @Override
     public void openConnection() {
         try {
-            Connection connection = thread.get();
+            Connection connection = THREAD.get();
             if(connection == null){
                 connection = dataSource.getConnection();
                 connection.setAutoCommit(autoCommit);
-                thread.set(connection);
+                THREAD.set(connection);
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -83,6 +83,6 @@ public class JdbcTransaction implements Transaction {
 
     @Override
     public Connection getConnection() {
-        return thread.get();
+        return THREAD.get();
     }
 }

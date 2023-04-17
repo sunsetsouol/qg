@@ -1,6 +1,12 @@
 package com.yinjunbiao.util;
 
+/**
+ * 常量类
+ * @author yinjunbiao
+ */
 public class CONST {
+    public static final String CONFIGXML = "mybatis-config.xml";
+
     public static final String UN_POOLED_DATASOURCE = "UNPOOLED";
     public static final String POOLED_DATASOURCE = "POOLED";
     public static final String JNDI_DATASOURCE = "JNDI";

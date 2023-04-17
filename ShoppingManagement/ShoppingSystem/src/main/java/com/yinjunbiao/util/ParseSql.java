@@ -3,6 +3,10 @@ package com.yinjunbiao.util;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 解析sql语句
+ * @author yinjunbiao
+ */
 public class ParseSql {
     private List<String > params;
 
