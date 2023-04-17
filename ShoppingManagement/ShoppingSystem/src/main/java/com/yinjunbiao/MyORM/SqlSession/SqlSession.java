@@ -3,7 +3,6 @@ package com.yinjunbiao.MyORM.SqlSession;
 import com.yinjunbiao.MyORM.MappedStatement.MappedStatement;
 import com.yinjunbiao.MyORM.SqlSession.TypeHandler.*;
 
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.sql.*;
@@ -12,6 +11,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * SqlSession
+ * @author yinjunbiao
+ */
 public class SqlSession {
 
     public static Map<Class, TypeHandler> getTypeHandlerMap() {
@@ -192,12 +195,7 @@ public class SqlSession {
      * @return 代理对象
      */
     public <T>T getMapper(Class<T> mapper){
-        Object instance = Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class[]{mapper}, new InvocationHandler() {
-            @Override
-            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                return null;
-            }
-        });
+        Object instance = Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class[]{mapper}, new InvocationHandlerImpl(mapper,this) );
         return (T) instance;
     }
 
