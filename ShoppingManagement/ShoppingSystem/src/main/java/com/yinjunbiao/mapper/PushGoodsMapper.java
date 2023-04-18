@@ -21,7 +21,7 @@ public interface PushGoodsMapper {
     List<PushGood> select();
 
     @Select(sql = "select * from push where id = #{id}")
-    PushGood selectById(@Param("id")Integer id);
+    PushGood selectById(@Param("id")Long id);
 
     @Select(sql = "select * from push where name like #{name}")
     List<PushGood> selectByName(@Param("name")String name);
@@ -30,14 +30,14 @@ public interface PushGoodsMapper {
     List<PushGood> selectByStatus(@Param("status")Integer status);
 
     @Update(sql = "update push set name = #{name} where id = #{id}")
-    int updateName(@Param("name")String name,@Param("id")Integer id);
+    int updateName(@Param("name")String name,@Param("id")Long id);
 
     @Update(sql = "update push set price = #{price} where id = #{id}")
-    int updatePrice(@Param("price")Integer price,@Param("id")Integer id);
+    int updatePrice(@Param("price")Integer price,@Param("id")Long id);
 
     @Update(sql = "update push set status = #{status} where id = #{id}")
-    int updateStatus(@Param("status")Integer status,@Param("id")Integer id);
+    int updateStatus(@Param("status")Integer status,@Param("id")Long id);
 
     @Update(sql = "update push set picture = #{picture} where id = #{id}")
-    int updatePicture(@Param("picture")String picture,@Param("id")Integer id);
+    int updatePicture(@Param("picture")String picture,@Param("id")Long id);
 }
