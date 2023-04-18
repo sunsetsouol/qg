@@ -41,6 +41,10 @@ public interface GoodsMapper {
     @Update(sql = "update goods set sales = #{sales} where id = #{id}")
     int updateSales(@Param("sales")Integer sales,@Param("id")Integer id);
 
+    @Update(sql = "update goods set inventory = #{inventory} where id = #{id}")
+    int updateInventory(@Param("inventory")Integer inventory,@Param("id")Integer id);
 
+    @Update(sql = "update goods set name = #{name} where id = #{id}")
+    int updateName(@Param("name")String name,@Param("id")Integer id);
 
 }
