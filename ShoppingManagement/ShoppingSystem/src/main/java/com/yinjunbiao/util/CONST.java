@@ -20,4 +20,7 @@ public class CONST {
     public static final String SET = "set";
 
     public static final String SINGLETON = "singleton";
+
+    public static final String JWTKEY = "JwtKey";
+
 }

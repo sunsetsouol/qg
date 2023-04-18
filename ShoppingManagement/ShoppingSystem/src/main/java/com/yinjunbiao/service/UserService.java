@@ -8,4 +8,6 @@ public interface UserService {
     ResultSet login(User user);
 
     ResultSet register(User user);
+
+    ResultSet changePassword(User user);
 }

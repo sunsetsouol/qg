@@ -23,7 +23,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResultSet login(User user) {
-        User select = userMapper.select(user.getPhone());
+        User select = userMapper.selectByPhone(user.getPhone());
         ResultSet resultSet = null;
         if (select == null) {
             resultSet = ResultSet.error("userName", "账号不存在");
@@ -31,14 +31,14 @@ public class UserServiceImpl implements UserService {
             int cnt = select.getCnt();
             if (cnt > 0) {
                 synchronized (UserService.class) {
-                    cnt = userMapper.select(user.getPhone()).getCnt();
+                    cnt = userMapper.selectByPhone(user.getPhone()).getCnt();
                     if (cnt > 0) {
-                        select = userMapper.select(user.getPhone());
+                        select = userMapper.selectByPhone(user.getPhone());
                         if (select != null && select.getPassword().equals(user.getPassword())) {
                             resultSet = ResultSet.success(select, "登录成功");
                         } else {
                             resultSet = ResultSet.error(select, "账号不存在或密码错误");
-                            userMapper.updateCnt(userMapper.select(user.getPhone()).getCnt() - 1, user.getPhone());
+                            userMapper.updateCnt(userMapper.selectByPhone(user.getPhone()).getCnt() - 1, user.getPhone());
                             SqlSessionUtil.commit();
                             SqlSessionUtil.close();
                         }
@@ -62,11 +62,11 @@ public class UserServiceImpl implements UserService {
             }
         }
             int res;
-            if (userMapper.select(user.getUserName()) != null) {
+            if (userMapper.selectByPhone(user.getUserName()) != null) {
                 resultSet = ResultSet.error("userName", "用户名已被注册");
             }else {
                 synchronized (UserServiceImpl.class) {
-                    if (userMapper.select(user.getPhone()) != null) {
+                    if (userMapper.selectByPhone(user.getPhone()) != null) {
                         resultSet = ResultSet.error("userName", "用户名已被注册");
                     } else if (user.getUserName().length() > 20 || user.getPassword().length() > 20 || user.getAddress().length() > 50) {
                         resultSet = ResultSet.error(null, "账号跟密码长度不能超过20个字符,地址不能超过五十个字符");
@@ -78,6 +78,27 @@ public class UserServiceImpl implements UserService {
                     }
                 }
             }
+
+        SqlSessionUtil.commit();
+        SqlSessionUtil.close();
+        return resultSet;
+    }
+
+    @Override
+    public ResultSet changePassword(User user) {
+        User select = userMapper.selectByPhone(user.getPhone());
+        ResultSet resultSet = null;
+        int res = 0;
+        if (select == null) {
+            resultSet = ResultSet.error("phone", "该手机号尚未注册");
+        } else if (select.getPassword().equals(user.getPassword())) {
+            resultSet = ResultSet.error("password", "不能修改与原来相同的密码");
+        } else {
+            res = userMapper.updatePassword(user.getPassword(), user.getPhone());
+        }
+        if (res == 1) {
+            resultSet = ResultSet.success(null, "修改成功");
+        }
 
         SqlSessionUtil.commit();
         SqlSessionUtil.close();

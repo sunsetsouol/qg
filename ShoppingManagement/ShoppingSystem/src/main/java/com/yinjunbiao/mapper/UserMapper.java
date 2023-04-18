@@ -13,7 +13,7 @@ import com.yinjunbiao.entity.User;
 @Component("userMapper")
 public interface UserMapper {
     @Select(sql = "select * from user where phone = #{phone}")
-    User select(@Param("phone")String phone);
+    User selectByPhone(@Param("phone")String phone);
 
     @Update(sql = "update user set cnt = #{cnt} where phone = #{phone}")
     int updateCnt(@Param("cnt")int cnt,@Param("phone")String userName);
@@ -22,5 +22,9 @@ public interface UserMapper {
     int add(@Param("phone")String phone, @Param("userName")String userName,@Param("address")String address,@Param("password")String password,@Param("isPrivate")Integer isPrivate);
 
 
+    @Update(sql = "update user set password = #{password} where phone = #{phone}")
+    int updatePassword(@Param("password") String password, @Param("phone") String phone);
 
+    @Update(sql = "update user set phone = #{phone} where id = #{id}")
+    int updatePhone();
 }
