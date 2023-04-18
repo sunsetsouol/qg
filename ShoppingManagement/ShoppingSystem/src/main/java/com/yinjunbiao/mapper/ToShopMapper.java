@@ -25,6 +25,6 @@ public interface ToShopMapper {
 
     @Update(sql = "update toshop set status = #{status}")
     int updateStatus(@Param("status")Integer status);
-    
+
 
 }
