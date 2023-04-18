@@ -5,7 +5,7 @@ package com.yinjunbiao.entity;
  * 推文（动态
  */
 public class Tweets {
-    private Integer id;
+    private Long id;
 
     private Integer shopId;
 
@@ -20,11 +20,11 @@ public class Tweets {
                 '}';
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -47,7 +47,7 @@ public class Tweets {
     public Tweets() {
     }
 
-    public Tweets(Integer id, Integer shopId, String tweet) {
+    public Tweets(Long id, Integer shopId, String tweet) {
         this.id = id;
         this.shopId = shopId;
         this.tweet = tweet;
