@@ -8,7 +8,7 @@ public class Consultation {
 
     private Long id;
 
-    private Integer goodsId;
+    private Long goodsId;
 
     private String consultation;
 
@@ -32,11 +32,11 @@ public class Consultation {
         this.id = id;
     }
 
-    public Integer getGoodsId() {
+    public Long getGoodsId() {
         return goodsId;
     }
 
-    public void setGoodsId(Integer goodsId) {
+    public void setGoodsId(Long goodsId) {
         this.goodsId = goodsId;
     }
 
@@ -59,7 +59,7 @@ public class Consultation {
     public Consultation() {
     }
 
-    public Consultation(Long id, Integer goodsId, String consultation, Integer userId) {
+    public Consultation(Long id, Long goodsId, String consultation, Integer userId) {
         this.id = id;
         this.goodsId = goodsId;
         this.consultation = consultation;
