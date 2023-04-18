@@ -73,7 +73,7 @@ public class UserServiceImpl implements UserService {
                     } else if (user.getUserName().length() > 20 || user.getPassword().length() > 20 || user.getAddress().length() > 50) {
                         resultSet = ResultSet.error(null, "账号跟密码长度不能超过20个字符,地址不能超过五十个字符");
                     } else {
-                        res = userMapper.add(user.getPhone(),user.getUserName(),user.getAddress(),user.getPassword(),user.getIsPrivate());
+                        res = userMapper.insert(user.getPhone(),user.getUserName(),user.getAddress(),user.getPassword(),user.getIsPrivate());
                         if (res == 1) {
                             resultSet = ResultSet.success(res, "注册成功");
                         }

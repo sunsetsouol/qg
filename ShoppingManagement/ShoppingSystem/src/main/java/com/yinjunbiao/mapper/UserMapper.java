@@ -20,7 +20,7 @@ public interface UserMapper {
     List<User> selectByName(@Param("userName")String userName);
 
     @Insert(sql = "insert into user values(null,0,#{phone},null,#{userName},#{address},#{password},#{isPrivate},5)")
-    int add(@Param("phone")String phone, @Param("userName")String userName,@Param("address")String address,@Param("password")String password,@Param("isPrivate")Integer isPrivate);
+    int insert(@Param("phone")String phone, @Param("userName")String userName,@Param("address")String address,@Param("password")String password,@Param("isPrivate")Integer isPrivate);
 
 
     @Update(sql = "update user set cnt = #{cnt} where phone = #{phone}")
