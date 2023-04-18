@@ -15,6 +15,8 @@ public class Shop {
 
     private Integer sales;
 
+    private String name;
+
     @Override
     public String toString() {
         return "Shop{" +
@@ -23,7 +25,25 @@ public class Shop {
                 ", fans=" + fans +
                 ", introductation='" + introductation + '\'' +
                 ", sales=" + sales +
+                ", name='" + name + '\'' +
                 '}';
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Shop(Integer id, Integer bossId, Integer fans, String introductation, Integer sales, String name) {
+        this.id = id;
+        this.bossId = bossId;
+        this.fans = fans;
+        this.introductation = introductation;
+        this.sales = sales;
+        this.name = name;
     }
 
     public Integer getId() {
@@ -69,11 +89,5 @@ public class Shop {
     public Shop() {
     }
 
-    public Shop(Integer id, Integer bossId, Integer fans, String introductation, Integer sales) {
-        this.id = id;
-        this.bossId = bossId;
-        this.fans = fans;
-        this.introductation = introductation;
-        this.sales = sales;
-    }
+
 }

@@ -13,8 +13,12 @@ public class TestMapper {
     public void testUserMapper(){
         SqlSession sqlSession = SqlSessionUtil.getSqlSession();
         UserMapper mapper = sqlSession.getMapper(UserMapper.class);
-//        User select = mapper.select();
-//        System.out.println(select);
+        User user = mapper.selectByPhone("12312312312");
+        System.out.println(user);
+        int i = mapper.updatePhone("12312312312", "12312");
+        SqlSessionUtil.commit();
+        SqlSessionUtil.close();
+        System.out.println(i);
     }
 
     @Test

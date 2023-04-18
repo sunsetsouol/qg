@@ -22,6 +22,8 @@ public class Goods {
 
     private Blob picture;
 
+    private String name;
+
     @Override
     public String toString() {
         return "Goods{" +
@@ -32,7 +34,16 @@ public class Goods {
                 ", inventory=" + inventory +
                 ", price=" + price +
                 ", picture=" + picture +
+                ", name='" + name + '\'' +
                 '}';
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Long getId() {
@@ -94,13 +105,5 @@ public class Goods {
     public Goods() {
     }
 
-    public Goods(Long id, Integer shopId, String description, Integer sales, Integer inventory, Integer price, Blob picture) {
-        this.id = id;
-        this.shopId = shopId;
-        this.description = description;
-        this.sales = sales;
-        this.inventory = inventory;
-        this.price = price;
-        this.picture = picture;
-    }
+
 }

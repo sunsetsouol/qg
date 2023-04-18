@@ -13,7 +13,7 @@ public class User {
 
     private String phone;
 
-    private Blob headshot;
+    private String  headshot;
 
     private String userName;
 
@@ -64,11 +64,11 @@ public class User {
         this.phone = phone;
     }
 
-    public Blob getHeadshot() {
+    public String getHeadshot() {
         return headshot;
     }
 
-    public void setHeadshot(Blob headshot) {
+    public void setHeadshot(String headshot) {
         this.headshot = headshot;
     }
 
@@ -115,7 +115,7 @@ public class User {
     public User() {
     }
 
-    public User(Integer id, Integer identify, String phone, Blob headshot, String userName, String address, String password, Integer isPrivate, Integer cnt) {
+    public User(Integer id, Integer identify, String phone, String headshot, String userName, String address, String password, Integer isPrivate, Integer cnt) {
         this.id = id;
         this.identify = identify;
         this.phone = phone;

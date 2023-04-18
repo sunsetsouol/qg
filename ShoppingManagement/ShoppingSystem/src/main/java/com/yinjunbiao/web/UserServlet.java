@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.yinjunbiao.MySpring.Annotation.Autowired;
 import com.yinjunbiao.MySpring.Annotation.ComponentScan;
 import com.yinjunbiao.MySpring.Annotation.Scope;
+
 import com.yinjunbiao.entity.User;
 import com.yinjunbiao.pojo.ResultSet;
 import com.yinjunbiao.service.UserService;
@@ -15,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.HashMap;
@@ -38,12 +38,14 @@ public class UserServlet extends BaseServlet {
         BufferedReader reader = request.getReader();
         String s = reader.readLine();
         LOGGER.info(s);
+        System.out.println(s);
         User user = JSON.parseObject(s, User.class);
         if(user == null){
             response.setStatus(200);
             response.setContentType("application/json;charset=utf-8");
             response.getWriter().write(JSON.toJSONString(ResultSet.error()));
         }
+        System.out.println(user);
         LOGGER.info(user.toString());
         //查找并判断密码是否正确
         ResultSet resultSet = service.login(user);
