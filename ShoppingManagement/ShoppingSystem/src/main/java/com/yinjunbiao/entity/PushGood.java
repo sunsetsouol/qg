@@ -9,31 +9,23 @@ import com.mysql.cj.jdbc.Blob;
 public class PushGood {
     private Long id;
 
-    private String goodsName;
+    private String name;
 
     private Integer price;
 
     private Integer status;
 
-    private Blob picture;
+    private String  picture;
 
     @Override
     public String toString() {
         return "PushGood{" +
                 "id=" + id +
-                ", goodsName='" + goodsName + '\'' +
+                ", name='" + name + '\'' +
                 ", price=" + price +
                 ", status=" + status +
-                ", picture=" + picture +
+                ", picture='" + picture + '\'' +
                 '}';
-    }
-
-    public Blob getPicture() {
-        return picture;
-    }
-
-    public void setPicture(Blob picture) {
-        this.picture = picture;
     }
 
     public Long getId() {
@@ -44,12 +36,12 @@ public class PushGood {
         this.id = id;
     }
 
-    public String getGoodsName() {
-        return goodsName;
+    public String getName() {
+        return name;
     }
 
-    public void setGoodsName(String goodsName) {
-        this.goodsName = goodsName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Integer getPrice() {
@@ -68,12 +60,20 @@ public class PushGood {
         this.status = status;
     }
 
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
+
     public PushGood() {
     }
 
-    public PushGood(Long id, String goodsName, Integer price, Integer status, Blob picture) {
+    public PushGood(Long id, String name, Integer price, Integer status, String picture) {
         this.id = id;
-        this.goodsName = goodsName;
+        this.name = name;
         this.price = price;
         this.status = status;
         this.picture = picture;

@@ -11,7 +11,7 @@ public class Shop {
 
     private Integer fans;
 
-    private String introductation;
+    private String description;
 
     private Integer sales;
 
@@ -23,27 +23,10 @@ public class Shop {
                 "id=" + id +
                 ", bossId=" + bossId +
                 ", fans=" + fans +
-                ", introductation='" + introductation + '\'' +
+                ", description='" + description + '\'' +
                 ", sales=" + sales +
                 ", name='" + name + '\'' +
                 '}';
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Shop(Integer id, Integer bossId, Integer fans, String introductation, Integer sales, String name) {
-        this.id = id;
-        this.bossId = bossId;
-        this.fans = fans;
-        this.introductation = introductation;
-        this.sales = sales;
-        this.name = name;
     }
 
     public Integer getId() {
@@ -70,12 +53,12 @@ public class Shop {
         this.fans = fans;
     }
 
-    public String getIntroductation() {
-        return introductation;
+    public String getDescription() {
+        return description;
     }
 
-    public void setIntroductation(String introductation) {
-        this.introductation = introductation;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Integer getSales() {
@@ -86,8 +69,23 @@ public class Shop {
         this.sales = sales;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public Shop() {
     }
 
-
+    public Shop(Integer id, Integer bossId, Integer fans, String description, Integer sales, String name) {
+        this.id = id;
+        this.bossId = bossId;
+        this.fans = fans;
+        this.description = description;
+        this.sales = sales;
+        this.name = name;
+    }
 }

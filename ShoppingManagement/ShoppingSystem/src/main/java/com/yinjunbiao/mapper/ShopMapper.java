@@ -23,8 +23,8 @@ public interface ShopMapper {
     @Select(sql = "select * from shop where id = #{id}")
     Shop selectById(@Param("id")Integer id);
 
-    @Insert(sql = "insert into shop values(null,#{bossId},0,#{introduction},#{sales}")
-    int insert(@Param("bossId")Integer bossId,@Param("introduction")String introduction,@Param("sales")Integer sales);
+    @Insert(sql = "insert into shop values(null,#{bossId},0,#{description},#{sales}")
+    int insert(@Param("bossId")Integer bossId,@Param("description")String description,@Param("sales")Integer sales);
 
     @Update(sql = "update shop set fans = #{fans} where id = #{id}")
     int updateFans(@Param("fans")Integer fans,@Param("id")Integer id);

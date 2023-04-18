@@ -20,7 +20,7 @@ public class Goods {
 
     private Integer price;
 
-    private Blob picture;
+    private String picture;
 
     private String name;
 
@@ -94,16 +94,25 @@ public class Goods {
         this.price = price;
     }
 
-    public Blob getPicture() {
+    public String getPicture() {
         return picture;
     }
 
-    public void setPicture(Blob picture) {
+    public void setPicture(String picture) {
         this.picture = picture;
     }
 
     public Goods() {
     }
 
-
+    public Goods(Long id, Integer shopId, String description, Integer sales, Integer inventory, Integer price, String picture, String name) {
+        this.id = id;
+        this.shopId = shopId;
+        this.description = description;
+        this.sales = sales;
+        this.inventory = inventory;
+        this.price = price;
+        this.picture = picture;
+        this.name = name;
+    }
 }
