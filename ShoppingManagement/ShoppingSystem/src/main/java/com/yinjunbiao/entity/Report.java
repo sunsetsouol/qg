@@ -5,7 +5,7 @@ package com.yinjunbiao.entity;
  * 举报商品
  */
 public class Report {
-    private Long id;
+    private Integer id;
 
     private Long goodId;
 
@@ -29,11 +29,11 @@ public class Report {
     public Report() {
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -69,7 +69,7 @@ public class Report {
         this.description = description;
     }
 
-    public Report(Long id, Long goodId, Integer userId, Integer status, String description) {
+    public Report(Integer id, Long goodId, Integer userId, Integer status, String description) {
         this.id = id;
         this.goodId = goodId;
         this.userId = userId;
