@@ -10,8 +10,8 @@ import com.yinjunbiao.entity.Refund;
 
 import java.util.List;
 
-//@Mapper
-//@Component("refundMapper")
+@Mapper
+@Component("refundMapper")
 public interface RefundMapper {
 
     @Select(sql = "select * from refund")

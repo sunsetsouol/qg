@@ -21,6 +21,8 @@ public class Orders {
 
     private String comment;
 
+    private Integer number;
+
     @Override
     public String toString() {
         return "Orders{" +
@@ -32,6 +34,7 @@ public class Orders {
                 ", userId=" + userId +
                 ", status=" + status +
                 ", comment='" + comment + '\'' +
+                ", number=" + number +
                 '}';
     }
 
@@ -99,10 +102,18 @@ public class Orders {
         this.comment = comment;
     }
 
+    public Integer getNumber() {
+        return number;
+    }
+
+    public void setNumber(Integer number) {
+        this.number = number;
+    }
+
     public Orders() {
     }
 
-    public Orders(Long id, Long time, String sendAddress, String receiveAddress, Long goodsId, Integer userId, Integer status, String comment) {
+    public Orders(Long id, Long time, String sendAddress, String receiveAddress, Long goodsId, Integer userId, Integer status, String comment, Integer number) {
         this.id = id;
         this.time = time;
         this.sendAddress = sendAddress;
@@ -111,5 +122,6 @@ public class Orders {
         this.userId = userId;
         this.status = status;
         this.comment = comment;
+        this.number = number;
     }
 }

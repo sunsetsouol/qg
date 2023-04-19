@@ -4,7 +4,7 @@ package com.yinjunbiao.entity;
  * @author yinjunbiao
  * 店铺申请
  */
-public class ToShop {
+public class Apply {
     private Integer id;
 
     private Integer userId;
@@ -20,10 +20,10 @@ public class ToShop {
                 '}';
     }
 
-    public ToShop() {
+    public Apply() {
     }
 
-    public ToShop(Integer id, Integer userId, Integer status) {
+    public Apply(Integer id, Integer userId, Integer status) {
         this.id = id;
         this.userId = userId;
         this.status = status;

@@ -6,19 +6,19 @@ import com.yinjunbiao.MyORM.Annotation.Select;
 import com.yinjunbiao.MyORM.Annotation.Update;
 import com.yinjunbiao.MySpring.Annotation.Component;
 import com.yinjunbiao.MySpring.Annotation.Mapper;
-import com.yinjunbiao.entity.ToShop;
+import com.yinjunbiao.entity.Apply;
 
 import java.util.List;
 
-//@Mapper
-//@Component("toShopMapper")
-public interface ToShopMapper {
+@Mapper
+@Component("toShopMapper")
+public interface ApplyMapper {
 
     @Select(sql = "select * from toshop")
-    List<ToShop> select();
+    List<Apply> select();
 
     @Select(sql = "select * from toshop where user_id = #{userId}")
-    ToShop selectByUserId(@Param("userId")Integer id);
+    Apply selectByUserId(@Param("userId")Integer id);
 
     @Insert(sql = "insert into toshop values(null,#{userId},0)")
     int insert (@Param("userId")Integer userId);

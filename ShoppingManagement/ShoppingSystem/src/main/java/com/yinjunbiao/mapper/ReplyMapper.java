@@ -10,8 +10,8 @@ import com.yinjunbiao.entity.Reply;
 
 import java.util.List;
 
-//@Mapper
-//@Component("replyMapper")
+@Mapper
+@Component("replyMapper")
 public interface ReplyMapper {
 
     @Select(sql = "select * from reply where consultation_id = #{consultationId}")

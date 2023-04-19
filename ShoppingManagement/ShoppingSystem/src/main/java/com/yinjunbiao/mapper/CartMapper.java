@@ -7,15 +7,18 @@ import com.yinjunbiao.entity.ShoppingCart;
 
 import java.util.List;
 
-//@Mapper
-//@Component("cartMapper")
+@Mapper
+@Component("cartMapper")
 public interface CartMapper {
 
     @Select(sql = "select * from cart where user_id = #{userId}")
-    List<ShoppingCart> selectById(@Param("userId")Integer userId);
+    List<ShoppingCart> selectByUserId(@Param("userId")Integer userId);
 
     @Select(sql = "select * from cart where user_id = #{userId} and goods_id = #{goodsId}")
     ShoppingCart selectByUAGId(@Param("userId")Integer userId,@Param("goodsId")Long goodsId);
+
+    @Select(sql = "select * from cart where id = #{id}")
+    ShoppingCart selectById(@Param("id")Long id);
 
     @Insert(sql = "insert into cart values(null,#{goodsId},#{number},#{userId})")
     int insert(@Param("goodsId")Long goodsId,@Param("number")Integer number,@Param("userId")Integer userId);

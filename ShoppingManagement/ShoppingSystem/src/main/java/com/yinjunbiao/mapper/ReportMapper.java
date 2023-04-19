@@ -4,10 +4,14 @@ import com.yinjunbiao.MyORM.Annotation.Insert;
 import com.yinjunbiao.MyORM.Annotation.Param;
 import com.yinjunbiao.MyORM.Annotation.Select;
 import com.yinjunbiao.MyORM.Annotation.Update;
+import com.yinjunbiao.MySpring.Annotation.Component;
+import com.yinjunbiao.MySpring.Annotation.Mapper;
 import com.yinjunbiao.entity.Report;
 
 import java.util.List;
 
+@Mapper
+@Component("reportMapper")
 public interface ReportMapper {
 
     @Select(sql = "select * from report")
