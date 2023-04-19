@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
     public ResultSet register(User user) {
         ResultSet resultSet = null;
         for (String s : CONST.SENSITIVE) {
-            if (user.getUserName().contains(s)) {
+            if (user.getUserName().contains(s) || user.getAddress().contains(s)) {
                 resultSet = ResultSet.error("userName", "用户名含有敏感字");
             }
         }
@@ -106,4 +106,26 @@ public class UserServiceImpl implements UserService {
         SqlSessionUtil.close();
         return resultSet;
     }
+
+    @Override
+    public ResultSet changePhone(User user) {
+        ResultSet resultSet = null;
+        String regex = "1[34578][0-9]{9}";
+        if (!user.getPhone().matches(regex)){
+            return ResultSet.error(user.getPhone(),"请输入正确的手机号");
+        }
+        User select = userMapper.selectById(user.getId());
+        if (select == null || select.getPhone().equals(user.getPhone())){
+            resultSet = ResultSet.error("phone","不能修改与原来相同的手机号");
+        } else if (userMapper.updatePhone(user.getPhone(),user.getId()) == 1) {
+            SqlSessionUtil.commit();
+            resultSet = ResultSet.success(null,"手机号修改成功");
+        }
+        SqlSessionUtil.close();
+        SqlSessionUtil.close();
+        return resultSet;
+    }
+
+
+
 }

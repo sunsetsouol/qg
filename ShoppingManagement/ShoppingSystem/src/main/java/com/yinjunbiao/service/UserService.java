@@ -11,4 +11,6 @@ public interface UserService {
     ResultSet register(User user);
 
     ResultSet changePassword(User user);
+
+    ResultSet changePhone(User user);
 }
