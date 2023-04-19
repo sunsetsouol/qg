@@ -10,6 +10,7 @@ import com.yinjunbiao.pojo.ResultSet;
 import com.yinjunbiao.service.UserService;
 import com.yinjunbiao.util.ApplicationUtil;
 import com.yinjunbiao.util.JwtUtil;
+import io.jsonwebtoken.Claims;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +55,6 @@ public class UserServlet extends BaseServlet {
             claims.put("id", ((User) resultSet.getData()).getId());
             String jwt = JwtUtil.generateJwt(claims);
             resultSet.setData(jwt);
-            response.setHeader("Access-Control-Allow-Credentials", "true");
         }
         response.setStatus(200);
         response.setContentType("application/json;charset=utf-8");

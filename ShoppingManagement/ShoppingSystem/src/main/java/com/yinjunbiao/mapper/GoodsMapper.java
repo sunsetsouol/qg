@@ -7,8 +7,8 @@ import com.yinjunbiao.entity.Goods;
 
 import java.util.List;
 
-@Mapper
-@Component("goodsMapper")
+//@Mapper
+//@Component("goodsMapper")
 public interface GoodsMapper {
 
     @Select(sql = "select * from goods")

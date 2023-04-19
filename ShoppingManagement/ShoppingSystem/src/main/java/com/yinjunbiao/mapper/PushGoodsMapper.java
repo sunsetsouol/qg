@@ -10,8 +10,8 @@ import com.yinjunbiao.entity.PushGood;
 
 import java.util.List;
 
-@Mapper
-@Component("pushGoodsMapper")
+//@Mapper
+//@Component("pushGoodsMapper")
 public interface PushGoodsMapper {
 
     @Insert(sql = "insert into push values(null,#{name},#{price},0,#{picture})")

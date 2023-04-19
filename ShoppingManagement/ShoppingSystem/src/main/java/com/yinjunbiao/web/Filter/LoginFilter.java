@@ -15,6 +15,9 @@ import java.io.IOException;
 
 //@WebFilter("/*")
 public class LoginFilter implements Filter {
+
+    private static String []urls = {"/login.html","/register.html","forgetPassword.html","/css","/user/login","/user/register",".woff",".ttf","/json",".js",".css"};
+
     @Override
     public void destroy() {
     }
@@ -22,7 +25,6 @@ public class LoginFilter implements Filter {
     @Override
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws ServletException, IOException {
         HttpServletRequest request = (HttpServletRequest) req;
-        String []urls = {"/login.html","/register.html","forgetPassword.html","/css","/user/login","/user/register",".woff",".ttf","/json",".js",".css"};
         String requestUrl = request.getRequestURL().toString();
         for (String url : urls) {
             if (requestUrl.contains(url)){
@@ -32,20 +34,13 @@ public class LoginFilter implements Filter {
         }
 
         String token = request.getHeader("Authorization");
-        if (token == null || token.length() == 0){
-            HttpServletResponse response = (HttpServletResponse) resp;
-
-            response.sendRedirect("/ShoppingSystem/login.html");
-            return;
-        }
-        Claims claims = JwtUtil.parseJWT(token);
-        if(claims == null){
+        try {
+            JwtUtil.parseJWT(token);
+        }catch (Exception e){
             HttpServletResponse response = (HttpServletResponse) resp;
             response.sendRedirect("/ShoppingSystem/login.html");
-
-        }else {
-            chain.doFilter(req, resp);
         }
+        chain.doFilter(req, resp);
     }
 
     @Override

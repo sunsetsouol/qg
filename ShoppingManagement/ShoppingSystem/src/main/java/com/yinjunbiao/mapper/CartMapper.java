@@ -7,8 +7,8 @@ import com.yinjunbiao.entity.ShoppingCart;
 
 import java.util.List;
 
-@Mapper
-@Component("cartMapper")
+//@Mapper
+//@Component("cartMapper")
 public interface CartMapper {
 
     @Select(sql = "select * from cart where user_id = #{userId}")

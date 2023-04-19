@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 80031
 File Encoding         : 65001
 
-Date: 2023-04-16 23:02:01
+Date: 2023-04-19 14:32:53
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -20,7 +20,7 @@ SET FOREIGN_KEY_CHECKS=0;
 -- ----------------------------
 DROP TABLE IF EXISTS `tweet`;
 CREATE TABLE `tweet` (
-  `id` int NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'id',
   `shop_id` int NOT NULL COMMENT '店铺id',
   `tweet` varchar(200) NOT NULL COMMENT '推文',
   PRIMARY KEY (`id`),

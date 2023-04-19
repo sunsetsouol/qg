@@ -10,8 +10,8 @@ import com.yinjunbiao.entity.Shop;
 
 import java.util.List;
 
-@Mapper
-@Component("shopMapper")
+//@Mapper
+//@Component("shopMapper")
 public interface ShopMapper {
 
     @Select(sql = "select * from shop where name like #{name}")

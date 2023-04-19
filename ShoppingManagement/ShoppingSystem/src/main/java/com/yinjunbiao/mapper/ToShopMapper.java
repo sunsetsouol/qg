@@ -10,8 +10,8 @@ import com.yinjunbiao.entity.ToShop;
 
 import java.util.List;
 
-@Mapper
-@Component("toShopMapper")
+//@Mapper
+//@Component("toShopMapper")
 public interface ToShopMapper {
 
     @Select(sql = "select * from toshop")

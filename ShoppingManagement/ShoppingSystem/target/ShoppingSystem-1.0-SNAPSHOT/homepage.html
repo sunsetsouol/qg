@@ -73,11 +73,6 @@
             >
             </el-table-column>
             <el-table-column
-                    prop="ordered"
-                    align="center"
-                    label="排序">
-            </el-table-column>
-            <el-table-column
                     prop="statusStr"
                     align="center"
                     label="当前状态">
@@ -127,7 +122,7 @@
                 var _this = this;
                 axios({
                     method:"post",
-                    url:"http://localhost:8080/brand-demo/brand/selectByPageAndCondition?currentPage="+this.currentPage+"&pageSize="+this.pageSize,
+                    url:"http://localhost:8080/ShoppingSystem/brand/selectByPageAndCondition?currentPage="+this.currentPage+"&pageSize="+this.pageSize,
                     data:this.brand
                 }).then(function (resp){
                     _this.tableData = resp.data.rows;

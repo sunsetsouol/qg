@@ -10,8 +10,8 @@ import com.yinjunbiao.entity.Consultation;
 
 import java.util.List;
 
-@Mapper
-@Component("consultationMapper")
+//@Mapper
+//@Component("consultationMapper")
 public interface ConsultationMapper {
 
     @Select(sql = "select * from consultation where user_id = #{userId}")

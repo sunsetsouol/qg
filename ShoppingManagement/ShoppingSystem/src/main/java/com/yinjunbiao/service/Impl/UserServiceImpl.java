@@ -96,7 +96,7 @@ public class UserServiceImpl implements UserService {
         } else if (select.getPassword().equals(user.getPassword())) {
             resultSet = ResultSet.error("password", "不能修改与原来相同的密码");
         } else {
-            res = userMapper.updatePassword(user.getPassword(), user.getPhone());
+            res = userMapper.updatePassword(user.getPassword(), user.getId());
         }
         if (res == 1) {
             resultSet = ResultSet.success(null, "修改成功");
