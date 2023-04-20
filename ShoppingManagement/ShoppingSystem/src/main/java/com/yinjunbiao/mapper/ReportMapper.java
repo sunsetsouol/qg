@@ -17,10 +17,13 @@ public interface ReportMapper {
     @Select(sql = "select * from report")
     List<Report> select();
 
+    @Select(sql = "select * from report where user_id = #{userId} and goods_id = #{goodsId}")
+    Report selectByUAGId(@Param("userId")Integer userId,@Param("goodsId")Long goodsId);
+
     @Update(sql = "update report set status = #{status} where id = #{id}")
     int updateStatus(@Param("status")Integer status,@Param("id")Integer id);
 
     @Insert(sql = "insert into report values(null,#{goodsId},#{userId},0,#{status},#{description}")
-    int insert(@Param("goodsId")Long goodsId,@Param("userId")Insert userId,@Param("status")Integer status,@Param("description")String description);
+    int insert(@Param("goodsId")Long goodsId,@Param("userId")Integer userId,@Param("status")Integer status,@Param("description")String description);
 
 }

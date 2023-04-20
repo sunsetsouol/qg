@@ -60,4 +60,6 @@ public interface UserMapper {
     @Update(sql = "update user set headshot = #{headshot} where id = #{id}")
     @ResultMap(id = "userResultMap")
     int updateHeadshot(@Param("headshot")String headshot,@Param("id") Integer id);
+
+
 }

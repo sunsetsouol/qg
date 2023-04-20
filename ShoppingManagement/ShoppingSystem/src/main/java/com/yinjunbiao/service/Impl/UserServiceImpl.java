@@ -43,6 +43,18 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private RefundMapper refundMapper;
 
+    @Autowired
+    private SubscribleMapper subscribleMapper;
+
+    @Autowired
+    private ConsultationMapper consultationMapper;
+
+    @Autowired
+    private ReplyMapper replyMapper;
+
+    @Autowired
+    private ReportMapper reportMapper;
+
     @Override
     public ResultSet login(User user) {
         User select = userMapper.selectByPhone(user.getPhone());
@@ -52,7 +64,7 @@ public class UserServiceImpl implements UserService {
         } else {
             int cnt = select.getCnt();
             if (cnt > 0) {
-                synchronized (UserService.class) {
+                synchronized (userMapper) {
                     cnt = userMapper.selectByPhone(user.getPhone()).getCnt();
                     if (cnt > 0) {
                         select = userMapper.selectByPhone(user.getPhone());
@@ -70,6 +82,7 @@ public class UserServiceImpl implements UserService {
                 resultSet = ResultSet.error(null, "登录失败次数过多，请稍后重试");
             }
         }
+
         SqlSessionUtil.commit();
         SqlSessionUtil.close();
         return resultSet;
@@ -87,7 +100,7 @@ public class UserServiceImpl implements UserService {
             if (userMapper.selectByPhone(user.getUserName()) != null) {
                 resultSet = ResultSet.error("userName", "用户名已被注册");
             }else {
-                synchronized (UserServiceImpl.class) {
+                synchronized (userMapper) {
                     if (userMapper.selectByPhone(user.getPhone()) != null) {
                         resultSet = ResultSet.error("userName", "用户名已被注册");
                     } else if (user.getUserName().length() > 20 || user.getPassword().length() > 20 || user.getAddress().length() > 50) {
@@ -342,6 +355,89 @@ public class UserServiceImpl implements UserService {
         }
         if (resultSet == null){
             resultSet = ResultSet.error(null,"退款申请次数过多");
+        }
+        return resultSet;
+    }
+
+    @Override
+    public ResultSet selectSub(Subscrible subscrible) {
+        Subscrible select = subscribleMapper.selectByUASId(subscrible.getUserId(), subscrible.getShopId());
+        ResultSet resultSet = null;
+        if (select == null){
+            resultSet = ResultSet.error();
+        }
+        if (resultSet == null){
+            resultSet = ResultSet.success();
+        }
+        return resultSet;
+    }
+
+
+
+    @Override
+    public ResultSet subscrible(Subscrible subscrible) {
+        ResultSet resultSet = null;
+        if (subscribleMapper.selectByUASId(subscrible.getUserId(),subscrible.getShopId()) == null){
+            synchronized (subscribleMapper){
+                if (subscribleMapper.selectByUASId(subscrible.getUserId(),subscrible.getShopId()) == null){
+                    subscribleMapper.insert(subscrible.getUserId(),subscrible.getShopId());
+                    resultSet = ResultSet.success(null,"订阅成功");
+                }else {
+                    subscribleMapper.deleteByUASId(subscrible.getUserId(),subscrible.getShopId());
+                }
+            }
+        }else {
+            subscribleMapper.deleteByUASId(subscrible.getUserId(),subscrible.getShopId());
+        }
+        if (resultSet == null){
+            resultSet = ResultSet.success(null,"取消订阅成功");
+        }
+        return resultSet;
+    }
+
+    @Override
+    public ResultSet selectMySubs(Integer userId) {
+        List<Subscrible> subscribles = subscribleMapper.selectbyUserId(userId);
+        return ResultSet.success(subscribles,"查询成功");
+    }
+
+    @Override
+    public ResultSet sendConsultation(Consultation consultation) {
+        consultationMapper.insert(consultation.getGoodsId(),consultation.getConsultation(),consultation.getUserId());
+        return ResultSet.success();
+    }
+
+    @Override
+    public ResultSet deleteConsultation(Long id) {
+        int delete = consultationMapper.deleteById(id);
+        return delete == 1 ? ResultSet.success(null,"删除成功") : ResultSet.error(null,"评论不存在，可能已经被删除");
+    }
+
+    @Override
+    public ResultSet sendReply(Reply reply) {
+        int insert = replyMapper.insert(reply.getConsultationId(), reply.getReply(), reply.getUserId());
+        return insert == 1 ? ResultSet.success(null,"发送成功") : ResultSet.error(null,"发送异常");
+    }
+
+    @Override
+    public ResultSet deleteReply(Long id) {
+        int delete = replyMapper.deleteById(id);
+        return delete == 1 ? ResultSet.success(null,"删除成功") : ResultSet.error(null,"回复不存在，可能已经删除");
+    }
+
+    @Override
+    public ResultSet reportGoods(Report report) {
+        ResultSet resultSet = null;
+        if (reportMapper.selectByUAGId(report.getUserId(), report.getGoodId()) == null){
+            synchronized (reportMapper){
+                if (reportMapper.selectByUAGId(report.getUserId(),report.getGoodId()) == null){
+                    reportMapper.insert(report.getGoodId(),report.getUserId(),report.getStatus(),report.getDescription());
+                    resultSet = ResultSet.success(null,"举报成功");
+                }
+            }
+        }
+        if (resultSet == null){
+            resultSet = ResultSet.error(null,"请勿重复举报");
         }
         return resultSet;
     }

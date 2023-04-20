@@ -1,10 +1,7 @@
 package com.yinjunbiao.service;
 
 
-import com.yinjunbiao.entity.Orders;
-import com.yinjunbiao.entity.Refund;
-import com.yinjunbiao.entity.ShoppingCart;
-import com.yinjunbiao.entity.User;
+import com.yinjunbiao.entity.*;
 import com.yinjunbiao.pojo.ResultSet;
 
 public interface UserService {
@@ -43,4 +40,19 @@ public interface UserService {
 
     ResultSet refund(Refund refund);
 
+    ResultSet subscrible(Subscrible subscrible);
+
+    ResultSet selectSub(Subscrible subscrible);
+
+    ResultSet selectMySubs(Integer userId);
+
+    ResultSet sendConsultation(Consultation consultation);
+
+    ResultSet deleteConsultation(Long id);
+
+    ResultSet sendReply(Reply reply);
+
+    ResultSet deleteReply(Long id);
+
+    ResultSet reportGoods(Report report);
 }
