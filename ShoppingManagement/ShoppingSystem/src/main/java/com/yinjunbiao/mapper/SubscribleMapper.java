@@ -11,7 +11,7 @@ import com.yinjunbiao.entity.Subscrible;
 import java.util.List;
 
 @Mapper
-@Component("subscrible")
+@Component("subscribleMapper")
 public interface SubscribleMapper {
     @Insert(sql = "insert into subscrible values (null,#{userId},#{shopId})")
     int insert(@Param("userId")Integer userId,@Param("shopId")Integer shopId);

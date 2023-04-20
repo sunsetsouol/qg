@@ -9,13 +9,15 @@ import com.yinjunbiao.MySpring.Annotation.Scope;
 import com.yinjunbiao.entity.*;
 import com.yinjunbiao.mapper.*;
 import com.yinjunbiao.pojo.ResultSet;
+import com.yinjunbiao.pojo.ShoppingCart;
 import com.yinjunbiao.service.UserService;
 import com.yinjunbiao.util.CONST;
 import com.yinjunbiao.util.SqlSessionUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
-@Component("service")
+@Component("userService")
 @Scope("singleton")
 public class UserServiceImpl implements UserService {
 
@@ -55,10 +57,16 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private ReportMapper reportMapper;
 
+    /**
+     * 登录
+     * @param user 用户信息
+     * @return 结果集
+     */
     @Override
     public ResultSet login(User user) {
         User select = userMapper.selectByPhone(user.getPhone());
         ResultSet resultSet = null;
+        //双重验证登录
         if (select == null) {
             resultSet = ResultSet.error("userName", "账号不存在");
         } else {
@@ -88,9 +96,15 @@ public class UserServiceImpl implements UserService {
         return resultSet;
     }
 
+    /**
+     * 注册
+     * @param user 用户信息
+     * @return
+     */
     @Override
     public ResultSet register(User user) {
         ResultSet resultSet = null;
+        //判断用户名和地址是否含有敏感词
         for (String s : CONST.SENSITIVE) {
             if (user.getUserName().contains(s) || user.getAddress().contains(s)) {
                 return ResultSet.error("userName", "用户名含有敏感字");
@@ -119,6 +133,11 @@ public class UserServiceImpl implements UserService {
         return resultSet;
     }
 
+    /**
+     * 改密码
+     * @param user 用户信息
+     * @return 结果集
+     */
     @Override
     public ResultSet changePassword(User user) {
         User select = userMapper.selectByPhone(user.getPhone());
@@ -140,13 +159,20 @@ public class UserServiceImpl implements UserService {
         return resultSet;
     }
 
+    /**
+     * 改手机号
+     * @param user
+     * @return
+     */
     @Override
     public ResultSet changePhone(User user) {
+        //判断格式
         ResultSet resultSet = null;
         String regex = "1[34578][0-9]{9}";
         if (!user.getPhone().matches(regex)){
             return ResultSet.error(user.getPhone(),"请输入正确的手机号");
         }
+        //密码验证
         User select = userMapper.selectById(user.getId());
         if (!user.getPassword().equals(select.getPassword())){
             resultSet = ResultSet.error("password","密码错误");
@@ -160,22 +186,12 @@ public class UserServiceImpl implements UserService {
         return resultSet;
     }
 
-    @Override
-    public ResultSet changeAddress(String address, Integer id) {
-        ResultSet resultSet = null;
-        for (String s : CONST.SENSITIVE) {
-            if (address.contains(s)) {
-                return ResultSet.error("userName", "地址含有敏感字");
-            }
-        }
-        if (userMapper.updateAddress(address,id) == 1) {
-            resultSet = ResultSet.success(null,"修改成功");
-            SqlSessionUtil.commit();
-            SqlSessionUtil.close();
-        }
-        return resultSet;
-    }
-
+    /**
+     * 改头像
+     * @param headshot 头像的url
+     * @param id 用户id
+     * @return
+     */
     @Override
     public ResultSet changeHeadshot(String headshot, Integer id) {
         if (userMapper.updateHeadshot(headshot,id) == 1) {
@@ -186,34 +202,37 @@ public class UserServiceImpl implements UserService {
         return ResultSet.error();
     }
 
+    /**
+     * 修改用户个人信息
+     * @param user 用户信息
+     * @return 是否成功
+     */
     @Override
-    public ResultSet changePrivate(Integer isPrivate, Integer id) {
-        if (userMapper.updateIsPrivate(isPrivate,id) == 1) {
-            SqlSessionUtil.commit();
-            SqlSessionUtil.close();
-            return ResultSet.success(null,"修改成功");
-        }
-        return ResultSet.error();
-    }
-
-    @Override
-    public ResultSet changeUserName(String userName, Integer id) {
+    public ResultSet changeMessage(User user) {
+        ResultSet resultSet = null;
+        //判断敏感词
         for (String s : CONST.SENSITIVE) {
-            if (userName.contains(s)){
-                return ResultSet.error("userName","用户名含敏感词");
+            if (user.getAddress().contains(s) || user.getUserName().contains(s)) {
+                resultSet =  ResultSet.error("userName", "用户名或地址含有敏感字");
             }
         }
-        if (userMapper.updateUserName(userName,id) == 1) {
-            SqlSessionUtil.commit();
-            SqlSessionUtil.close();
-            return ResultSet.success(null,"修改成功");
+        if (resultSet == null){
+            userMapper.updateMessage(user.getUserName(),user.getAddress(),user.getIsPrivate());
         }
-        return ResultSet.error();
+        resultSet = ResultSet.success(null,"信息修改成功");
+        return resultSet;
     }
 
+
+    /**
+     * 申请称为商家
+     * @param id 申请用户id
+     * @return 是狗成功
+     */
     @Override
     public ResultSet applyShop(Integer id) {
         ResultSet resultSet = null;
+        //判断是否重复申请
         if (userMapper.selectById(id).getIdentify() == 1 || applyMapper.selectByUserId(id).getStatus() == 0){
             resultSet = ResultSet.error(null,"请勿重复申请");
         }else if (applyMapper.insert(id) == 1){
@@ -224,15 +243,30 @@ public class UserServiceImpl implements UserService {
         return resultSet;
     }
 
+    /**
+     * 查找购物车用户的
+     * @param id 查找的用户
+     * @return 返回购物车信息
+     */
     @Override
     public ResultSet selectMyShoppingCart(Integer id) {
-        List<ShoppingCart> shoppingCarts = cartMapper.selectByUserId(id);
+        List<Cart> carts = cartMapper.selectByUserId(id);
+        List<ShoppingCart> shoppingCarts = new ArrayList<>();
+        for (Cart cart : carts) {
+            Goods goods = goodsMapper.selectById(cart.getGoodsId());
+            shoppingCarts.add(new ShoppingCart(cart.getId(),cart.getUserId(),goods.getName(),shopMapper.selectById(goods.getShopId()).getName(),cart.getNumber()));
+        }
         return ResultSet.success(shoppingCarts,"查询成功");
     }
 
+    /**
+     * 添加到购物车
+     * @param cart
+     * @return
+     */
     @Override
-    public ResultSet addShoppingCart(ShoppingCart cart) {
-        ShoppingCart shoppingCart = cartMapper.selectByUAGId(cart.getUserId(), cart.getGoodsId());
+    public ResultSet addShoppingCart(Cart cart) {
+        Cart shoppingCart = cartMapper.selectByUAGId(cart.getUserId(), cart.getGoodsId());
         ResultSet resultSet = null;
         if (shoppingCart == null){
             synchronized (cartMapper){
@@ -258,7 +292,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResultSet changeShoppingCart(ShoppingCart cart) {
+    public ResultSet changeShoppingCart(Cart cart) {
         if (cart.getNumber() == 0){
             cartMapper.deleteById(cart.getId());
         }else {
@@ -268,7 +302,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResultSet buyCart(ShoppingCart cart) {
+    public ResultSet buyCart(Cart cart) {
         Goods goods = goodsMapper.selectById(cart.getGoodsId());
         ResultSet resultSet = null;
         if (goods.getInventory() < cart.getNumber()){
@@ -296,9 +330,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResultSet buyAllcart(Integer id) {
-        List<ShoppingCart> shoppingCarts = cartMapper.selectByUserId(id);
+        List<Cart> shoppingCarts = cartMapper.selectByUserId(id);
         ResultSet resultSet = null;
-        for (ShoppingCart shoppingCart : shoppingCarts) {
+        for (Cart shoppingCart : shoppingCarts) {
             resultSet = buyCart(shoppingCart);
             if (resultSet.getCode() != 1) {
                 SqlSessionUtil.rollback();

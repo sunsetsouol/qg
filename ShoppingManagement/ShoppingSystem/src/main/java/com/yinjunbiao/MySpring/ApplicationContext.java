@@ -59,7 +59,6 @@ public class ApplicationContext {
                     for (Field declaredField : declaredFields) {
                         if (declaredField.getAnnotation(Autowired.class) != null){
                             try {
-                                System.out.println(declaredField.getName());
                                 declaredField.setAccessible(true);
                                 declaredField.set(bean,getBean(declaredField.getName()));
                             } catch (IllegalAccessException e) {

@@ -3,7 +3,7 @@ package com.yinjunbiao.mapper;
 import com.yinjunbiao.MyORM.Annotation.*;
 import com.yinjunbiao.MySpring.Annotation.Component;
 import com.yinjunbiao.MySpring.Annotation.Mapper;
-import com.yinjunbiao.entity.ShoppingCart;
+import com.yinjunbiao.entity.Cart;
 
 import java.util.List;
 
@@ -12,13 +12,13 @@ import java.util.List;
 public interface CartMapper {
 
     @Select(sql = "select * from cart where user_id = #{userId}")
-    List<ShoppingCart> selectByUserId(@Param("userId")Integer userId);
+    List<Cart> selectByUserId(@Param("userId")Integer userId);
 
     @Select(sql = "select * from cart where user_id = #{userId} and goods_id = #{goodsId}")
-    ShoppingCart selectByUAGId(@Param("userId")Integer userId,@Param("goodsId")Long goodsId);
+    Cart selectByUAGId(@Param("userId")Integer userId, @Param("goodsId")Long goodsId);
 
     @Select(sql = "select * from cart where id = #{id}")
-    ShoppingCart selectById(@Param("id")Long id);
+    Cart selectById(@Param("id")Long id);
 
     @Insert(sql = "insert into cart values(null,#{goodsId},#{number},#{userId})")
     int insert(@Param("goodsId")Long goodsId,@Param("number")Integer number,@Param("userId")Integer userId);

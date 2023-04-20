@@ -2,6 +2,7 @@ package com.yinjunbiao.web;
 
 import com.alibaba.fastjson.JSON;
 import com.yinjunbiao.MySpring.Annotation.Autowired;
+import com.yinjunbiao.MySpring.Annotation.Component;
 import com.yinjunbiao.MySpring.Annotation.ComponentScan;
 import com.yinjunbiao.MySpring.Annotation.Scope;
 
@@ -14,23 +15,25 @@ import io.jsonwebtoken.Claims;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
-import java.io.IOException;
+import javax.servlet.http.Part;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
 @WebServlet("/user/*")
 @ComponentScan("com.yinjunbiao")
 @Scope("singleton")
+@MultipartConfig
 public class UserServlet extends BaseServlet {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("UserServlet.class");
 
     @Autowired
-    private UserService service = (UserService) ApplicationUtil.getApplicationContext().getBean("service");
+    private UserService userService = (UserService) ApplicationUtil.getApplicationContext().getBean("userService");
 
     //登录
     public void login(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -39,7 +42,6 @@ public class UserServlet extends BaseServlet {
         BufferedReader reader = request.getReader();
         String s = reader.readLine();
         LOGGER.info(s);
-        System.out.println(s);
         User user = JSON.parseObject(s, User.class);
         if(user == null){
             response.setStatus(200);
@@ -49,9 +51,11 @@ public class UserServlet extends BaseServlet {
         System.out.println(user);
         LOGGER.info(user.toString());
         //查找并判断密码是否正确
-        ResultSet resultSet = service.login(user);
+        ResultSet resultSet = userService.login(user);
+
         if (resultSet.getCode() == 1){
             Map<String ,Object> claims = new HashMap<>();
+
             claims.put("id", ((User) resultSet.getData()).getId());
             String jwt = JwtUtil.generateJwt(claims);
             resultSet.setData(jwt);
@@ -62,10 +66,11 @@ public class UserServlet extends BaseServlet {
     }
 
     //注册
-    public void register(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void register(HttpServletRequest request, HttpServletResponse response) throws Exception {
         //读取json数据转换成user，并判断是否为空
         BufferedReader reader = request.getReader();
         String s = reader.readLine();
+
         System.out.println(s);
         if(s == null || s.length() == 0){
             response.setStatus(200);
@@ -75,7 +80,7 @@ public class UserServlet extends BaseServlet {
         }
         User user = JSON.parseObject(s, User.class);
 
-        ResultSet resultSet = service.register(user);
+        ResultSet resultSet = userService.register(user);
         response.setStatus(200);
         response.setContentType("application/json;charset=utf-8");
         response.getWriter().write(JSON.toJSONString(resultSet));
@@ -92,7 +97,7 @@ public class UserServlet extends BaseServlet {
             return;
         }
         User user = JSON.parseObject(s, User.class);
-        ResultSet resultSet = service.changePassword(user);
+        ResultSet resultSet = userService.changePassword(user);
         response.setStatus(200);
         response.setContentType("application/json;charset=utf-8");
         response.getWriter().write(JSON.toJSONString(resultSet));

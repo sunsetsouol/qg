@@ -11,7 +11,7 @@ import com.yinjunbiao.entity.Apply;
 import java.util.List;
 
 @Mapper
-@Component("toShopMapper")
+@Component("applyMapper")
 public interface ApplyMapper {
 
     @Select(sql = "select * from toshop")

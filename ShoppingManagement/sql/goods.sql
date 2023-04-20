@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 80031
 File Encoding         : 65001
 
-Date: 2023-04-19 14:32:23
+Date: 2023-04-20 22:48:11
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -25,8 +25,8 @@ CREATE TABLE `goods` (
   `description` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '商品描述',
   `sales` int DEFAULT NULL COMMENT '销量',
   `inventory` int DEFAULT NULL COMMENT '库存',
-  `price` varchar(20) DEFAULT NULL COMMENT '价格',
-  `picture` varchar(20) DEFAULT NULL COMMENT '图片',
+  `price` int DEFAULT NULL COMMENT '价格',
+  `picture` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '图片',
   `name` varchar(20) DEFAULT NULL COMMENT '商品名称',
   PRIMARY KEY (`id`),
   KEY `fk_goods_shop_id` (`shop_id`),

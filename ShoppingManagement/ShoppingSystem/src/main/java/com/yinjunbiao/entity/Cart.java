@@ -4,7 +4,7 @@ package com.yinjunbiao.entity;
  * @author yinjunbiao
  * 购物车
  */
-public class ShoppingCart {
+public class Cart {
     private Long id;
 
     private Long goodsId;
@@ -55,10 +55,10 @@ public class ShoppingCart {
         this.userId = userId;
     }
 
-    public ShoppingCart() {
+    public Cart() {
     }
 
-    public ShoppingCart(Long id, Long goodsId, Integer number, Integer userId) {
+    public Cart(Long id, Long goodsId, Integer number, Integer userId) {
         this.id = id;
         this.goodsId = goodsId;
         this.number = number;

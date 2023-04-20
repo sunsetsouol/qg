@@ -11,11 +11,11 @@ import java.util.List;
 @Component("goodsMapper")
 public interface GoodsMapper {
 
-    @Select(sql = "select * from goods")
-    List<Goods> selectAll();
+    @Select(sql = "select * from goods limit #{begin},#{size}")
+    List<Goods> selectAll(@Param("begin")Integer begin,@Param("size")Integer size);
 
-    @Select(sql = "select * from goods where description like #{name} or name like #{name}")
-    List<Goods> selectByName(@Param("name")String name);
+    @Select(sql = "select * from goods where description like #{name} or name like #{name} limit #{begin},#{size}")
+    List<Goods> selectByName(@Param("name")String name,@Param("begin")Integer begin,@Param("size")Integer size);
 
     @Select(sql = "select * from goods where shop_id = #{shopId}")
     List<Goods> selectByShopId(@Param("shopId")Integer shopId);

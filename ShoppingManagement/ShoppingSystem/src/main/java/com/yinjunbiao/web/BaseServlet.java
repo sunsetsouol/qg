@@ -11,7 +11,6 @@ public class BaseServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.setCharacterEncoding("utf-8");
         resp.setCharacterEncoding("utf-8");
         String requestURI = req.getRequestURI();
         String methodName = requestURI.substring(requestURI.lastIndexOf("/") + 1);

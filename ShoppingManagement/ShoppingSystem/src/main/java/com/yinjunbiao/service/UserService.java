@@ -14,27 +14,23 @@ public interface UserService {
 
     ResultSet changePhone(User user);
 
-    ResultSet changeAddress(String address,Integer id);
-
     ResultSet changeHeadshot(String headshot,Integer id);
 
-    ResultSet changePrivate(Integer isPrivate,Integer id);
-
-    ResultSet changeUserName(String userName,Integer id);
+    ResultSet changeMessage(User user);
 
     ResultSet applyShop(Integer id);
 
     ResultSet selectMyShoppingCart(Integer id);
 
-    ResultSet addShoppingCart(ShoppingCart cart);
+    ResultSet addShoppingCart(Cart cart);
 
     ResultSet delectShoppingCart(Long id);
 
-    ResultSet changeShoppingCart(ShoppingCart cart);
+    ResultSet changeShoppingCart(Cart cart);
 
     ResultSet buyAllcart(Integer id);
 
-    ResultSet buyCart(ShoppingCart cart);
+    ResultSet buyCart(Cart cart);
 
     ResultSet buy(Orders orders);
 
