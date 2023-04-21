@@ -20,8 +20,8 @@ public interface CartMapper {
     @Select(sql = "select * from cart where id = #{id}")
     Cart selectById(@Param("id")Long id);
 
-    @Insert(sql = "insert into cart values(null,#{goodsId},#{number},#{userId})")
-    int insert(@Param("goodsId")Long goodsId,@Param("number")Integer number,@Param("userId")Integer userId);
+    @Insert(sql = "insert into cart values(null,#{goodsId},#{number},#{userId},#{singlePrice})")
+    int insert(@Param("goodsId")Long goodsId,@Param("number")Integer number,@Param("userId")Integer userId,@Param("singlePrice")Integer singlePrice);
 
     @Update(sql = "update cart set number = #{number} where id = #{id}")
     int updateNumber(@Param("number")Integer number,@Param("id")Long id);

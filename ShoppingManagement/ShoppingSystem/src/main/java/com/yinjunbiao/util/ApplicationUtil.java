@@ -1,7 +1,6 @@
 package com.yinjunbiao.util;
 
 import com.yinjunbiao.MySpring.ApplicationContext;
-import com.yinjunbiao.entity.Apply;
 import com.yinjunbiao.mapper.*;
 import com.yinjunbiao.web.UserServlet;
 
@@ -20,7 +19,7 @@ public class ApplicationUtil {
         ApplicationContext.registerFactory(new MapperBeanFactory(ShopMapper.class));
         ApplicationContext.registerFactory(new MapperBeanFactory(SubscribleMapper.class));
         ApplicationContext.registerFactory(new MapperBeanFactory(TweetMapper.class));
-        ApplicationContext.registerFactory(new MapperBeanFactory(OrderMapper.class));
+        ApplicationContext.registerFactory(new MapperBeanFactory(OrdersMapper.class));
         applicationContext = new ApplicationContext(UserServlet.class);
     }
 

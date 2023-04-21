@@ -84,7 +84,7 @@ public class InvocationHandlerImpl implements InvocationHandler {
         for (int i = 0; i < params.size(); i++) {
             Object value = paramMaps.get(params.get(i));
             if(value == null){
-                throw new MapperException("没有找到需要的参数");
+                throw new MapperException("没有找到需要的参数"+paramMaps.get(i));
             }
             Class<?> type = value.getClass();
             SqlSession.getTypeHandlerMap().get(type).setParam(preparedStatement,i+1,value);

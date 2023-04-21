@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
     private CartMapper cartMapper;
 
     @Autowired
-    private OrderMapper orderMapper;
+    private OrdersMapper ordersMapper;
 
     @Autowired
     private GoodsMapper goodsMapper;
@@ -272,7 +272,7 @@ public class UserServiceImpl implements UserService {
             synchronized (cartMapper){
                 shoppingCart = cartMapper.selectByUAGId(cart.getUserId(),cart.getGoodsId());
                 if (shoppingCart == null){
-                    if (cartMapper.insert(cart.getGoodsId(),cart.getNumber(),cart.getUserId()) == 1) {
+                    if (cartMapper.insert(cart.getGoodsId(),cart.getNumber(),cart.getUserId(),cart.getSinglePrice()) == 1) {
                         resultSet = ResultSet.success(null,"插入成功");
                     }
                 }
@@ -308,12 +308,12 @@ public class UserServiceImpl implements UserService {
         if (goods.getInventory() < cart.getNumber()){
             resultSet = ResultSet.error(null,"库存不足");
         }else {
-            synchronized (orderMapper){
+            synchronized (ordersMapper){
                 goods = goodsMapper.selectById(cart.getGoodsId());
                     if (goods.getInventory() < cart.getNumber()){
                         resultSet = ResultSet.error(null,"库存不足");
                     }else {
-                        orderMapper.insert(System.currentTimeMillis(),userMapper.selectById(shopMapper.selectById(goods.getShopId()).getBossId()).getAddress(),userMapper.selectById(cart.getUserId()).getAddress(),cart.getGoodsId(),cart.getUserId(),cart.getNumber());
+                        ordersMapper.insert(System.currentTimeMillis(),userMapper.selectById(shopMapper.selectById(goods.getShopId()).getBossId()).getAddress(),userMapper.selectById(cart.getUserId()).getAddress(),cart.getGoodsId(),cart.getUserId(),cart.getNumber(),cart.getSinglePrice());
                         cartMapper.deleteById(cart.getId());
                         resultSet = ResultSet.success();
                     }
@@ -353,12 +353,12 @@ public class UserServiceImpl implements UserService {
         if (orders.getNumber() > goods.getInventory()){
             resultSet = ResultSet.error(null,"库存不足");
         }else {
-            synchronized (orderMapper){
+            synchronized (ordersMapper){
                 goods = goodsMapper.selectById(orders.getGoodsId());
                 if (orders.getNumber() > goods.getInventory()){
                     resultSet = ResultSet.error(null,"库存不足");
                 }else {
-                    orderMapper.insert(System.currentTimeMillis(),userMapper.selectById(shopMapper.selectById(goods.getShopId()).getBossId()).getAddress(),userMapper.selectById(orders.getUserId()).getAddress(),orders.getGoodsId(),orders.getUserId(),orders.getNumber());
+                    ordersMapper.insert(System.currentTimeMillis(),userMapper.selectById(shopMapper.selectById(goods.getShopId()).getBossId()).getAddress(),userMapper.selectById(orders.getUserId()).getAddress(),orders.getGoodsId(),orders.getUserId(),orders.getNumber(),orders.getSinglePrice());
                     resultSet = ResultSet.success();
                 }
             }
@@ -371,7 +371,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResultSet refund(Refund refund) {
         //查找订单
-        Orders select = orderMapper.select(refund.getOrderId());
+        Orders select = ordersMapper.select(refund.getOrderId());
         ResultSet resultSet = null;
         if (select != null ){
             //订单存在且没有重复申请

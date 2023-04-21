@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yinjunbiao.mapper.OrdersMapper">
+
+    <resultMap id="ordersResultMap" type="com.yinjunbiao.entity.Orders">
+        <result property="sendAddress" column="send_address"/>
+        <result property="receiveAddress" column="receive_address"/>
+        <result property="goodsId" column="goods_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="singlePrice" column="single_price"/>
+    </resultMap>
+
+</mapper>

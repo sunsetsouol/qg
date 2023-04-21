@@ -218,7 +218,7 @@ public class ApplicationContext {
                 return createBean(beanName, beanDefinition);
             }
         } else {
-            throw new NullPointerException("没有找到需要的bean对象");
+            throw new NullPointerException("没有找到需要的bean对象"+beanName);
         }
     }
 }

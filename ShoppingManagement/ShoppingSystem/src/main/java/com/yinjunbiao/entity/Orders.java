@@ -23,6 +23,8 @@ public class Orders {
 
     private Integer number;
 
+    private Integer singlePrice;
+
     @Override
     public String toString() {
         return "Orders{" +
@@ -35,6 +37,7 @@ public class Orders {
                 ", status=" + status +
                 ", comment='" + comment + '\'' +
                 ", number=" + number +
+                ", singlePrice=" + singlePrice +
                 '}';
     }
 
@@ -110,10 +113,18 @@ public class Orders {
         this.number = number;
     }
 
+    public Integer getSinglePrice() {
+        return singlePrice;
+    }
+
+    public void setSinglePrice(Integer singlePrice) {
+        this.singlePrice = singlePrice;
+    }
+
     public Orders() {
     }
 
-    public Orders(Long id, Long time, String sendAddress, String receiveAddress, Long goodsId, Integer userId, Integer status, String comment, Integer number) {
+    public Orders(Long id, Long time, String sendAddress, String receiveAddress, Long goodsId, Integer userId, Integer status, String comment, Integer number, Integer singlePrice) {
         this.id = id;
         this.time = time;
         this.sendAddress = sendAddress;
@@ -123,5 +134,6 @@ public class Orders {
         this.status = status;
         this.comment = comment;
         this.number = number;
+        this.singlePrice = singlePrice;
     }
 }

@@ -28,5 +28,8 @@
     </environments>
     <mappers>
         <mapper resource="/com/yinjunbiao/mapper/UserMapper.xml"/>
+        <mapper resource="/com/yinjunbiao/mapper/GoodsMapper.xml"/>
+        <mapper resource="/com/yinjunbiao/mapper/OrdersMapper.xml"/>
+        <mapper resource="/com/yinjunbiao/mapper/ShopMapper.xml"/>
     </mappers>
 </configuration>

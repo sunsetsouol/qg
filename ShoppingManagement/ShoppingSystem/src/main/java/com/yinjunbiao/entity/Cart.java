@@ -13,13 +13,16 @@ public class Cart {
 
     private Integer userId;
 
+    private Integer singlePrice;
+
     @Override
     public String toString() {
-        return "ShoppingCart{" +
+        return "Cart{" +
                 "id=" + id +
                 ", goodsId=" + goodsId +
                 ", number=" + number +
                 ", userId=" + userId +
+                ", singlePrice=" + singlePrice +
                 '}';
     }
 
@@ -55,13 +58,22 @@ public class Cart {
         this.userId = userId;
     }
 
+    public Integer getSinglePrice() {
+        return singlePrice;
+    }
+
+    public void setSinglePrice(Integer singlePrice) {
+        this.singlePrice = singlePrice;
+    }
+
     public Cart() {
     }
 
-    public Cart(Long id, Long goodsId, Integer number, Integer userId) {
+    public Cart(Long id, Long goodsId, Integer number, Integer userId, Integer singlePrice) {
         this.id = id;
         this.goodsId = goodsId;
         this.number = number;
         this.userId = userId;
+        this.singlePrice = singlePrice;
     }
 }
