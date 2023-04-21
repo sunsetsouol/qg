@@ -79,7 +79,6 @@ public class GoodsServlet extends BaseServlet {
             String s = reader.readLine();
             Orders orders = JSON.parseObject(s, Orders.class);
             orders.setUserId(id);
-            System.out.println(orders);
             ResultSet resultSet = goodsService.newOrders(orders);
             if (resultSet.getCode() == 1){
                 response.setStatus(200);
@@ -87,7 +86,6 @@ public class GoodsServlet extends BaseServlet {
                 response.getWriter().write(JSON.toJSONString(resultSet));
             }
         }catch (Exception e){
-            response.sendRedirect("/ShoppingSystem/login.html");
         }
 
     }

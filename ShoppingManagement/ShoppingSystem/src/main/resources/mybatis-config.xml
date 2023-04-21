@@ -27,9 +27,17 @@
         </environment>
     </environments>
     <mappers>
-        <mapper resource="/com/yinjunbiao/mapper/UserMapper.xml"/>
+        <mapper resource="/com/yinjunbiao/mapper/ApplyMapper.xml"/>
+        <mapper resource="/com/yinjunbiao/mapper/CartMapper.xml"/>
+        <mapper resource="/com/yinjunbiao/mapper/ConsultationMapper.xml"/>
         <mapper resource="/com/yinjunbiao/mapper/GoodsMapper.xml"/>
         <mapper resource="/com/yinjunbiao/mapper/OrdersMapper.xml"/>
+        <mapper resource="/com/yinjunbiao/mapper/RefundMapper.xml"/>
+        <mapper resource="/com/yinjunbiao/mapper/ReplyMapper.xml"/>
+        <mapper resource="/com/yinjunbiao/mapper/ReportMapper.xml"/>
         <mapper resource="/com/yinjunbiao/mapper/ShopMapper.xml"/>
+        <mapper resource="/com/yinjunbiao/mapper/SubscribleMapper.xml"/>
+        <mapper resource="/com/yinjunbiao/mapper/TweetsMapper.xml"/>
+        <mapper resource="/com/yinjunbiao/mapper/UserMapper.xml"/>
     </mappers>
 </configuration>

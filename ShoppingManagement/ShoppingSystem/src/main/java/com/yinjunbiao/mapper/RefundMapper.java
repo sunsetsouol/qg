@@ -1,9 +1,6 @@
 package com.yinjunbiao.mapper;
 
-import com.yinjunbiao.MyORM.Annotation.Insert;
-import com.yinjunbiao.MyORM.Annotation.Param;
-import com.yinjunbiao.MyORM.Annotation.Select;
-import com.yinjunbiao.MyORM.Annotation.Update;
+import com.yinjunbiao.MyORM.Annotation.*;
 import com.yinjunbiao.MySpring.Annotation.Component;
 import com.yinjunbiao.MySpring.Annotation.Mapper;
 import com.yinjunbiao.entity.Refund;
@@ -15,6 +12,7 @@ import java.util.List;
 public interface RefundMapper {
 
     @Select(sql = "select * from refund")
+    @ResultMap(id = "refundResultMap")
     List<Refund> select();
 
     @Select(sql = "select * from refund where order_id = #{orderId}")

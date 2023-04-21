@@ -18,7 +18,7 @@ public interface UserService {
 
     ResultSet changeMessage(User user);
 
-    ResultSet applyShop(Integer id);
+    ResultSet applyShop(Apply apply);
 
     ResultSet selectMyShoppingCart(Integer id);
 
@@ -51,4 +51,6 @@ public interface UserService {
     ResultSet deleteReply(Long id);
 
     ResultSet reportGoods(Report report);
+
+
 }

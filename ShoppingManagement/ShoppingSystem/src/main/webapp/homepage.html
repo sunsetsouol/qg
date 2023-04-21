@@ -42,6 +42,29 @@
 
     </el-form>
 
+
+    <el-button type="primary" plain @click="dialogApply = true">申请称为商家</el-button>
+
+    <el-button type="primary" icon="el-icon-shopping-cart-full" @click="searchMyCart">购物车</el-button>
+
+
+    <el-dialog
+            title="提示"
+            :visible.sync="dialogApply"
+            width="30%">
+        <el-form :model="apply" label-width="80px">
+            <el-form-item label="店铺名称">
+                <el-input v-model="apply.shopName"></el-input>
+            </el-form-item>
+        </el-form>
+
+        <span slot="footer" class="dialog-footer is-align-middle">
+    <el-button type="primary" @click="applyShop">确 定</el-button>
+  </span>
+    </el-dialog>
+
+
+
     <el-dialog
             title="购买"
             :visible.sync="dialogVisible"
@@ -64,7 +87,7 @@
                     <div class="block">
                         <el-slider
                                 v-model="orders.number"
-                                show-input max="20">
+                                show-input max="20" >
                         </el-slider>
                     </div>
                 </template>
@@ -89,15 +112,12 @@
             :visible.sync="dialogSuccess"
             width="30%">
         <el-row>
-            <el-col :sm="12" :lg="6">
+            <el-col :sm="12" :lg="6" align="center">
                 <el-result icon="success" title="操作成功" subTitle="请根据提示进行操作">
-                    <template slot="extra">
-                        <el-button type="primary" size="medium">返回</el-button>
-                    </template>
                 </el-result>
             </el-col>
         </el-row>
-        <span slot="footer" class="dialog-footer">
+        <span slot="footer" class="dialog-footer is-align-middle">
     <el-button type="primary" @click="dialogSuccess = false">确 定</el-button>
   </span>
     </el-dialog>
@@ -109,14 +129,26 @@
         <el-row>
             <el-col :sm="12" :lg="6">
                 <el-result icon="error" title="操作失败，可能是库存不足" subTitle="请根据提示进行操作">
-                    <template slot="extra">
-                        <el-button type="primary" size="medium">返回</el-button>
-                    </template>
                 </el-result>
             </el-col>
         </el-row>
-        <span slot="footer" class="dialog-footer">
+        <span slot="footer" class="dialog-footer" >
     <el-button type="primary" @click="dialogError = false">确 定</el-button>
+  </span>
+    </el-dialog>
+
+    <el-dialog
+            title="提示"
+            :visible.sync="dialogApplyError"
+            width="30%">
+        <el-row>
+            <el-col :sm="12" :lg="6">
+                <el-result icon="error" title="申请失败，请勿重复申请" subTitle="请根据提示进行操作">
+                </el-result>
+            </el-col>
+        </el-row>
+        <span slot="footer" class="dialog-footer" >
+    <el-button type="primary" @click="dialogApplyError = false">确 定</el-button>
   </span>
     </el-dialog>
 
@@ -203,6 +235,42 @@
             this.selectAll();
         },
         methods: {
+            searchMyCart(){
+                var _this = this;
+                axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
+                axios({
+                    method:"post",
+                    url:"http://localhost:8080/ShoppingSystem/user/apply",
+                    data:this.apply
+                }).then(function (resp){
+                    if (resp.data.code == 1){
+                        _this.dialogApply = false;
+                        _this.dialogSuccess = true;
+                    }else {
+                        _this.dialogApply = false;
+                        _this.dialogApplyError = true;
+                    }
+                })
+
+            },
+            applyShop(){
+                var _this = this;
+                axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
+                axios({
+                    method:"post",
+                    url:"http://localhost:8080/ShoppingSystem/user/apply",
+                    data:this.apply
+                }).then(function (resp){
+                    if (resp.data.code == 1){
+                        _this.dialogApply = false;
+                        _this.dialogSuccess = true;
+                    }else {
+                        _this.dialogApply = false;
+                        _this.dialogApplyError = true;
+                    }
+                })
+            },
+
             handleAdd(row){
               this.orders.goodsId = row.id;
               this.orders.name = row.name;
@@ -211,7 +279,17 @@
               this.dialogVisible = true;
             },
             buy(){
-                if (this.orders.number>0){
+                this.$confirm('请付款', '付款', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.$message({
+                        type: 'success',
+                        message: '下单中'
+
+                    });
+                    var _this = this;
                     axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
                     axios({
                         method:"post",
@@ -226,7 +304,13 @@
                             _this.dialogError = true;
                         }
                     })
-                }
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消下单'
+                    });
+                });
+
             },
             addCart(){
               if (this.orders.number>0){
@@ -277,8 +361,12 @@
         },
         data() {
             return {
+                apply:{
+                    shopName:''
+                },
                 searchName:'',
-
+                dialogApplyError:false,
+                dialogApply:false,
                 dialogVisible:false,
                 dialogSuccess:false,
                 dialogError:false,

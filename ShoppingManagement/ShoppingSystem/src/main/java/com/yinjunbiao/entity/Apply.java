@@ -11,23 +11,36 @@ public class Apply {
 
     private Integer status;
 
+    private String shopName;
+
+    public String getShopName() {
+        return shopName;
+    }
+
+    public void setShopName(String shopName) {
+        this.shopName = shopName;
+    }
+
     @Override
     public String toString() {
-        return "ToShop{" +
+        return "Apply{" +
                 "id=" + id +
                 ", userId=" + userId +
                 ", status=" + status +
+                ", shopName='" + shopName + '\'' +
                 '}';
+    }
+
+    public Apply(Integer id, Integer userId, Integer status, String shopName) {
+        this.id = id;
+        this.userId = userId;
+        this.status = status;
+        this.shopName = shopName;
     }
 
     public Apply() {
     }
 
-    public Apply(Integer id, Integer userId, Integer status) {
-        this.id = id;
-        this.userId = userId;
-        this.status = status;
-    }
 
     public Integer getId() {
         return id;

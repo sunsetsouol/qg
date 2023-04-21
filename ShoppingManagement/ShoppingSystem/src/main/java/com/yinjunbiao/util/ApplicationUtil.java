@@ -18,7 +18,7 @@ public class ApplicationUtil {
         ApplicationContext.registerFactory(new MapperBeanFactory(ReportMapper.class));
         ApplicationContext.registerFactory(new MapperBeanFactory(ShopMapper.class));
         ApplicationContext.registerFactory(new MapperBeanFactory(SubscribleMapper.class));
-        ApplicationContext.registerFactory(new MapperBeanFactory(TweetMapper.class));
+        ApplicationContext.registerFactory(new MapperBeanFactory(TweetsMapper.class));
         ApplicationContext.registerFactory(new MapperBeanFactory(OrdersMapper.class));
         applicationContext = new ApplicationContext(UserServlet.class);
     }

@@ -59,6 +59,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 登录
+     *
      * @param user 用户信息
      * @return 结果集
      */
@@ -98,6 +99,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 注册
+     *
      * @param user 用户信息
      * @return
      */
@@ -110,23 +112,23 @@ public class UserServiceImpl implements UserService {
                 return ResultSet.error("userName", "用户名含有敏感字");
             }
         }
-            int res;
-            if (userMapper.selectByPhone(user.getUserName()) != null) {
-                resultSet = ResultSet.error("userName", "用户名已被注册");
-            }else {
-                synchronized (userMapper) {
-                    if (userMapper.selectByPhone(user.getPhone()) != null) {
-                        resultSet = ResultSet.error("userName", "用户名已被注册");
-                    } else if (user.getUserName().length() > 20 || user.getPassword().length() > 20 || user.getAddress().length() > 50) {
-                        resultSet = ResultSet.error(null, "账号跟密码长度不能超过20个字符,地址不能超过五十个字符");
-                    } else {
-                        res = userMapper.insert(user.getPhone(),user.getUserName(),user.getAddress(),user.getPassword(),user.getIsPrivate());
-                        if (res == 1) {
-                            resultSet = ResultSet.success(res, "注册成功");
-                        }
+        int res;
+        if (userMapper.selectByPhone(user.getUserName()) != null) {
+            resultSet = ResultSet.error("userName", "用户名已被注册");
+        } else {
+            synchronized (userMapper) {
+                if (userMapper.selectByPhone(user.getPhone()) != null) {
+                    resultSet = ResultSet.error("userName", "用户名已被注册");
+                } else if (user.getUserName().length() > 20 || user.getPassword().length() > 20 || user.getAddress().length() > 50) {
+                    resultSet = ResultSet.error(null, "账号跟密码长度不能超过20个字符,地址不能超过五十个字符");
+                } else {
+                    res = userMapper.insert(user.getPhone(), user.getUserName(), user.getAddress(), user.getPassword(), user.getIsPrivate());
+                    if (res == 1) {
+                        resultSet = ResultSet.success(res, "注册成功");
                     }
                 }
             }
+        }
 
         SqlSessionUtil.commit();
         SqlSessionUtil.close();
@@ -135,6 +137,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 改密码
+     *
      * @param user 用户信息
      * @return 结果集
      */
@@ -161,6 +164,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 改手机号
+     *
      * @param user
      * @return
      */
@@ -169,18 +173,18 @@ public class UserServiceImpl implements UserService {
         //判断格式
         ResultSet resultSet = null;
         String regex = "1[34578][0-9]{9}";
-        if (!user.getPhone().matches(regex)){
-            return ResultSet.error(user.getPhone(),"请输入正确的手机号");
+        if (!user.getPhone().matches(regex)) {
+            return ResultSet.error(user.getPhone(), "请输入正确的手机号");
         }
         //密码验证
         User select = userMapper.selectById(user.getId());
-        if (!user.getPassword().equals(select.getPassword())){
-            resultSet = ResultSet.error("password","密码错误");
-        }else if (select == null || select.getPhone().equals(user.getPhone())){
-            resultSet = ResultSet.error("phone","不能修改与原来相同的手机号");
-        } else if (userMapper.updatePhone(user.getPhone(),user.getId()) == 1) {
+        if (!user.getPassword().equals(select.getPassword())) {
+            resultSet = ResultSet.error("password", "密码错误");
+        } else if (select == null || select.getPhone().equals(user.getPhone())) {
+            resultSet = ResultSet.error("phone", "不能修改与原来相同的手机号");
+        } else if (userMapper.updatePhone(user.getPhone(), user.getId()) == 1) {
             SqlSessionUtil.commit();
-            resultSet = ResultSet.success(null,"手机号修改成功");
+            resultSet = ResultSet.success(null, "手机号修改成功");
         }
         SqlSessionUtil.close();
         return resultSet;
@@ -188,22 +192,24 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 改头像
+     *
      * @param headshot 头像的url
-     * @param id 用户id
+     * @param id       用户id
      * @return
      */
     @Override
     public ResultSet changeHeadshot(String headshot, Integer id) {
-        if (userMapper.updateHeadshot(headshot,id) == 1) {
+        if (userMapper.updateHeadshot(headshot, id) == 1) {
             SqlSessionUtil.commit();
             SqlSessionUtil.close();
-            return ResultSet.success(null,"修改成功");
+            return ResultSet.success(null, "修改成功");
         }
         return ResultSet.error();
     }
 
     /**
      * 修改用户个人信息
+     *
      * @param user 用户信息
      * @return 是否成功
      */
@@ -213,38 +219,20 @@ public class UserServiceImpl implements UserService {
         //判断敏感词
         for (String s : CONST.SENSITIVE) {
             if (user.getAddress().contains(s) || user.getUserName().contains(s)) {
-                resultSet =  ResultSet.error("userName", "用户名或地址含有敏感字");
+                resultSet = ResultSet.error("userName", "用户名或地址含有敏感字");
             }
         }
-        if (resultSet == null){
-            userMapper.updateMessage(user.getUserName(),user.getAddress(),user.getIsPrivate());
+        if (resultSet == null) {
+            userMapper.updateMessage(user.getUserName(), user.getAddress(), user.getIsPrivate());
         }
-        resultSet = ResultSet.success(null,"信息修改成功");
+        resultSet = ResultSet.success(null, "信息修改成功");
         return resultSet;
     }
 
-
-    /**
-     * 申请称为商家
-     * @param id 申请用户id
-     * @return 是狗成功
-     */
-    @Override
-    public ResultSet applyShop(Integer id) {
-        ResultSet resultSet = null;
-        //判断是否重复申请
-        if (userMapper.selectById(id).getIdentify() == 1 || applyMapper.selectByUserId(id).getStatus() == 0){
-            resultSet = ResultSet.error(null,"请勿重复申请");
-        }else if (applyMapper.insert(id) == 1){
-            resultSet = ResultSet.success(null,"申请成功");
-        }else {
-            resultSet = ResultSet.error();
-        }
-        return resultSet;
-    }
 
     /**
      * 查找购物车用户的
+     *
      * @param id 查找的用户
      * @return 返回购物车信息
      */
@@ -254,13 +242,14 @@ public class UserServiceImpl implements UserService {
         List<ShoppingCart> shoppingCarts = new ArrayList<>();
         for (Cart cart : carts) {
             Goods goods = goodsMapper.selectById(cart.getGoodsId());
-            shoppingCarts.add(new ShoppingCart(cart.getId(),cart.getUserId(),goods.getName(),shopMapper.selectById(goods.getShopId()).getName(),cart.getNumber()));
+            shoppingCarts.add(new ShoppingCart(cart.getId(), cart.getUserId(), goods.getName(), shopMapper.selectById(goods.getShopId()).getName(), cart.getNumber()));
         }
-        return ResultSet.success(shoppingCarts,"查询成功");
+        return ResultSet.success(shoppingCarts, "查询成功");
     }
 
     /**
      * 添加到购物车
+     *
      * @param cart
      * @return
      */
@@ -268,12 +257,12 @@ public class UserServiceImpl implements UserService {
     public ResultSet addShoppingCart(Cart cart) {
         Cart shoppingCart = cartMapper.selectByUAGId(cart.getUserId(), cart.getGoodsId());
         ResultSet resultSet = null;
-        if (shoppingCart == null){
-            synchronized (cartMapper){
-                shoppingCart = cartMapper.selectByUAGId(cart.getUserId(),cart.getGoodsId());
-                if (shoppingCart == null){
-                    if (cartMapper.insert(cart.getGoodsId(),cart.getNumber(),cart.getUserId(),cart.getSinglePrice()) == 1) {
-                        resultSet = ResultSet.success(null,"插入成功");
+        if (shoppingCart == null) {
+            synchronized (cartMapper) {
+                shoppingCart = cartMapper.selectByUAGId(cart.getUserId(), cart.getGoodsId());
+                if (shoppingCart == null) {
+                    if (cartMapper.insert(cart.getGoodsId(), cart.getNumber(), cart.getUserId(), cart.getSinglePrice()) == 1) {
+                        resultSet = ResultSet.success(null, "插入成功");
                     }
                 }
             }
@@ -288,40 +277,40 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResultSet delectShoppingCart(Long id) {
         cartMapper.deleteById(id);
-        return ResultSet.success(null,"删除成功");
+        return ResultSet.success(null, "删除成功");
     }
 
     @Override
     public ResultSet changeShoppingCart(Cart cart) {
-        if (cart.getNumber() == 0){
+        if (cart.getNumber() == 0) {
             cartMapper.deleteById(cart.getId());
-        }else {
-            cartMapper.updateNumber(cart.getNumber(),cart.getId());
+        } else {
+            cartMapper.updateNumber(cart.getNumber(), cart.getId());
         }
-        return ResultSet.success(null,"修改成功");
+        return ResultSet.success(null, "修改成功");
     }
 
     @Override
     public ResultSet buyCart(Cart cart) {
         Goods goods = goodsMapper.selectById(cart.getGoodsId());
         ResultSet resultSet = null;
-        if (goods.getInventory() < cart.getNumber()){
-            resultSet = ResultSet.error(null,"库存不足");
-        }else {
-            synchronized (ordersMapper){
+        if (goods.getInventory() < cart.getNumber()) {
+            resultSet = ResultSet.error(null, "库存不足");
+        } else {
+            synchronized (ordersMapper) {
                 goods = goodsMapper.selectById(cart.getGoodsId());
-                    if (goods.getInventory() < cart.getNumber()){
-                        resultSet = ResultSet.error(null,"库存不足");
-                    }else {
-                        ordersMapper.insert(System.currentTimeMillis(),userMapper.selectById(shopMapper.selectById(goods.getShopId()).getBossId()).getAddress(),userMapper.selectById(cart.getUserId()).getAddress(),cart.getGoodsId(),cart.getUserId(),cart.getNumber(),cart.getSinglePrice());
-                        cartMapper.deleteById(cart.getId());
-                        resultSet = ResultSet.success();
-                    }
+                if (goods.getInventory() < cart.getNumber()) {
+                    resultSet = ResultSet.error(null, "库存不足");
+                } else {
+                    ordersMapper.insert(System.currentTimeMillis(), userMapper.selectById(shopMapper.selectById(goods.getShopId()).getBossId()).getAddress(), userMapper.selectById(cart.getUserId()).getAddress(), cart.getGoodsId(), cart.getUserId(), cart.getNumber(), cart.getSinglePrice());
+                    cartMapper.deleteById(cart.getId());
+                    resultSet = ResultSet.success();
+                }
             }
         }
-        if (resultSet.getCode() == 1){
+        if (resultSet.getCode() == 1) {
             SqlSessionUtil.commit();
-        }else {
+        } else {
             SqlSessionUtil.rollback();
         }
         SqlSessionUtil.close();
@@ -340,7 +329,7 @@ public class UserServiceImpl implements UserService {
             }
         }
         SqlSessionUtil.commit();
-        if (resultSet == null){
+        if (resultSet == null) {
             resultSet = ResultSet.success();
         }
         return resultSet;
@@ -350,15 +339,15 @@ public class UserServiceImpl implements UserService {
     public ResultSet buy(Orders orders) {
         ResultSet resultSet = null;
         Goods goods = goodsMapper.selectById(orders.getGoodsId());
-        if (orders.getNumber() > goods.getInventory()){
-            resultSet = ResultSet.error(null,"库存不足");
-        }else {
-            synchronized (ordersMapper){
+        if (orders.getNumber() > goods.getInventory()) {
+            resultSet = ResultSet.error(null, "库存不足");
+        } else {
+            synchronized (ordersMapper) {
                 goods = goodsMapper.selectById(orders.getGoodsId());
-                if (orders.getNumber() > goods.getInventory()){
-                    resultSet = ResultSet.error(null,"库存不足");
-                }else {
-                    ordersMapper.insert(System.currentTimeMillis(),userMapper.selectById(shopMapper.selectById(goods.getShopId()).getBossId()).getAddress(),userMapper.selectById(orders.getUserId()).getAddress(),orders.getGoodsId(),orders.getUserId(),orders.getNumber(),orders.getSinglePrice());
+                if (orders.getNumber() > goods.getInventory()) {
+                    resultSet = ResultSet.error(null, "库存不足");
+                } else {
+                    ordersMapper.insert(System.currentTimeMillis(), userMapper.selectById(shopMapper.selectById(goods.getShopId()).getBossId()).getAddress(), userMapper.selectById(orders.getUserId()).getAddress(), orders.getGoodsId(), orders.getUserId(), orders.getNumber(), orders.getSinglePrice());
                     resultSet = ResultSet.success();
                 }
             }
@@ -373,22 +362,22 @@ public class UserServiceImpl implements UserService {
         //查找订单
         Orders select = ordersMapper.select(refund.getOrderId());
         ResultSet resultSet = null;
-        if (select != null ){
+        if (select != null) {
             //订单存在且没有重复申请
             List<Refund> refunds = refundMapper.selectByOrderId(select.getId());
             //超过两次就不能继续申请了
-            if (refunds == null || (refunds.size() < 2 && refunds.get(0).getStatus() != 0)){
-                synchronized (refundMapper){
+            if (refunds == null || (refunds.size() < 2 && refunds.get(0).getStatus() != 0)) {
+                synchronized (refundMapper) {
                     refunds = refundMapper.selectByOrderId(select.getId());
-                    if (refunds == null || (refunds.size() < 2 && refunds.get(0).getStatus() != 0)){
-                        refundMapper.insert(select.getId(),refund.getCause(),refund.getDescription());
+                    if (refunds == null || (refunds.size() < 2 && refunds.get(0).getStatus() != 0)) {
+                        refundMapper.insert(select.getId(), refund.getCause(), refund.getDescription());
                         resultSet = ResultSet.success();
                     }
                 }
             }
         }
-        if (resultSet == null){
-            resultSet = ResultSet.error(null,"退款申请次数过多");
+        if (resultSet == null) {
+            resultSet = ResultSet.error(null, "退款申请次数过多");
         }
         return resultSet;
     }
@@ -397,34 +386,33 @@ public class UserServiceImpl implements UserService {
     public ResultSet selectSub(Subscrible subscrible) {
         Subscrible select = subscribleMapper.selectByUASId(subscrible.getUserId(), subscrible.getShopId());
         ResultSet resultSet = null;
-        if (select == null){
+        if (select == null) {
             resultSet = ResultSet.error();
         }
-        if (resultSet == null){
+        if (resultSet == null) {
             resultSet = ResultSet.success();
         }
         return resultSet;
     }
 
 
-
     @Override
     public ResultSet subscrible(Subscrible subscrible) {
         ResultSet resultSet = null;
-        if (subscribleMapper.selectByUASId(subscrible.getUserId(),subscrible.getShopId()) == null){
-            synchronized (subscribleMapper){
-                if (subscribleMapper.selectByUASId(subscrible.getUserId(),subscrible.getShopId()) == null){
-                    subscribleMapper.insert(subscrible.getUserId(),subscrible.getShopId());
-                    resultSet = ResultSet.success(null,"订阅成功");
-                }else {
-                    subscribleMapper.deleteByUASId(subscrible.getUserId(),subscrible.getShopId());
+        if (subscribleMapper.selectByUASId(subscrible.getUserId(), subscrible.getShopId()) == null) {
+            synchronized (subscribleMapper) {
+                if (subscribleMapper.selectByUASId(subscrible.getUserId(), subscrible.getShopId()) == null) {
+                    subscribleMapper.insert(subscrible.getUserId(), subscrible.getShopId());
+                    resultSet = ResultSet.success(null, "订阅成功");
+                } else {
+                    subscribleMapper.deleteByUASId(subscrible.getUserId(), subscrible.getShopId());
                 }
             }
-        }else {
-            subscribleMapper.deleteByUASId(subscrible.getUserId(),subscrible.getShopId());
+        } else {
+            subscribleMapper.deleteByUASId(subscrible.getUserId(), subscrible.getShopId());
         }
-        if (resultSet == null){
-            resultSet = ResultSet.success(null,"取消订阅成功");
+        if (resultSet == null) {
+            resultSet = ResultSet.success(null, "取消订阅成功");
         }
         return resultSet;
     }
@@ -432,47 +420,82 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResultSet selectMySubs(Integer userId) {
         List<Subscrible> subscribles = subscribleMapper.selectbyUserId(userId);
-        return ResultSet.success(subscribles,"查询成功");
+        return ResultSet.success(subscribles, "查询成功");
     }
 
     @Override
     public ResultSet sendConsultation(Consultation consultation) {
-        consultationMapper.insert(consultation.getGoodsId(),consultation.getConsultation(),consultation.getUserId());
+        consultationMapper.insert(consultation.getGoodsId(), consultation.getConsultation(), consultation.getUserId());
         return ResultSet.success();
     }
 
     @Override
     public ResultSet deleteConsultation(Long id) {
         int delete = consultationMapper.deleteById(id);
-        return delete == 1 ? ResultSet.success(null,"删除成功") : ResultSet.error(null,"评论不存在，可能已经被删除");
+        return delete == 1 ? ResultSet.success(null, "删除成功") : ResultSet.error(null, "评论不存在，可能已经被删除");
     }
 
     @Override
     public ResultSet sendReply(Reply reply) {
         int insert = replyMapper.insert(reply.getConsultationId(), reply.getReply(), reply.getUserId());
-        return insert == 1 ? ResultSet.success(null,"发送成功") : ResultSet.error(null,"发送异常");
+        return insert == 1 ? ResultSet.success(null, "发送成功") : ResultSet.error(null, "发送异常");
     }
 
     @Override
     public ResultSet deleteReply(Long id) {
         int delete = replyMapper.deleteById(id);
-        return delete == 1 ? ResultSet.success(null,"删除成功") : ResultSet.error(null,"回复不存在，可能已经删除");
+        return delete == 1 ? ResultSet.success(null, "删除成功") : ResultSet.error(null, "回复不存在，可能已经删除");
     }
 
     @Override
     public ResultSet reportGoods(Report report) {
         ResultSet resultSet = null;
-        if (reportMapper.selectByUAGId(report.getUserId(), report.getGoodId()) == null){
-            synchronized (reportMapper){
-                if (reportMapper.selectByUAGId(report.getUserId(),report.getGoodId()) == null){
-                    reportMapper.insert(report.getGoodId(),report.getUserId(),report.getStatus(),report.getDescription());
-                    resultSet = ResultSet.success(null,"举报成功");
+        if (reportMapper.selectByUAGId(report.getUserId(), report.getGoodId()) == null) {
+            synchronized (reportMapper) {
+                if (reportMapper.selectByUAGId(report.getUserId(), report.getGoodId()) == null) {
+                    reportMapper.insert(report.getGoodId(), report.getUserId(), report.getStatus(), report.getDescription());
+                    resultSet = ResultSet.success(null, "举报成功");
+                }
+            }
+        }
+        if (resultSet == null) {
+            resultSet = ResultSet.error(null, "请勿重复举报");
+        }
+        return resultSet;
+    }
+
+    /**
+     * 申请称为商家
+     *
+     * @param apply 用户发送的申请信息
+     * @return 是狗成功
+     */
+    @Override
+    public ResultSet applyShop(Apply apply) {
+        ResultSet resultSet = null;
+        Apply apply1 = applyMapper.selectByUserId(apply.getUserId());
+        //判断是否重复申请
+        if (userMapper.selectById(apply.getUserId()).getIdentify() != 1) {
+            if (apply1 == null || apply1.getStatus() != 0) {
+                synchronized (applyMapper) {
+                    if (userMapper.selectById(apply.getUserId()).getIdentify() != 1) {
+                        apply1 = applyMapper.selectByUserId(apply.getUserId());
+                        if (apply1 == null || apply1.getStatus() != 0) {
+                            applyMapper.insert(apply.getUserId(), apply.getShopName());
+                            resultSet = ResultSet.success(null, "申请成功");
+                            SqlSessionUtil.commit();
+                        }
+                    }
                 }
             }
         }
         if (resultSet == null){
-            resultSet = ResultSet.error(null,"请勿重复举报");
+            SqlSessionUtil.rollback();
+            resultSet = ResultSet.error(null,"请勿重复申请");
         }
-        return resultSet;
+        SqlSessionUtil.close();
+        return  resultSet;
     }
+
+
 }

@@ -54,27 +54,32 @@ public class GoodsServiceImpl implements GoodsService {
         return  ResultSet.success(goods,"查询成功");
     }
 
+    /**
+     * 生成订单
+     * @param orders
+     * @return
+     */
     @Override
     public ResultSet newOrders(Orders orders) {
         ResultSet resultSet = null;
         Goods goods = goodsMapper.selectById(orders.getGoodsId());
-        if (orders.getNumber() > goods.getInventory()){
-            resultSet = ResultSet.error(null,"库存不足");
-        }else {
-            synchronized (ordersMapper){
+        if (orders.getNumber() <= goods.getInventory()){
+            synchronized (goodsMapper){
                 goods = goodsMapper.selectById(orders.getGoodsId());
-                if (orders.getNumber() > goods.getInventory()){
-                    resultSet = ResultSet.error(null,"库存不足");
-                }else {
-                    System.out.println(userMapper.selectById(shopMapper.selectById(goods.getShopId()).getBossId()).getAddress());
-
-                    System.out.println(userMapper.selectById(orders.getUserId()).getAddress());
+                if (orders.getNumber() <= goods.getInventory()){
+                    //插入订单同时库存减
                     ordersMapper.insert(System.currentTimeMillis(),userMapper.selectById(shopMapper.selectById(goods.getShopId()).getBossId()).getAddress(),userMapper.selectById(orders.getUserId()).getAddress(),orders.getGoodsId(),orders.getUserId(),orders.getNumber(),orders.getSinglePrice());
+                    goodsMapper.updateInventory(goods.getInventory() - orders.getNumber(),orders.getGoodsId());
                     resultSet = ResultSet.success();
                 }
             }
         }
-        SqlSessionUtil.commit();
+        if (resultSet == null){
+            SqlSessionUtil.rollback();
+            resultSet = ResultSet.error(null,"库存不足");
+        }else {
+            SqlSessionUtil.commit();
+        }
         SqlSessionUtil.close();
         return resultSet;
     }
