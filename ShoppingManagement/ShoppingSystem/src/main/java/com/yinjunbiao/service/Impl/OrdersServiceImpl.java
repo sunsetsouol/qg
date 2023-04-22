@@ -72,7 +72,7 @@ public class OrdersServiceImpl implements OrdersService {
         List<ShopOrders> shopOrders = new ArrayList<>();
         for (Orders order : orders) {
             Goods goods = goodsMapper.selectById(order.getGoodsId());
-            ShopOrders shopOrder = new ShopOrders(order.getId(), CONST.dateFormat.format(order.getTime()),order.getSendAddress(),order.getReceiveAddress(),goods.getName(),order.getStatus(),userMapper.selectById(order.getUserId()).getUserName(),order.getNumber());
+            ShopOrders shopOrder = new ShopOrders(order.getId(), CONST.dateFormat.format(order.getTime()),order.getSendAddress(),order.getReceiveAddress(),goods.getName(),order.getStatus(),userMapper.selectById(order.getUserId()).getUserName(),order.getNumber(),goods.getShopName(),goods.getPrice());
             shopOrders.add(shopOrder);
         }
         ResultSet resultSet = ResultSet.success(shopOrders,null);

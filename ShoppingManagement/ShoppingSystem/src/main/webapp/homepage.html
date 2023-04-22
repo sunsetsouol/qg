@@ -46,6 +46,7 @@
     <el-button type="primary" plain @click="MyShop">我的店铺</el-button>
 
     <el-button type="primary" icon="el-icon-shopping-cart-full" @click="searchMyCart">购物车</el-button>
+    <el-button type="primary" icon="el-icon-shopping-bag-1" @click="searchMyOrders">我的订单</el-button>
 
 
     <el-dialog
@@ -265,8 +266,19 @@
 
                 dialogApply = true
             },
+            searchMyOrders(){
+                if (localStorage.getItem('Authorization') != ''){
+                    window.open("MyOrders.html","_self");
+                }else {
+                    window.open("login.html","_self");
+                }
+            },
             searchMyCart(){
-                window.open("MyCart.html","_self");
+                if (localStorage.getItem('Authorization') != ''){
+                    window.open("MyCart.html","_self");
+                }else {
+                    window.open("login.html","_self");
+                }
             },
             applyShop(){
                 var _this = this;

@@ -10,7 +10,7 @@ import java.util.List;
 @Mapper
 @Component("ordersMapper")
 public interface OrdersMapper {
-    @Insert(sql = "insert into orders values(null,#{time},#{sendAddress},#{receiveAddress},#{goodsId},#{shopId}#{userId},1,null,#{number},#{singlePrice})")
+    @Insert(sql = "insert into orders values(null,#{time},#{sendAddress},#{receiveAddress},#{goodsId},#{shopId},#{userId},1,null,#{number},#{singlePrice})")
     @ResultMap(id = "ordersResultMap")
     int insert(@Param("time")Long time,@Param("sendAddress")String sendAddress,@Param("receiveAddress")String receiveAddress,@Param("goodsId")Long goodsId,@Param("shopId")Integer shopId,@Param("userId")Integer userId,@Param("number")Integer number,@Param("singlePrice")Integer singlePrice);
 

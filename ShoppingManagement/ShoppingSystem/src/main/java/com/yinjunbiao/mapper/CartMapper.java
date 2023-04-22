@@ -23,9 +23,9 @@ public interface CartMapper {
     @ResultMap(id = "cartResultMap")
     Cart selectById(@Param("id")Long id);
 
-    @Insert(sql = "insert into cart values(null,#{goodsId},#{number},#{userId},#{singlePrice})")
+    @Insert(sql = "insert into cart values(null,#{goodsId},#{shopId},#{number},#{userId},#{singlePrice})")
     @ResultMap(id = "cartResultMap")
-    int insert(@Param("goodsId")Long goodsId,@Param("number")Integer number,@Param("userId")Integer userId,@Param("singlePrice")Integer singlePrice);
+    int insert(@Param("goodsId")Long goodsId,@Param("shopId")Integer shopId,@Param("number")Integer number,@Param("userId")Integer userId,@Param("singlePrice")Integer singlePrice);
 
     @Update(sql = "update cart set number = #{number} where id = #{id}")
     @ResultMap(id = "cartResultMap")

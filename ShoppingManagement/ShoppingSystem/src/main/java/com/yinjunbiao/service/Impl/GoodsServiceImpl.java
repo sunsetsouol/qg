@@ -72,7 +72,7 @@ public class GoodsServiceImpl implements GoodsService {
                 cartMapper.updateNumber(cart.getNumber(),id);
             }
         }else {
-            cartMapper.insert(cart.getGoodsId(),cart.getNumber(), cart.getUserId(),cart.getSinglePrice());
+            cartMapper.insert(cart.getGoodsId(),cart.getShopId(),cart.getNumber(), cart.getUserId(),cart.getSinglePrice());
         }
         SqlSessionUtil.commit();
         SqlSessionUtil.close();

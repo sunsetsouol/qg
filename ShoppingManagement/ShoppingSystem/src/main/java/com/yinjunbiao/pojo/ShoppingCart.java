@@ -2,6 +2,8 @@ package com.yinjunbiao.pojo;
 
 public class ShoppingCart {
 
+    private Long id;
+
     private String name;
 
     private Integer number;
@@ -12,15 +14,25 @@ public class ShoppingCart {
 
     private String shop;
 
+
     @Override
     public String toString() {
         return "ShoppingCart{" +
-                "name='" + name + '\'' +
+                "id=" + id +
+                ", name='" + name + '\'' +
                 ", number=" + number +
                 ", picture='" + picture + '\'' +
                 ", price=" + price +
                 ", shop='" + shop + '\'' +
                 '}';
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -66,7 +78,8 @@ public class ShoppingCart {
     public ShoppingCart() {
     }
 
-    public ShoppingCart(String name, Integer number, String picture, Integer price, String shop) {
+    public ShoppingCart(Long id, String name, Integer number, String picture, Integer price, String shop) {
+        this.id = id;
         this.name = name;
         this.number = number;
         this.picture = picture;

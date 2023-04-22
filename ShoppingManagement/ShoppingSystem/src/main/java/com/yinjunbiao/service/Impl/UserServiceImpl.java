@@ -9,6 +9,7 @@ import com.yinjunbiao.MySpring.Annotation.Scope;
 import com.yinjunbiao.entity.*;
 import com.yinjunbiao.mapper.*;
 import com.yinjunbiao.pojo.ResultSet;
+import com.yinjunbiao.pojo.ShopOrders;
 import com.yinjunbiao.pojo.ShoppingCart;
 import com.yinjunbiao.service.UserService;
 import com.yinjunbiao.util.CONST;
@@ -224,7 +225,9 @@ public class UserServiceImpl implements UserService {
         }
         if (resultSet == null) {
             userMapper.updateMessage(user.getUserName(), user.getAddress(), user.getIsPrivate());
+            SqlSessionUtil.commit();
         }
+        SqlSessionUtil.close();
         resultSet = ResultSet.success(null, "信息修改成功");
         return resultSet;
     }
@@ -242,16 +245,24 @@ public class UserServiceImpl implements UserService {
         List<ShoppingCart> shoppingCarts = new ArrayList<>();
         for (Cart cart : carts) {
             Goods goods = goodsMapper.selectById(cart.getGoodsId());
-            shoppingCarts.add(new ShoppingCart(goods.getName(),cart.getNumber(),goods.getPicture(),goods.getPrice(),goods.getShopName()));
+            shoppingCarts.add(new ShoppingCart(cart.getId(),goods.getName(),cart.getNumber(),goods.getPicture(),goods.getPrice(),goods.getShopName()));
         }
+        SqlSessionUtil.commit();
+        SqlSessionUtil.close();
         return ResultSet.success(shoppingCarts, "查询成功");
     }
 
 
-
+    /**
+     * 根据id删除购物车
+     * @param id
+     * @return
+     */
     @Override
     public ResultSet delectShoppingCart(Long id) {
         cartMapper.deleteById(id);
+        SqlSessionUtil.commit();
+        SqlSessionUtil.close();
         return ResultSet.success(null, "删除成功");
     }
 
@@ -452,7 +463,7 @@ public class UserServiceImpl implements UserService {
             synchronized (cartMapper){
                 shoppingCart = cartMapper.selectByUAGId(cart.getUserId(),cart.getGoodsId());
                 if (shoppingCart == null){
-                    if (cartMapper.insert(cart.getGoodsId(),cart.getNumber(),cart.getUserId(),cart.getSinglePrice()) == 1) {
+                    if (cartMapper.insert(cart.getGoodsId(),cart.getShopId(),cart.getNumber(),cart.getUserId(),cart.getSinglePrice()) == 1) {
                         resultSet = ResultSet.success(null,"插入成功");
                     }
                 }
@@ -540,5 +551,17 @@ public class UserServiceImpl implements UserService {
             resultSet = ResultSet.success(shop.getId(),null);
         }
         return resultSet;
+    }
+
+    @Override
+    public ResultSet selectMyOrders(Integer userId) {
+        List<Orders> orders = ordersMapper.selectByUserId(userId);
+        List<ShopOrders> shopOrders = new ArrayList<>();
+        for (Orders order : orders) {
+            Goods goods = goodsMapper.selectById(order.getGoodsId());
+            ShopOrders shopOrder = new ShopOrders(order.getId(), CONST.dateFormat.format(order.getTime()),order.getSendAddress(),order.getReceiveAddress(),goods.getName(),order.getStatus(),userMapper.selectById(order.getUserId()).getUserName(),order.getNumber(),goods.getShopName(),goods.getPrice());
+            shopOrders.add(shopOrder);
+        }
+        return ResultSet.success(shopOrders,null);
     }
 }

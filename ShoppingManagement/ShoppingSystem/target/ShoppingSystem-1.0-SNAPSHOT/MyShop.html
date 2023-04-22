@@ -7,8 +7,8 @@
 <body>
 <div id="app">
 
-    <el-button type="primary" plain @click="selectNotSend">新增</el-button>
-    <el-button type="primary" plain @click="selectSended">新增</el-button>
+    <el-button type="primary" plain @click="selectNotSend">未发货订单</el-button>
+    <el-button type="primary" plain @click="selectSended">已发货订单</el-button>
     <!--按钮-->
 
     <el-row>
@@ -154,11 +154,11 @@
         </el-table>
     </template>
 
-    <!--分页工具条-->
+
     <el-pagination
             @current-change="handleCurrentChange"
             :current-page="currentPage"
-            layout="total,  prev, pager, next, jumper"
+            layout="total, prev, pager, next, jumper"
             :total="totalCount">
     </el-pagination>
 
@@ -278,7 +278,8 @@
                 pageSize:20,
                 // 当前页码
                 currentPage: 1,
-                // 添加数据对话框是否展示的标记
+
+                totalCount:'',
                 dialogVisible: false,
                 pushSuccess:false,
                 pushError:false,

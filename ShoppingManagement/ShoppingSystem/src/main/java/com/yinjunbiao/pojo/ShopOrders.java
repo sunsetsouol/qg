@@ -19,17 +19,26 @@ public class ShopOrders {
 
     private Integer number;
 
+    private String shopName;
+
+    private Integer singlePrice;
+
+    private Integer price;
+
     @Override
     public String toString() {
         return "ShopOrders{" +
                 "id=" + id +
-                ", time=" + time +
+                ", time='" + time + '\'' +
                 ", sendAddress='" + sendAddress + '\'' +
                 ", receiveAddress='" + receiveAddress + '\'' +
                 ", goodsName='" + goodsName + '\'' +
-                ", status=" + status +
+                ", status='" + status + '\'' +
                 ", userName='" + userName + '\'' +
                 ", number=" + number +
+                ", shopName='" + shopName + '\'' +
+                ", singlePrice=" + singlePrice +
+                ", price=" + price +
                 '}';
     }
 
@@ -97,10 +106,34 @@ public class ShopOrders {
         this.userName = userName;
     }
 
+    public String getShopName() {
+        return shopName;
+    }
+
+    public void setShopName(String shopName) {
+        this.shopName = shopName;
+    }
+
+    public Integer getSinglePrice() {
+        return singlePrice;
+    }
+
+    public void setSinglePrice(Integer singlePrice) {
+        this.singlePrice = singlePrice;
+    }
+
+    public Integer getPrice() {
+        return price;
+    }
+
+    public void setPrice(Integer price) {
+        this.price = price;
+    }
+
     public ShopOrders() {
     }
 
-    public ShopOrders(Long id, String  time, String sendAddress, String receiveAddress, String goodsName, Integer status, String userName, Integer number) {
+    public ShopOrders(Long id, String time, String sendAddress, String receiveAddress, String goodsName, Integer status, String userName, Integer number, String shopName, Integer singlePrice) {
         this.id = id;
         this.time = time;
         this.sendAddress = sendAddress;
@@ -115,5 +148,8 @@ public class ShopOrders {
         }
         this.userName = userName;
         this.number = number;
+        this.shopName = shopName;
+        this.singlePrice = singlePrice;
+        this.price = singlePrice * number;
     }
 }

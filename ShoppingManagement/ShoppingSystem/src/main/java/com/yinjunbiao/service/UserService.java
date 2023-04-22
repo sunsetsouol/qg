@@ -34,6 +34,8 @@ public interface UserService {
 
     ResultSet refund(Refund refund);
 
+    ResultSet selectMyOrders(Integer userId);
+
     ResultSet subscrible(Subscrible subscrible);
 
     ResultSet selectSub(Subscrible subscrible);
