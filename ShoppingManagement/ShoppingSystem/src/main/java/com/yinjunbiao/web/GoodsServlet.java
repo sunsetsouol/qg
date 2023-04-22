@@ -56,64 +56,13 @@ public class GoodsServlet extends BaseServlet {
         BufferedReader reader = request.getReader();
         String s = reader.readLine();
         Goods goods = JSON.parseObject(s, Goods.class);
-        String token = request.getHeader("Authorization");
-        Claims claims = JwtUtil.parseJWT(token);
         ResultSet resultSet = goodsService.selectByName(goods.getName(),currentPage,pageSize);
         response.setStatus(200);
         response.setContentType("application/json;charset=utf-8");
         response.getWriter().write(JSON.toJSONString(resultSet));
     }
 
-    /**
-     * 直接购买
-     * @param request
-     * @param response
-     * @throws IOException
-     */
-    public void buy(HttpServletRequest request, HttpServletResponse response) throws IOException{
-        String token = request.getHeader("Authorization");
-        try {
-            Claims claims = JwtUtil.parseJWT(token);
-            Integer id = (Integer) claims.get("id");
-            BufferedReader reader = request.getReader();
-            String s = reader.readLine();
-            Orders orders = JSON.parseObject(s, Orders.class);
-            orders.setUserId(id);
-            ResultSet resultSet = goodsService.newOrders(orders);
-            if (resultSet.getCode() == 1){
-                response.setStatus(200);
-                response.setContentType("application/json;charset=utf-8");
-                response.getWriter().write(JSON.toJSONString(resultSet));
-            }
-        }catch (Exception e){
-        }
 
-    }
 
-    /**
-     * 添加到购物车
-     * @param request
-     * @param response
-     * @throws IOException
-     */
-    public void addCart(HttpServletRequest request, HttpServletResponse response) throws IOException{
-        String token = request.getHeader("Authorization");
-        try{
-            Claims claims = JwtUtil.parseJWT(token);
-            Integer id = (Integer) claims.get("id");
-            BufferedReader reader = request.getReader();
-            String s = reader.readLine();
-            Cart cart = JSON.parseObject(s, Cart.class);
-            cart.setUserId(id);
-            System.out.println(cart);
-            ResultSet resultSet = goodsService.addCart(cart);
-            if (resultSet.getCode() == 1){
-                response.setStatus(200);
-                response.setContentType("application/json;charset=utf-8");
-                response.getWriter().write(JSON.toJSONString(resultSet));
-            }
-        }catch (Exception e){
-            response.sendRedirect("/ShoppingSystem/login.html");
-        }
-    }
+
 }

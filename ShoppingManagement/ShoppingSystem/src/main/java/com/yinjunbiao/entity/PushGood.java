@@ -17,6 +17,10 @@ public class PushGood {
 
     private String  picture;
 
+    private String description;
+
+    private Integer shopId;
+
     @Override
     public String toString() {
         return "PushGood{" +
@@ -25,6 +29,8 @@ public class PushGood {
                 ", price=" + price +
                 ", status=" + status +
                 ", picture='" + picture + '\'' +
+                ", description='" + description + '\'' +
+                ", shopId=" + shopId +
                 '}';
     }
 
@@ -68,14 +74,32 @@ public class PushGood {
         this.picture = picture;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Integer getShopId() {
+        return shopId;
+    }
+
+    public void setShopId(Integer shopId) {
+        this.shopId = shopId;
+    }
+
     public PushGood() {
     }
 
-    public PushGood(Long id, String name, Integer price, Integer status, String picture) {
+    public PushGood(Long id, String name, Integer price, Integer status, String picture, String description, Integer shopId) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.status = status;
         this.picture = picture;
+        this.description = description;
+        this.shopId = shopId;
     }
 }

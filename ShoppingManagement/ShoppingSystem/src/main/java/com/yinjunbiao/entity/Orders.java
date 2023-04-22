@@ -15,6 +15,8 @@ public class Orders {
 
     private Long goodsId;
 
+    private Integer shopId;
+
     private Integer userId;
 
     private Integer status;
@@ -33,6 +35,7 @@ public class Orders {
                 ", sendAddress='" + sendAddress + '\'' +
                 ", receiveAddress='" + receiveAddress + '\'' +
                 ", goodsId=" + goodsId +
+                ", shopId=" + shopId +
                 ", userId=" + userId +
                 ", status=" + status +
                 ", comment='" + comment + '\'' +
@@ -121,15 +124,24 @@ public class Orders {
         this.singlePrice = singlePrice;
     }
 
+    public Integer getShopId() {
+        return shopId;
+    }
+
+    public void setShopId(Integer shopId) {
+        this.shopId = shopId;
+    }
+
     public Orders() {
     }
 
-    public Orders(Long id, Long time, String sendAddress, String receiveAddress, Long goodsId, Integer userId, Integer status, String comment, Integer number, Integer singlePrice) {
+    public Orders(Long id, Long time, String sendAddress, String receiveAddress, Long goodsId, Integer shopId, Integer userId, Integer status, String comment, Integer number, Integer singlePrice) {
         this.id = id;
         this.time = time;
         this.sendAddress = sendAddress;
         this.receiveAddress = receiveAddress;
         this.goodsId = goodsId;
+        this.shopId = shopId;
         this.userId = userId;
         this.status = status;
         this.comment = comment;

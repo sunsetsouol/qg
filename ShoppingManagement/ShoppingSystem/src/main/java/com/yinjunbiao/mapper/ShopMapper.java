@@ -23,6 +23,10 @@ public interface ShopMapper {
     @ResultMap(id = "shopResultMap")
     Shop selectById(@Param("id")Integer id);
 
+    @Select(sql = "select * from shop where boss_id = #{id}")
+    @ResultMap(id = "shopResultMap")
+    Shop selectByBossId(@Param("id")Integer id);
+
     @Insert(sql = "insert into shop values(null,#{bossId},0,#{description},#{sales}")
     @ResultMap(id = "shopResultMap")
     int insert(@Param("bossId")Integer bossId,@Param("description")String description,@Param("sales")Integer sales);

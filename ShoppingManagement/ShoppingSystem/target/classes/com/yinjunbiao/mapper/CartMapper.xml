@@ -4,10 +4,11 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.yinjunbiao.mapper.CartMapper">
 
-    <resultMap id="cartResultMapper" type="com.yinjunbiao.entity.Cart">
+    <resultMap id="cartResultMap" type="com.yinjunbiao.entity.Cart">
         <result property="goodsId" column="goods_id"/>
         <result property="userId" column="user_id"/>
         <result property="singlePrice" column="single_price"/>
+        <result property="shopId" column="shop_id"/>
     </resultMap>
 
 </mapper>

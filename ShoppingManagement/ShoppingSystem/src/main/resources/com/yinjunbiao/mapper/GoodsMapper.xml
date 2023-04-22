@@ -6,6 +6,7 @@
 
     <resultMap id="goodsResultMap" type="com.yinjunbiao.entity.Goods">
         <result property="shopId" column="shop_id"/>
+        <result property="shopName" column="shop_name"/>
     </resultMap>
 
 </mapper>

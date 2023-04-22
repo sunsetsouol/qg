@@ -32,6 +32,7 @@
         <mapper resource="/com/yinjunbiao/mapper/ConsultationMapper.xml"/>
         <mapper resource="/com/yinjunbiao/mapper/GoodsMapper.xml"/>
         <mapper resource="/com/yinjunbiao/mapper/OrdersMapper.xml"/>
+        <mapper resource="/com/yinjunbiao/mapper/PushGoodsMapper.xml"/>
         <mapper resource="/com/yinjunbiao/mapper/RefundMapper.xml"/>
         <mapper resource="/com/yinjunbiao/mapper/ReplyMapper.xml"/>
         <mapper resource="/com/yinjunbiao/mapper/ReportMapper.xml"/>

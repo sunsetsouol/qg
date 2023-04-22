@@ -43,13 +43,13 @@
     </el-form>
 
 
-    <el-button type="primary" plain @click="dialogApply = true">申请称为商家</el-button>
+    <el-button type="primary" plain @click="MyShop">我的店铺</el-button>
 
     <el-button type="primary" icon="el-icon-shopping-cart-full" @click="searchMyCart">购物车</el-button>
 
 
     <el-dialog
-            title="提示"
+            title="申请店铺"
             :visible.sync="dialogApply"
             width="30%">
         <el-form :model="apply" label-width="80px">
@@ -191,6 +191,12 @@
             </el-table-column>
 
             <el-table-column
+                    prop="shopName"
+                    align="center"
+                    label="店名">
+            </el-table-column>
+
+            <el-table-column
                     prop="description"
                     align="center"
                     label="介绍">
@@ -211,7 +217,8 @@
                     label="操作">
                 <template slot-scope="scope">
                     <el-row>
-                        <el-button type="primary"  @click="handleAdd(scope.row)">查看</el-button>
+                        <el-button type="primary"  @click="searchConsultation(scope.row)">查看评论</el-button>
+                        <el-button type="primary"  @click="handleAdd(scope.row)">购买</el-button>
                     </el-row>
                 </template>
             </el-table-column>
@@ -219,6 +226,12 @@
         </el-table>
     </template>
 
+    <el-pagination
+            @current-change="handleCurrentChange"
+            :current-page="currentPage"
+            layout="total, prev, pager, next, jumper"
+            :total="totalCount">
+    </el-pagination>
 
 
 </div>
@@ -235,23 +248,25 @@
             this.selectAll();
         },
         methods: {
-            searchMyCart(){
+            MyShop(){
                 var _this = this;
                 axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
                 axios({
                     method:"post",
-                    url:"http://localhost:8080/ShoppingSystem/user/apply",
-                    data:this.apply
+                    url:"http://localhost:8080/ShoppingSystem/user/myShop"
                 }).then(function (resp){
                     if (resp.data.code == 1){
-                        _this.dialogApply = false;
-                        _this.dialogSuccess = true;
+                        localStorage.setItem('shopId',resp.data.data);
+                       window.open("MyShop.html","_self")
                     }else {
-                        _this.dialogApply = false;
-                        _this.dialogApplyError = true;
+                        _this.dialogApply = true;
                     }
                 })
 
+                dialogApply = true
+            },
+            searchMyCart(){
+                window.open("MyCart.html","_self");
             },
             applyShop(){
                 var _this = this;
@@ -276,6 +291,7 @@
               this.orders.name = row.name;
               this.orders.singlePrice = row.price;
               this.orders.picture = row.picture;
+              this.orders.shopId = row.shopId;
               this.dialogVisible = true;
             },
             buy(){
@@ -293,7 +309,7 @@
                     axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
                     axios({
                         method:"post",
-                        url:"http://localhost:8080/ShoppingSystem/goods/buy",
+                        url:"http://localhost:8080/ShoppingSystem/user/buy",
                         data:this.orders
                     }).then(function (resp){
                         if (resp.data.code == 1){
@@ -318,7 +334,7 @@
                   axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
                   axios({
                       method:"post",
-                      url:"http://localhost:8080/ShoppingSystem/goods/addCart",
+                      url:"http://localhost:8080/ShoppingSystem/user/addCart",
                       data:this.orders
                   }).then(function (resp){
                       if (resp.data.code == 1){
@@ -331,19 +347,26 @@
                   })
               }
             },
+            handleCurrentChange(val) {
+                this.currentPage = val;
+                this.selectAll();
+            },
 
             onSubmit(){
                 var _this = this;
+                if (this.goods.name.length>0)  {
                 axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
-              if (this.goods.name.length>0)  {
                   axios({
                       method:"post",
                       url:"http://localhost:8080/ShoppingSystem/goods/selectByName?currentPage="+this.currentPage+"&pageSize="+this.pageSize,
                       data:this.goods
                   }).then(function (resp){
                        _this.tableData = resp.data.data;
+                      _this.totalCount = resp.data.length;
                   })
-              }
+              }else {
+                    this.selectAll();
+                }
             },
             selectAll(){
                 var _this = this;
@@ -354,6 +377,7 @@
                     data:this.goods,
                 }).then(function (resp){
                     _this.tableData = resp.data.data;
+                    _this.totalCount = resp.data.length;
                 })
 
             },
@@ -378,6 +402,7 @@
                 // 当前页码
                 currentPage: 1,
 
+                totalCount:'',
                 // 品牌模型数据
                 goods: {
                     id:'',
@@ -386,7 +411,8 @@
                     sales: '',
                     inventory:"",
                     picture:"",
-                    description:""
+                    description:"",
+                    shopId:'',
                 },
                 orders:{
                     name:'',
@@ -394,7 +420,8 @@
                     goodsId:'',
                     singlePrice:'',
                     price:'',
-                    picture:''
+                    picture:'',
+                    shopId:''
                 },
                 tableData:[{
                     id:'',
@@ -403,7 +430,9 @@
                     sales: '',
                     inventory:"",
                     picture:"",
-                    description:""
+                    description:"",
+                    shopName:'',
+                    shopId:''
                 }]
 
             }

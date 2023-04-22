@@ -15,6 +15,8 @@ public class Cart {
 
     private Integer singlePrice;
 
+    private Integer shopId;
+
     @Override
     public String toString() {
         return "Cart{" +
@@ -23,6 +25,7 @@ public class Cart {
                 ", number=" + number +
                 ", userId=" + userId +
                 ", singlePrice=" + singlePrice +
+                ", shopId=" + shopId +
                 '}';
     }
 
@@ -66,14 +69,23 @@ public class Cart {
         this.singlePrice = singlePrice;
     }
 
+    public Integer getShopId() {
+        return shopId;
+    }
+
+    public void setShopId(Integer shopId) {
+        this.shopId = shopId;
+    }
+
     public Cart() {
     }
 
-    public Cart(Long id, Long goodsId, Integer number, Integer userId, Integer singlePrice) {
+    public Cart(Long id, Long goodsId, Integer number, Integer userId, Integer singlePrice, Integer shopId) {
         this.id = id;
         this.goodsId = goodsId;
         this.number = number;
         this.userId = userId;
         this.singlePrice = singlePrice;
+        this.shopId = shopId;
     }
 }

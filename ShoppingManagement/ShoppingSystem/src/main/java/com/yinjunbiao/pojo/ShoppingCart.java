@@ -2,60 +2,33 @@ package com.yinjunbiao.pojo;
 
 public class ShoppingCart {
 
-    private Long id;
-
-    private Integer userId;
-
-    private String goods;
-
-    private String shopName;
+    private String name;
 
     private Integer number;
+
+    private String picture;
+
+    private Integer price;
+
+    private String shop;
 
     @Override
     public String toString() {
         return "ShoppingCart{" +
-                "id=" + id +
-                ", userId=" + userId +
-                ", goods='" + goods + '\'' +
-                ", shopName='" + shopName + '\'' +
+                "name='" + name + '\'' +
                 ", number=" + number +
+                ", picture='" + picture + '\'' +
+                ", price=" + price +
+                ", shop='" + shop + '\'' +
                 '}';
     }
 
-    public ShoppingCart() {
+    public String getName() {
+        return name;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-
-    public String getGoods() {
-        return goods;
-    }
-
-    public void setGoods(String goods) {
-        this.goods = goods;
-    }
-
-    public String getShopName() {
-        return shopName;
-    }
-
-    public void setShopName(String shopName) {
-        this.shopName = shopName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Integer getNumber() {
@@ -66,11 +39,38 @@ public class ShoppingCart {
         this.number = number;
     }
 
-    public ShoppingCart(Long id, Integer userId, String goods, String shopName, Integer number) {
-        this.id = id;
-        this.userId = userId;
-        this.goods = goods;
-        this.shopName = shopName;
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
+
+    public Integer getPrice() {
+        return price;
+    }
+
+    public void setPrice(Integer price) {
+        this.price = price;
+    }
+
+    public String getShop() {
+        return shop;
+    }
+
+    public void setShop(String shop) {
+        this.shop = shop;
+    }
+
+    public ShoppingCart() {
+    }
+
+    public ShoppingCart(String name, Integer number, String picture, Integer price, String shop) {
+        this.name = name;
         this.number = number;
+        this.picture = picture;
+        this.price = price;
+        this.shop = shop;
     }
 }

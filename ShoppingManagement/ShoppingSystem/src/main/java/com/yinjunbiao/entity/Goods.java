@@ -11,6 +11,8 @@ public class Goods {
 
     private Integer shopId;
 
+    private String shopName;
+
     private String description;
 
     private Integer sales;
@@ -29,11 +31,12 @@ public class Goods {
         return "Goods{" +
                 "id=" + id +
                 ", shopId=" + shopId +
+                ", shopName='" + shopName + '\'' +
                 ", description='" + description + '\'' +
                 ", sales=" + sales +
                 ", inventory=" + inventory +
                 ", price=" + price +
-                ", picture=" + picture +
+                ", picture='" + picture + '\'' +
                 ", name='" + name + '\'' +
                 '}';
     }
@@ -102,12 +105,21 @@ public class Goods {
         this.picture = picture;
     }
 
+    public String getShopName() {
+        return shopName;
+    }
+
+    public void setShopName(String shopName) {
+        this.shopName = shopName;
+    }
+
     public Goods() {
     }
 
-    public Goods(Long id, Integer shopId, String description, Integer sales, Integer inventory, Integer price, String picture, String name) {
+    public Goods(Long id, Integer shopId, String shopName, String description, Integer sales, Integer inventory, Integer price, String picture, String name) {
         this.id = id;
         this.shopId = shopId;
+        this.shopName = shopName;
         this.description = description;
         this.sales = sales;
         this.inventory = inventory;

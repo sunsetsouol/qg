@@ -13,9 +13,5 @@ public interface GoodsService {
 
     ResultSet selectByName(String name,Integer currentPage, Integer pageSize);
 
-    ResultSet newOrders (Orders orders);
-
-    ResultSet addCart (Cart cart);
-
     ResultSet changeShoppingCart(Cart cart);
 }

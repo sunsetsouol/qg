@@ -22,8 +22,6 @@ public interface UserService {
 
     ResultSet selectMyShoppingCart(Integer id);
 
-    ResultSet addShoppingCart(Cart cart);
-
     ResultSet delectShoppingCart(Long id);
 
     ResultSet changeShoppingCart(Cart cart);
@@ -52,5 +50,9 @@ public interface UserService {
 
     ResultSet reportGoods(Report report);
 
+    ResultSet selectMyShop(Integer id);
 
+    ResultSet addCart(Cart cart);
+
+    ResultSet newOrders(Orders orders);
 }

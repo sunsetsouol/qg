@@ -7,6 +7,8 @@ import com.yinjunbiao.MySpring.Annotation.ComponentScan;
 import com.yinjunbiao.MySpring.Annotation.Scope;
 
 import com.yinjunbiao.entity.Apply;
+import com.yinjunbiao.entity.Cart;
+import com.yinjunbiao.entity.Orders;
 import com.yinjunbiao.entity.User;
 import com.yinjunbiao.pojo.ResultSet;
 import com.yinjunbiao.service.GoodsService;
@@ -70,7 +72,12 @@ public class UserServlet extends BaseServlet {
         response.getWriter().write(JSON.toJSONString(resultSet));
     }
 
-    //注册
+    /**
+     * 注册
+     * @param request
+     * @param response
+     * @throws Exception
+     */
     public void register(HttpServletRequest request, HttpServletResponse response) throws Exception {
         //读取json数据转换成user，并判断是否为空
         BufferedReader reader = request.getReader();
@@ -92,6 +99,12 @@ public class UserServlet extends BaseServlet {
 
     }
 
+    /**
+     * 忘记密码
+     * @param request
+     * @param response
+     * @throws IOException
+     */
     public void forget(HttpServletRequest request, HttpServletResponse response) throws IOException {
         BufferedReader reader = request.getReader();
         String s = reader.readLine();
@@ -108,6 +121,64 @@ public class UserServlet extends BaseServlet {
         response.getWriter().write(JSON.toJSONString(resultSet));
     }
 
+    /**
+     * 直接购买
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    public void buy(HttpServletRequest request, HttpServletResponse response) throws IOException{
+        String token = request.getHeader("Authorization");
+        try {
+            Claims claims = JwtUtil.parseJWT(token);
+            Integer id = (Integer) claims.get("id");
+            BufferedReader reader = request.getReader();
+            String s = reader.readLine();
+            Orders orders = JSON.parseObject(s, Orders.class);
+            orders.setUserId(id);
+            ResultSet resultSet = userService.newOrders(orders);
+            if (resultSet.getCode() == 1){
+                response.setStatus(200);
+                response.setContentType("application/json;charset=utf-8");
+                response.getWriter().write(JSON.toJSONString(resultSet));
+            }
+        }catch (Exception e){
+            response.sendRedirect("/ShoppingSystem/login.html");
+        }
+    }
+
+    /**
+     * 添加到购物车
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    public void addCart(HttpServletRequest request, HttpServletResponse response) throws IOException{
+        String token = request.getHeader("Authorization");
+        try{
+            Claims claims = JwtUtil.parseJWT(token);
+            Integer id = (Integer) claims.get("id");
+            BufferedReader reader = request.getReader();
+            String s = reader.readLine();
+            Cart cart = JSON.parseObject(s, Cart.class);
+            cart.setUserId(id);
+            ResultSet resultSet = userService.addCart(cart);
+            if (resultSet.getCode() == 1){
+                response.setStatus(200);
+                response.setContentType("application/json;charset=utf-8");
+                response.getWriter().write(JSON.toJSONString(resultSet));
+            }
+        }catch (Exception e){
+            response.sendRedirect("/ShoppingSystem/login.html");
+        }
+    }
+
+    /**
+     * 申请称为商家
+     * @param request
+     * @param response
+     * @throws IOException
+     */
     public void apply(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
             BufferedReader reader = request.getReader();
@@ -127,12 +198,39 @@ public class UserServlet extends BaseServlet {
         }
     }
 
+    /**
+     * 查询购物车
+     * @param request
+     * @param response
+     * @throws IOException
+     */
     public void searchMyCart(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
             String authorization = request.getHeader("Authorization");
             Claims claims = JwtUtil.parseJWT(authorization);
             Integer id = (Integer) claims.get("id");
             ResultSet resultSet = userService.selectMyShoppingCart(id);
+            response.setStatus(200);
+            response.setContentType("application/json;charset=utf-8");
+            response.getWriter().write(JSON.toJSONString(resultSet));
+        }catch (Exception e){
+            response.sendRedirect("/ShoppingSystem/login.html");
+
+        }
+    }
+
+    /**
+     * 查询自己的店铺
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    public void myShop(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            String authorization = request.getHeader("Authorization");
+            Claims claims = JwtUtil.parseJWT(authorization);
+            Integer id = (Integer) claims.get("id");
+            ResultSet resultSet = userService.selectMyShop(id);
             response.setStatus(200);
             response.setContentType("application/json;charset=utf-8");
             response.getWriter().write(JSON.toJSONString(resultSet));

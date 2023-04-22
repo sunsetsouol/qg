@@ -1,5 +1,7 @@
 package com.yinjunbiao.util;
 
+import java.text.SimpleDateFormat;
+
 /**
  * 常量类
  * @author yinjunbiao
@@ -22,5 +24,7 @@ public class CONST {
     public static final String SINGLETON = "singleton";
 
     public static final String JWTKEY = "JwtKey";
+
+    public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 }

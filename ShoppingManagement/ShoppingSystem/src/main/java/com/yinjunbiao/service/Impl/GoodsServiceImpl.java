@@ -54,35 +54,7 @@ public class GoodsServiceImpl implements GoodsService {
         return  ResultSet.success(goods,"查询成功");
     }
 
-    /**
-     * 生成订单
-     * @param orders
-     * @return
-     */
-    @Override
-    public ResultSet newOrders(Orders orders) {
-        ResultSet resultSet = null;
-        Goods goods = goodsMapper.selectById(orders.getGoodsId());
-        if (orders.getNumber() <= goods.getInventory()){
-            synchronized (goodsMapper){
-                goods = goodsMapper.selectById(orders.getGoodsId());
-                if (orders.getNumber() <= goods.getInventory()){
-                    //插入订单同时库存减
-                    ordersMapper.insert(System.currentTimeMillis(),userMapper.selectById(shopMapper.selectById(goods.getShopId()).getBossId()).getAddress(),userMapper.selectById(orders.getUserId()).getAddress(),orders.getGoodsId(),orders.getUserId(),orders.getNumber(),orders.getSinglePrice());
-                    goodsMapper.updateInventory(goods.getInventory() - orders.getNumber(),orders.getGoodsId());
-                    resultSet = ResultSet.success();
-                }
-            }
-        }
-        if (resultSet == null){
-            SqlSessionUtil.rollback();
-            resultSet = ResultSet.error(null,"库存不足");
-        }else {
-            SqlSessionUtil.commit();
-        }
-        SqlSessionUtil.close();
-        return resultSet;
-    }
+
 
     /**
      * 修改购物车数量
@@ -107,29 +79,5 @@ public class GoodsServiceImpl implements GoodsService {
         return ResultSet.success(null,"修改成功");
     }
 
-    /**
-     * 添加到购物车
-     */
-    @Override
-    public ResultSet addCart(Cart cart) {
-        Cart shoppingCart = cartMapper.selectByUAGId(cart.getUserId(), cart.getGoodsId());
-        ResultSet resultSet = null;
-        if (shoppingCart == null){
-            synchronized (cartMapper){
-                shoppingCart = cartMapper.selectByUAGId(cart.getUserId(),cart.getGoodsId());
-                if (shoppingCart == null){
-                    if (cartMapper.insert(cart.getGoodsId(),cart.getNumber(),cart.getUserId(),cart.getSinglePrice()) == 1) {
-                        resultSet = ResultSet.success(null,"插入成功");
-                    }
-                }
-            }
-        }
-        if (resultSet == null) {
-            cart.setNumber(shoppingCart.getNumber() + cart.getNumber());
-            resultSet = changeShoppingCart(cart);
-        }
-        SqlSessionUtil.commit();
-        SqlSessionUtil.close();
-        return resultSet;
-    }
+
 }

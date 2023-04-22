@@ -15,7 +15,7 @@ public interface GoodsMapper {
     @ResultMap(id = "goodsResultMap")
     List<Goods> selectAll(@Param("begin")Integer begin,@Param("size")Integer size);
 
-    @Select(sql = "select * from goods where description like #{name} or name like #{name} limit #{begin},#{size}")
+    @Select(sql = "select * from goods where description like #{name} or name like #{name} or shop_name like #{name} limit #{begin},#{size}")
     @ResultMap(id = "goodsResultMap")
     List<Goods> selectByName(@Param("name")String name,@Param("begin")Integer begin,@Param("size")Integer size);
 
@@ -27,9 +27,9 @@ public interface GoodsMapper {
     @ResultMap(id = "goodsResultMap")
     Goods selectById(@Param("id")Long id);
 
-    @Insert(sql = "insert into goods values(null,#{shopId},#{description},0,#{inventory},#{price},#{picture},#{name}")
+    @Insert(sql = "insert into goods values(null,#{shopId},#{shopName},#{description},0,#{inventory},#{price},#{picture},#{name}")
     @ResultMap(id = "goodsResultMap")
-    int insert(@Param("shopId")Integer shopId,@Param("description")String description,@Param("inventory")Integer inventory,@Param("price")Integer price,@Param("picture")String picture,@Param("name")String name);
+    int insert(@Param("shopId")Integer shopId,@Param("shopName")String shopName,@Param("description")String description,@Param("inventory")Integer inventory,@Param("price")Integer price,@Param("picture")String picture,@Param("name")String name);
 
     @Delete(sql = "delete from goods where id = #{id}")
     @ResultMap(id = "goodsResultMap")

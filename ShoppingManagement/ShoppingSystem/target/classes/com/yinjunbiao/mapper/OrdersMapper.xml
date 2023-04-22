@@ -10,6 +10,7 @@
         <result property="goodsId" column="goods_id"/>
         <result property="userId" column="user_id"/>
         <result property="singlePrice" column="single_price"/>
+        <result property="goodsName" column="goods_name"/>
     </resultMap>
 
 </mapper>

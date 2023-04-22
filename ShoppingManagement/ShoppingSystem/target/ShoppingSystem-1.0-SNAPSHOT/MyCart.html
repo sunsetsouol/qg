@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="app">
+
+
+    <!--按钮-->
+
+    <el-row>
+
+        <el-button type="danger" plain @click="deleteByIds">批量删除</el-button>
+        <el-button type="primary" plain @click="cleanMyCart">购买</el-button>
+
+    </el-row>
+
+
+
+
+    <!--表格-->
+    <template>
+        <el-table
+                :data="tableData"
+                style="width: 100%"
+                :row-class-name="tableRowClassName"
+                @selection-change="handleSelectionChange"
+        >
+            <el-table-column
+                    type="selection"
+                    width="55">
+            </el-table-column>
+            <el-table-column
+                    type="index"
+                    width="50">
+            </el-table-column>
+
+            <el-table-column
+                    prop="name"
+                    label="商品名称"
+                    align="center"
+            >
+            </el-table-column>
+            <el-table-column
+                    prop="number"
+                    label="数量"
+                    align="center"
+            >
+            </el-table-column>
+
+            <el-table-column
+                    prop="picture"
+                    align="center"
+                    label="图片">
+                <template >
+                    <el-image :src="picture" />
+                </template>
+            </el-table-column>
+
+            <el-table-column
+                    prop="price"
+                    align="center"
+                    label="价格">
+            </el-table-column>
+
+            <el-table-column
+                    prop="shop"
+                    align="center"
+                    label="店名">
+            </el-table-column>
+
+            <el-table-column
+                    align="center"
+                    label="操作">
+                <template slot-scope="scope">
+                    <el-row>
+                        <el-button type="primary"  @click="delete(scope.row)">删除</el-button>
+                    </el-row>
+                </template>
+            </el-table-column>
+
+        </el-table>
+    </template>
+
+
+</div>
+
+
+<script src="js/vue.js"></script>
+<script src="element-ui/lib/index.js"></script>
+<link rel="stylesheet" href="element-ui/lib/theme-chalk/index.css">
+<script src="js/axios-0.18.0.js"></script>
+<script>
+    new Vue({
+        el: "#app",
+        mounted(){
+            this.selectMyCart();
+        },
+        methods: {
+            delete(row){
+
+            },
+            selectMyCart(){
+                var _this = this;
+                axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
+                axios({
+                    method:"post",
+                    url:"http://localhost:8080/ShoppingSystem/user/searchMyCart"
+                }).then(function (resp){
+                    _this.tableData = resp.data.data;
+                })
+
+            },
+            tableRowClassName({row, rowIndex}) {
+                if (rowIndex === 1) {
+                    return 'warning-row';
+                } else if (rowIndex === 3) {
+                    return 'success-row';
+                }
+                return '';
+            },
+            handleSelectionChange(val) {
+                this.multipleSelection = val;
+
+                console.log(this.multipleSelection)
+            },
+
+        },
+        data() {
+            return {
+
+                dialogVisible: false,
+
+                //被选中的id数组
+                selectedIds:[],
+                // 复选框选中数据集合
+                multipleSelection: [],
+                // 表格数据
+                tableData: [{
+                    name: '',
+                    number: '',
+                    picture: '',
+                    price: "",
+                    shop:'',
+                    goodsId:''
+                }]
+            }
+        }
+    })
+
+</script>
+
+</body>
+</html>
