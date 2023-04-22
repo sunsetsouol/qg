@@ -46,11 +46,15 @@ public class JdbcTransaction implements Transaction {
                 commit();
                 PooledDataSource pooledDataSource = (PooledDataSource) dataSource;
                 MyConnectionPool pool = pooledDataSource.getPool();
-                pool.releaseConnection(THREAD.get());
+                if (THREAD.get() != null){
+                    pool.releaseConnection(THREAD.get());
+                }
             }
             //非连接池
             if (dataSource instanceof UnPooledDataSource){
-                THREAD.get().close();
+                if (THREAD.get() != null){
+                    THREAD.get().close();
+                }
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();

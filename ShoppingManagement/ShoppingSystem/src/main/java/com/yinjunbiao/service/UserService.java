@@ -22,19 +22,9 @@ public interface UserService {
 
     ResultSet selectMyShoppingCart(Integer id);
 
-    ResultSet delectShoppingCart(Long id);
-
     ResultSet changeShoppingCart(Cart cart);
 
-    ResultSet buyAllcart(Integer id);
-
-    ResultSet buyCart(Cart cart);
-
-    ResultSet buy(Orders orders);
-
-    ResultSet refund(Refund refund);
-
-    ResultSet selectMyOrders(Integer userId);
+    ResultSet selectMyOrders(Integer userId,Integer status);
 
     ResultSet subscrible(Subscrible subscrible);
 
@@ -57,4 +47,9 @@ public interface UserService {
     ResultSet addCart(Cart cart);
 
     ResultSet newOrders(Orders orders);
+
+    ResultSet delectCarts(Long[] id);
+
+    ResultSet buyCarts(Long[] ids);
+
 }

@@ -200,12 +200,16 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public ResultSet changeHeadshot(String headshot, Integer id) {
+        ResultSet resultSet = null;
         if (userMapper.updateHeadshot(headshot, id) == 1) {
             SqlSessionUtil.commit();
-            SqlSessionUtil.close();
-            return ResultSet.success(null, "修改成功");
+            resultSet = ResultSet.success(null, "修改成功");
+        }else {
+            SqlSessionUtil.rollback();
+            resultSet = ResultSet.error();
         }
-        return ResultSet.error();
+        SqlSessionUtil.close();
+        return resultSet;
     }
 
     /**
@@ -253,194 +257,6 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    /**
-     * 根据id删除购物车
-     * @param id
-     * @return
-     */
-    @Override
-    public ResultSet delectShoppingCart(Long id) {
-        cartMapper.deleteById(id);
-        SqlSessionUtil.commit();
-        SqlSessionUtil.close();
-        return ResultSet.success(null, "删除成功");
-    }
-
-
-    @Override
-    public ResultSet buyCart(Cart cart) {
-        Goods goods = goodsMapper.selectById(cart.getGoodsId());
-        ResultSet resultSet = null;
-        if (goods.getInventory() < cart.getNumber()) {
-            resultSet = ResultSet.error(null, "库存不足");
-        } else {
-            synchronized (ordersMapper) {
-                goods = goodsMapper.selectById(cart.getGoodsId());
-                if (goods.getInventory() < cart.getNumber()) {
-                    resultSet = ResultSet.error(null, "库存不足");
-                } else {
-                    ordersMapper.insert(System.currentTimeMillis(), userMapper.selectById(shopMapper.selectById(cart.getShopId()).getBossId()).getAddress(), userMapper.selectById(cart.getUserId()).getAddress(), cart.getGoodsId(),cart.getShopId(), cart.getUserId(), cart.getNumber(), cart.getSinglePrice());
-                    cartMapper.deleteById(cart.getId());
-                    resultSet = ResultSet.success();
-                }
-            }
-        }
-        if (resultSet.getCode() == 1) {
-            SqlSessionUtil.commit();
-        } else {
-            SqlSessionUtil.rollback();
-        }
-        SqlSessionUtil.close();
-        return resultSet;
-    }
-
-    @Override
-    public ResultSet buyAllcart(Integer id) {
-        List<Cart> shoppingCarts = cartMapper.selectByUserId(id);
-        ResultSet resultSet = null;
-        for (Cart shoppingCart : shoppingCarts) {
-            resultSet = buyCart(shoppingCart);
-            if (resultSet.getCode() != 1) {
-                SqlSessionUtil.rollback();
-                break;
-            }
-        }
-        SqlSessionUtil.commit();
-        if (resultSet == null) {
-            resultSet = ResultSet.success();
-        }
-        return resultSet;
-    }
-
-    @Override
-    public ResultSet buy(Orders orders) {
-        ResultSet resultSet = null;
-        Goods goods = goodsMapper.selectById(orders.getGoodsId());
-        if (orders.getNumber() > goods.getInventory()) {
-            resultSet = ResultSet.error(null, "库存不足");
-        } else {
-            synchronized (ordersMapper) {
-                goods = goodsMapper.selectById(orders.getGoodsId());
-                if (orders.getNumber() > goods.getInventory()) {
-                    resultSet = ResultSet.error(null, "库存不足");
-                } else {
-                    ordersMapper.insert(System.currentTimeMillis(), userMapper.selectById(shopMapper.selectById(goods.getShopId()).getBossId()).getAddress(), userMapper.selectById(orders.getUserId()).getAddress(), orders.getGoodsId(),orders.getShopId(), orders.getUserId(), orders.getNumber(), orders.getSinglePrice());
-                    resultSet = ResultSet.success();
-                }
-            }
-        }
-        SqlSessionUtil.commit();
-        SqlSessionUtil.close();
-        return resultSet;
-    }
-
-    @Override
-    public ResultSet refund(Refund refund) {
-        //查找订单
-        Orders select = ordersMapper.select(refund.getOrderId());
-        ResultSet resultSet = null;
-        if (select != null) {
-            //订单存在且没有重复申请
-            List<Refund> refunds = refundMapper.selectByOrderId(select.getId());
-            //超过两次就不能继续申请了
-            if (refunds == null || (refunds.size() < 2 && refunds.get(0).getStatus() != 0)) {
-                synchronized (refundMapper) {
-                    refunds = refundMapper.selectByOrderId(select.getId());
-                    if (refunds == null || (refunds.size() < 2 && refunds.get(0).getStatus() != 0)) {
-                        refundMapper.insert(select.getId(), refund.getCause(), refund.getDescription());
-                        resultSet = ResultSet.success();
-                    }
-                }
-            }
-        }
-        if (resultSet == null) {
-            resultSet = ResultSet.error(null, "退款申请次数过多");
-        }
-        return resultSet;
-    }
-
-    @Override
-    public ResultSet selectSub(Subscrible subscrible) {
-        Subscrible select = subscribleMapper.selectByUASId(subscrible.getUserId(), subscrible.getShopId());
-        ResultSet resultSet = null;
-        if (select == null) {
-            resultSet = ResultSet.error();
-        }
-        if (resultSet == null) {
-            resultSet = ResultSet.success();
-        }
-        return resultSet;
-    }
-
-
-    @Override
-    public ResultSet subscrible(Subscrible subscrible) {
-        ResultSet resultSet = null;
-        if (subscribleMapper.selectByUASId(subscrible.getUserId(), subscrible.getShopId()) == null) {
-            synchronized (subscribleMapper) {
-                if (subscribleMapper.selectByUASId(subscrible.getUserId(), subscrible.getShopId()) == null) {
-                    subscribleMapper.insert(subscrible.getUserId(), subscrible.getShopId());
-                    resultSet = ResultSet.success(null, "订阅成功");
-                } else {
-                    subscribleMapper.deleteByUASId(subscrible.getUserId(), subscrible.getShopId());
-                }
-            }
-        } else {
-            subscribleMapper.deleteByUASId(subscrible.getUserId(), subscrible.getShopId());
-        }
-        if (resultSet == null) {
-            resultSet = ResultSet.success(null, "取消订阅成功");
-        }
-        return resultSet;
-    }
-
-    @Override
-    public ResultSet selectMySubs(Integer userId) {
-        List<Subscrible> subscribles = subscribleMapper.selectbyUserId(userId);
-        return ResultSet.success(subscribles, "查询成功");
-    }
-
-    @Override
-    public ResultSet sendConsultation(Consultation consultation) {
-        consultationMapper.insert(consultation.getGoodsId(), consultation.getConsultation(), consultation.getUserId());
-        return ResultSet.success();
-    }
-
-    @Override
-    public ResultSet deleteConsultation(Long id) {
-        int delete = consultationMapper.deleteById(id);
-        return delete == 1 ? ResultSet.success(null, "删除成功") : ResultSet.error(null, "评论不存在，可能已经被删除");
-    }
-
-    @Override
-    public ResultSet sendReply(Reply reply) {
-        int insert = replyMapper.insert(reply.getConsultationId(), reply.getReply(), reply.getUserId());
-        return insert == 1 ? ResultSet.success(null, "发送成功") : ResultSet.error(null, "发送异常");
-    }
-
-    @Override
-    public ResultSet deleteReply(Long id) {
-        int delete = replyMapper.deleteById(id);
-        return delete == 1 ? ResultSet.success(null, "删除成功") : ResultSet.error(null, "回复不存在，可能已经删除");
-    }
-
-    @Override
-    public ResultSet reportGoods(Report report) {
-        ResultSet resultSet = null;
-        if (reportMapper.selectByUAGId(report.getUserId(), report.getGoodId()) == null) {
-            synchronized (reportMapper) {
-                if (reportMapper.selectByUAGId(report.getUserId(), report.getGoodId()) == null) {
-                    reportMapper.insert(report.getGoodId(), report.getUserId(), report.getStatus(), report.getDescription());
-                    resultSet = ResultSet.success(null, "举报成功");
-                }
-            }
-        }
-        if (resultSet == null) {
-            resultSet = ResultSet.error(null, "请勿重复举报");
-        }
-        return resultSet;
-    }
-
 
     @Override
     public ResultSet changeShoppingCart(Cart cart) {
@@ -479,7 +295,7 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * 生成订单
+     * 生成订单(购买
      * @param orders
      * @return
      */
@@ -550,18 +366,173 @@ public class UserServiceImpl implements UserService {
         }else {
             resultSet = ResultSet.success(shop.getId(),null);
         }
+        SqlSessionUtil.close();
         return resultSet;
     }
 
     @Override
-    public ResultSet selectMyOrders(Integer userId) {
-        List<Orders> orders = ordersMapper.selectByUserId(userId);
+    public ResultSet selectMyOrders(Integer userId,Integer status) {
+        List<Orders> orders = ordersMapper.selectByUserId(userId,status);
         List<ShopOrders> shopOrders = new ArrayList<>();
         for (Orders order : orders) {
             Goods goods = goodsMapper.selectById(order.getGoodsId());
             ShopOrders shopOrder = new ShopOrders(order.getId(), CONST.dateFormat.format(order.getTime()),order.getSendAddress(),order.getReceiveAddress(),goods.getName(),order.getStatus(),userMapper.selectById(order.getUserId()).getUserName(),order.getNumber(),goods.getShopName(),goods.getPrice());
             shopOrders.add(shopOrder);
         }
+        SqlSessionUtil.close();
         return ResultSet.success(shopOrders,null);
     }
+
+
+    /**
+     * 根据id删除购物车
+     * @param ids
+     * @return
+     */
+    @Override
+    public ResultSet delectCarts(Long[] ids) {
+        for (Long id : ids) {
+            cartMapper.deleteById(id);
+        }
+        SqlSessionUtil.commit();
+        SqlSessionUtil.close();
+        return ResultSet.success(null, "删除成功");
+    }
+
+    /**
+     * 购买购物车的商品
+     * @param ids
+     * @return
+     */
+    @Override
+    public ResultSet buyCarts(Long[] ids) {
+        ResultSet resultSet = null;
+        for (Long id : ids) {
+            Cart cart = cartMapper.selectById(id);
+            Goods goods = goodsMapper.selectById(cart.getGoodsId());
+            if (goods.getInventory() >= cart.getNumber()) {
+                synchronized (ordersMapper) {
+                    goods = goodsMapper.selectById(cart.getGoodsId());
+                    if (goods.getInventory() >= cart.getNumber()) {
+                        ordersMapper.insert(System.currentTimeMillis(), userMapper.selectById(shopMapper.selectById(cart.getShopId()).getBossId()).getAddress(), userMapper.selectById(cart.getUserId()).getAddress(), cart.getGoodsId(), cart.getShopId(), cart.getUserId(), cart.getNumber(), cart.getSinglePrice());
+                        cartMapper.deleteById(cart.getId());
+                    }else {
+                        resultSet = ResultSet.error();
+                        break;
+                    }
+                }
+            }else {
+                resultSet = ResultSet.error();
+                break;
+            }
+        }
+        if (resultSet == null){
+            resultSet = ResultSet.success();
+            SqlSessionUtil.commit();
+        }else {
+            SqlSessionUtil.rollback();
+        }
+        SqlSessionUtil.close();
+        return resultSet;
+    }
+
+
+
+
+
+
+
+    @Override
+    public ResultSet selectSub(Subscrible subscrible) {
+        Subscrible select = subscribleMapper.selectByUASId(subscrible.getUserId(), subscrible.getShopId());
+        ResultSet resultSet = null;
+        if (select == null) {
+            resultSet = ResultSet.error();
+        }
+        if (resultSet == null) {
+            resultSet = ResultSet.success();
+        }
+        return resultSet;
+    }
+
+
+    @Override
+    public ResultSet subscrible(Subscrible subscrible) {
+        ResultSet resultSet = null;
+        if (subscribleMapper.selectByUASId(subscrible.getUserId(), subscrible.getShopId()) == null) {
+            synchronized (subscribleMapper) {
+                if (subscribleMapper.selectByUASId(subscrible.getUserId(), subscrible.getShopId()) == null) {
+                    subscribleMapper.insert(subscrible.getUserId(), subscrible.getShopId());
+                    resultSet = ResultSet.success(null, "订阅成功");
+                } else {
+                    subscribleMapper.deleteByUASId(subscrible.getUserId(), subscrible.getShopId());
+                }
+            }
+        } else {
+            subscribleMapper.deleteByUASId(subscrible.getUserId(), subscrible.getShopId());
+        }
+        if (resultSet == null) {
+            resultSet = ResultSet.success(null, "取消订阅成功");
+        }
+        SqlSessionUtil.commit();
+        SqlSessionUtil.close();
+        return resultSet;
+    }
+
+    @Override
+    public ResultSet selectMySubs(Integer userId) {
+        List<Subscrible> subscribles = subscribleMapper.selectbyUserId(userId);
+        SqlSessionUtil.close();
+        return ResultSet.success(subscribles, "查询成功");
+    }
+
+    @Override
+    public ResultSet sendConsultation(Consultation consultation) {
+        consultationMapper.insert(consultation.getGoodsId(), consultation.getConsultation(), consultation.getUserId());
+        SqlSessionUtil.commit();
+        SqlSessionUtil.close();
+        return ResultSet.success();
+    }
+
+    @Override
+    public ResultSet deleteConsultation(Long id) {
+        int delete = consultationMapper.deleteById(id);
+        SqlSessionUtil.commit();
+        SqlSessionUtil.close();
+        return delete == 1 ? ResultSet.success(null, "删除成功") : ResultSet.error(null, "评论不存在，可能已经被删除");
+    }
+
+    @Override
+    public ResultSet sendReply(Reply reply) {
+        int insert = replyMapper.insert(reply.getConsultationId(), reply.getReply(), reply.getUserId());
+        SqlSessionUtil.commit();
+        SqlSessionUtil.close();
+        return insert == 1 ? ResultSet.success(null, "发送成功") : ResultSet.error(null, "发送异常");
+    }
+
+    @Override
+    public ResultSet deleteReply(Long id) {
+        int delete = replyMapper.deleteById(id);
+        return delete == 1 ? ResultSet.success(null, "删除成功") : ResultSet.error(null, "回复不存在，可能已经删除");
+    }
+
+    @Override
+    public ResultSet reportGoods(Report report) {
+        ResultSet resultSet = null;
+        if (reportMapper.selectByUAGId(report.getUserId(), report.getGoodId()) == null) {
+            synchronized (reportMapper) {
+                if (reportMapper.selectByUAGId(report.getUserId(), report.getGoodId()) == null) {
+                    reportMapper.insert(report.getGoodId(), report.getUserId(), report.getStatus(), report.getDescription());
+                    resultSet = ResultSet.success(null, "举报成功");
+                }
+            }
+        }
+        if (resultSet == null) {
+            resultSet = ResultSet.error(null, "请勿重复举报");
+        }
+        SqlSessionUtil.commit();
+        SqlSessionUtil.close();
+        return resultSet;
+    }
+
 }

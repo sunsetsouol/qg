@@ -13,7 +13,7 @@
     <el-row>
 
         <el-button type="danger" plain @click="deleteByIds">批量删除</el-button>
-        <el-button type="primary" plain @click="cleanMyCart">购买</el-button>
+        <el-button type="primary" plain @click="buyByIds">购买</el-button>
 
     </el-row>
 
@@ -76,7 +76,8 @@
                     label="操作">
                 <template slot-scope="scope">
                     <el-row>
-                        <el-button type="primary"  @click="deleteRow(scope.row)">删除</el-button>
+                        <el-button type="primary"  @click="buyRow(scope.row)">购买</el-button>
+                        <el-button type="danger"  @click="deleteRow(scope.row)">删除</el-button>
                     </el-row>
                 </template>
             </el-table-column>
@@ -99,6 +100,69 @@
             this.selectMyCart();
         },
         methods: {
+            buyRow(row){
+                this.$confirm('请进行支付', '付款', {
+                    confirmButtonText: '付款',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    var _this = this;
+                    this.selectedIds=[row.id]
+                    axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
+                    axios({
+                        method:"post",
+                        url:"http://localhost:8080/ShoppingSystem/user/buyCartByIds",
+                        data:_this.selectedIds
+                    }).then(function (resp){
+                        if(resp.data.code == 1){
+                            _this.$message({
+                                message: '付款成功',
+                                type: 'success'
+                            });
+                            _this.selectMyCart();
+                        }
+                    })
+
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消支付'
+                    });
+                });
+            },
+            buyByIds(){
+                this.$confirm('请进行支付', '付款', {
+                    confirmButtonText: '付款',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+
+                    for (let i = 0; i <this.multipleSelection.length ; i++) {
+                        this.selectedIds[i] = this.multipleSelection[i].id;
+                    }
+                    var _this = this;
+                    axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
+                    axios({
+                        method:"post",
+                        url:"http://localhost:8080/ShoppingSystem/user/buyCartByIds",
+                        data:_this.selectedIds
+                    }).then(function (resp){
+                        if(resp.data.code == 1){
+                            _this.$message({
+                                message: '支付成功',
+                                type: 'success'
+                            });
+                            _this.selectMyCart();
+                        }
+                    })
+
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消付款'
+                    });
+                });
+            },
             deleteRow(row){
                 this.$confirm('此操作将删除该数据, 是否继续?', '提示', {
                     confirmButtonText: '确定',

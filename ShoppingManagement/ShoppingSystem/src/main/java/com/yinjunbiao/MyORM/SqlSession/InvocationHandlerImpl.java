@@ -167,6 +167,9 @@ public class InvocationHandlerImpl implements InvocationHandler {
         }
         resultSet.close();
         //判断返回类型
+        if (result.size() == 0){
+            return  null;
+        }
         if(method.getReturnType().equals(List.class)){
             return result;
         }

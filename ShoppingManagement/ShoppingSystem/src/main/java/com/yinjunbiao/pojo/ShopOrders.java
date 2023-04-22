@@ -143,8 +143,12 @@ public class ShopOrders {
             this.status = "未发货";
         }else if (status == 2){
             this.status = "已发货";
-        }else {
+        }else if(status == 3){
             this.status = "已收货";
+        }else if (status == 4){
+            this.status = "退款中";
+        }else {
+            this.status = "已退款";
         }
         this.userName = userName;
         this.number = number;

@@ -8,9 +8,9 @@
         <result property="sendAddress" column="send_address"/>
         <result property="receiveAddress" column="receive_address"/>
         <result property="goodsId" column="goods_id"/>
+        <result property="shopId" column="shop_id"/>
         <result property="userId" column="user_id"/>
         <result property="singlePrice" column="single_price"/>
-        <result property="goodsName" column="goods_name"/>
     </resultMap>
 
 </mapper>

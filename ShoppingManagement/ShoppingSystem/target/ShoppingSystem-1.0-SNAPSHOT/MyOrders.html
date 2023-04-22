@@ -7,16 +7,43 @@
 <body>
 <div id="app">
 
-
+    <el-button type="primary" plain @click="selectNotSend">待发货</el-button>
+    <el-button type="primary" plain @click="selectSended">待收货</el-button>
+    <el-button type="primary" plain @click="selectReceive">已收款</el-button>
+    <el-button type="primary" plain @click="selectRefunding">退款中</el-button>
+    <el-button type="primary" plain @click="selectRefunded">已退款</el-button>
     <!--按钮-->
 
-    <el-row>
+    <el-dialog
+            title="编辑品牌"
+            :visible.sync="dialogVisible"
+            width="30%"
+    >
 
-        <el-button type="danger" plain @click="deleteByIds">批量删除</el-button>
-        <el-button type="primary" plain @click="cleanMyCart">购买</el-button>
+        <el-form ref="form" :model="refund" :required="true" label-width="80px">
+            <el-form-item label="订单号">
+                <el-input v-model="refund.orderId"></el-input>
+            </el-form-item>
 
-    </el-row>
+            <el-form-item label="退款原因">
+                <el-select v-model="refund.cause" placeholder="请选择退款原因" default-first-option>
+                    <el-option label="无理由退款" value="0" ></el-option>
+                    <el-option label="质量问题" value="1"></el-option>
+                </el-select>
+            </el-form-item>
 
+            <el-form-item label="原因说明">
+                <el-input type="textarea" v-model="refund.description"></el-input>
+            </el-form-item>
+
+
+            <el-form-item>
+                <el-button type="primary" @click="submitRefund">提交</el-button>
+                <el-button @click="dialogVisible = false">取消</el-button>
+            </el-form-item>
+        </el-form>
+
+    </el-dialog>
 
 
 
@@ -89,7 +116,8 @@
                     label="操作">
                 <template slot-scope="scope">
                     <el-row>
-                        <el-button type="primary"  @click="deleteRow(scope.row)">已收货</el-button>
+                        <el-button type="primary"  @click="confirmReceipt(scope.row)">确认收货</el-button>
+                        <el-button type="danger"  @click="applyRefund(scope.row)">申请退款</el-button>
                     </el-row>
                 </template>
             </el-table-column>
@@ -109,20 +137,136 @@
     new Vue({
         el: "#app",
         mounted(){
-            this.selectMyOrders();
+            this.selectNotSend();
         },
         methods: {
-            selectMyOrders(){
+            applyRefund(row){
+                this.refund.orderId = row.id;
+                this.dialogVisible = true;
+            },
+            submitRefund(){
+                    this.$confirm('确认申请退款？', '退款', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        var _this = this;
+                        axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
+                        axios({
+                            method:"post",
+                            url:"http://localhost:8080/ShoppingSystem/user/refund",
+                            data:this.refund
+                        }).then(function (resp){
+                            if (resp.data.code == 1){
+                                _this.$message({
+                                    type: 'info',
+                                    message: '申请成功'
+                                });
+                            }else {
+                                _this.$alert('请勿重复申请', '申请失败', {
+                                    confirmButtonText: '确定',
+                                    callback: action => {
+                                        this.$message({
+                                            type: 'info',
+                                            message: `action: ${ action }`
+                                        });
+                                    }
+                                });
+                            }
+                        })
+
+                    }).catch(() => {
+                        this.$message({
+                            type: 'info',
+                            message: '已取消'
+                        });
+                    });
+            },
+            confirmReceipt(row){
+
+                if (row.status == '已发货'){
+                    this.$confirm('确认已经收货？（不能修改）', '已收货', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        var _this = this;
+                        axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
+                        axios({
+                            method:"post",
+                            url:"http://localhost:8080/ShoppingSystem/user/confirmReceipt",
+                            data:row.id
+                        }).then(function (resp){
+                            _this.selectNotSend();
+                        })
+
+                    }).catch(() => {
+                        this.$message({
+                            type: 'info',
+                            message: '已取消'
+                        });
+                    });
+                }
+            },
+
+            selectNotSend(){
                 var _this = this;
                 axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
                 axios({
                     method:"post",
-                    url:"http://localhost:8080/ShoppingSystem/user/myOrders"
+                    url:"http://localhost:8080/ShoppingSystem/user/myOrders",
+                    data:"status=1"
                 }).then(function (resp){
                     _this.tableData = resp.data.data;
                 })
 
             },
+            selectSended(){
+                var _this = this;
+                axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
+                axios({
+                    method:"post",
+                    url:"http://localhost:8080/ShoppingSystem/user/myOrders",
+                    data:"status=2"
+                }).then(function (resp){
+                    _this.tableData = resp.data.data;
+                })
+
+            },
+            selectReceive(){
+                var _this = this;
+                axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
+                axios({
+                    method:"post",
+                    url:"http://localhost:8080/ShoppingSystem/user/myOrders",
+                    data:"status=3"
+                }).then(function (resp){
+                    _this.tableData = resp.data.data;
+                })
+
+            },
+            selectRefunding(){
+                var _this = this;
+                axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
+                axios({
+                    method:"post",
+                    url:"http://localhost:8080/ShoppingSystem/user/myOrders",
+                    data:"status=4"
+                }).then(function (resp){
+                    _this.tableData = resp.data.data;
+                })
+            },
+            selectRefunded(){
+                var _this = this;
+                axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
+                axios({
+                    method:"post",
+                    url:"http://localhost:8080/ShoppingSystem/user/myOrders",
+                    data:"status=5"
+                }).then(function (resp){
+                    _this.tableData = resp.data.data;
+                })
+            }
 
         },
         data() {
@@ -130,6 +274,11 @@
 
                 dialogVisible: false,
 
+                refund:{
+                  orderId:'',
+                  cause:'',
+                  description:' '
+                },
                 tableData: [{
                     id:'',
                     goodsName: '',
