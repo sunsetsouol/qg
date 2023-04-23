@@ -3,12 +3,10 @@ package com.yinjunbiao.service.Impl;
 import com.yinjunbiao.MySpring.Annotation.Autowired;
 import com.yinjunbiao.MySpring.Annotation.Component;
 import com.yinjunbiao.MySpring.Annotation.Scope;
-import com.yinjunbiao.entity.Cart;
-import com.yinjunbiao.entity.Consultation;
-import com.yinjunbiao.entity.Goods;
-import com.yinjunbiao.entity.Orders;
+import com.yinjunbiao.entity.*;
 import com.yinjunbiao.mapper.*;
 import com.yinjunbiao.pojo.GoodsConsultations;
+import com.yinjunbiao.pojo.GoodsReply;
 import com.yinjunbiao.pojo.ResultSet;
 import com.yinjunbiao.service.GoodsService;
 import com.yinjunbiao.util.SqlSessionUtil;
@@ -44,6 +42,10 @@ public class GoodsServiceImpl implements GoodsService {
 
     @Autowired
     private ConsultationMapper consultationMapper;
+
+    @Autowired
+    private ReplyMapper replyMapper;
+
 
     @Override
     public ResultSet selectByPage(Integer currentPage, Integer pageSize) {
@@ -100,5 +102,33 @@ public class GoodsServiceImpl implements GoodsService {
             goodsConsultations.add(new GoodsConsultations(consultation.getId(),userMapper.selectById(consultation.getUserId()).getUserName(),consultation.getConsultation()));
         }
         return ResultSet.success(goodsConsultations,null);
+    }
+
+    @Override
+    public ResultSet sendConsultation(Consultation consultation) {
+        consultationMapper.insert(consultation.getGoodsId(), consultation.getConsultation(), consultation.getUserId());
+        SqlSessionUtil.commit();
+        SqlSessionUtil.close();
+        return ResultSet.success();
+    }
+
+    @Override
+    public ResultSet sendReply(Reply reply) {
+        replyMapper.insert(reply.getConsultationId(),reply.getReply(),reply.getUserId());
+        SqlSessionUtil.commit();
+        SqlSessionUtil.close();
+        return ResultSet.success();
+    }
+
+    @Override
+    public ResultSet selectReply(Long id) {
+        List<Reply> replies = replyMapper.selectByCId(id);
+        List<GoodsReply> goodsReplies = new ArrayList<>();
+        for (Reply reply : replies) {
+            goodsReplies.add(new GoodsReply(userMapper.selectById(reply.getUserId()).getUserName(),reply.getReply(),reply.getConsultationId()));
+        }
+        SqlSessionUtil.commit();
+        SqlSessionUtil.close();
+        return ResultSet.success(goodsReplies,null);
     }
 }

@@ -88,13 +88,67 @@
                         align="center"
                 >
                 </el-table-column>
+                <el-table-column
+                        align="center">
+                    <template slot-scope="scope">
+                        <el-row>
+                            <el-button type="primary"  @click="answer(scope.row)">回复</el-button>
+                        </el-row>
+                    </template>
+                </el-table-column>
             </el-table>
         </template>
         <span slot="footer" class="dialog-footer is-align-middle">
     <el-button type="primary" @click="dialogConsultation = false">确 定</el-button>
-    <el-button type="primary" @click="ask">商品好不好？问大家</el-button>
+    <el-button type="primary" @click="askP">商品好不好？问大家</el-button>
   </span>
     </el-dialog>
+
+    <el-dialog
+            title="商品详情"
+            :visible.sync="dialogAsk"
+            width="30%">
+        <el-form :model="ask" label-width="80px">
+            <el-form-item label="提问内容">
+                <el-input type="textarea" v-model="ask.consultation"></el-input>
+            </el-form-item>
+        </el-form>
+    <el-button type="primary" @click="sendQuestion">确 定</el-button>
+    </el-dialog>
+
+
+    <el-dialog
+            title="商品详情"
+            :visible.sync="dialogReply"
+            width="30%">
+        <template >
+            <el-table
+                    :data="reply"
+                    style="width: 100%"
+                    :row-class-name="tableRowClassName"
+                    @selection-change="handleSelectionChange"
+            >
+                <el-table-column
+                        prop="userName"
+                        label="用户"
+                        align="center"
+                >
+                </el-table-column>
+                <el-table-column
+                        prop="reply"
+                        label="回复"
+                        align="center"
+                >
+                </el-table-column>
+            </el-table>
+        </template>
+
+        <el-input type="textarea" v-model="myReply.reply"></el-input>
+        <el-button type="primary" @click="sendReply">确 定</el-button>
+
+        </span>
+    </el-dialog>
+
 
 
 
@@ -281,6 +335,59 @@
             this.selectAll();
         },
         methods: {
+            sendReply(){
+
+                var _this = this;
+                axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
+                axios({
+                    method:"post",
+                    url:"http://localhost:8080/ShoppingSystem/goods/sendReply",
+                    data:this.myReply
+                }).then(function (resp){
+                    if (resp.data.code == 1){
+                        alert("success");
+                    }else {
+                        alert("fail");
+                    }
+                })
+            },
+            answer(row){
+                this.myReply.consultationId = row.id;
+                var _this = this;
+                axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
+                axios({
+                    method:"post",
+                    url:"http://localhost:8080/ShoppingSystem/goods/selectReply",
+                    data:row
+                }).then(function (resp){
+                    if (resp.data.code == 1){
+                        _this.reply = resp.data.data;
+                        _this.dialogReply = true;
+                    }else {
+                        alert("fail");
+                    }
+                })
+
+            },
+            sendQuestion(){
+                var _this = this;
+                axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
+                axios({
+                    method:"post",
+                    url:"http://localhost:8080/ShoppingSystem/goods/sendConsultation",
+                    data:this.ask
+                }).then(function (resp){
+                    if (resp.data.code == 1){
+                        alert("success");
+                    }else {
+                        alert("fail");
+                    }
+                })
+            },
+            askP(){
+              this.ask.goodsId = this.consultation.goodsId;
+              this.dialogAsk = true;
+            },
             searchConsultation(row){
                 var _this = this;
                 axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
@@ -291,6 +398,7 @@
                 }).then(function (resp){
                     if (resp.data.code == 1){
                         _this.consultation = resp.data.data;
+                        _this.consultation.goodsId = row.id;
                         _this.dialogConsultation = true;
                     }
                 })
@@ -330,7 +438,7 @@
                 axios({
                     method:"post",
                     url:"http://localhost:8080/ShoppingSystem/user/apply",
-                    data:this.apply
+                    data:_this.apply
                 }).then(function (resp){
                     if (resp.data.code == 1){
                         _this.dialogApply = false;
@@ -446,6 +554,8 @@
                     shopName:''
                 },
                 searchName:'',
+                dialogReply:false,
+                dialogAsk:false,
                 dialogConsultation:false,
                 dialogApplyError:false,
                 dialogApply:false,
@@ -493,9 +603,24 @@
                     shopId:''
                 }],
                 consultation:[{
+                    id:'',
+                    goodsId:'',
                     userName:'',
                     consultation:''
-                }]
+                }],
+                ask:{
+                    goodsId:'',
+                    consultation:'',
+                },
+                reply:[{
+                    consultationId:'',
+                    reply:'',
+                    userName:''
+                }],
+                myReply:{
+                    consultationId:'',
+                    reply:''
+                }
 
             }
         }
