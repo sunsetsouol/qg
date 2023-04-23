@@ -374,6 +374,9 @@ public class UserServiceImpl implements UserService {
     public ResultSet selectMyOrders(Integer userId,Integer status) {
         List<Orders> orders = ordersMapper.selectByUserId(userId,status);
         List<ShopOrders> shopOrders = new ArrayList<>();
+        if (orders == null){
+            return ResultSet.success(null,"没有订单");
+        }
         for (Orders order : orders) {
             Goods goods = goodsMapper.selectById(order.getGoodsId());
             ShopOrders shopOrder = new ShopOrders(order.getId(), CONST.dateFormat.format(order.getTime()),order.getSendAddress(),order.getReceiveAddress(),goods.getName(),order.getStatus(),userMapper.selectById(order.getUserId()).getUserName(),order.getNumber(),goods.getShopName(),goods.getPrice());
@@ -452,6 +455,7 @@ public class UserServiceImpl implements UserService {
         if (resultSet == null) {
             resultSet = ResultSet.success();
         }
+        SqlSessionUtil.close();
         return resultSet;
     }
 

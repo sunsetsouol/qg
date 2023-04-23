@@ -85,6 +85,9 @@ public class OrdersServiceImpl implements OrdersService {
     public ResultSet selectOrdersByShopId(Integer shopId, Integer status, Integer currentPage, Integer pageSize) {
         List<Orders> orders = ordersMapper.selectByShopId(shopId, status, currentPage - 1, pageSize);
         List<ShopOrders> shopOrders = new ArrayList<>();
+        if (orders == null){
+            return ResultSet.error();
+        }
         for (Orders order : orders) {
             Goods goods = goodsMapper.selectById(order.getGoodsId());
             ShopOrders shopOrder = new ShopOrders(order.getId(), CONST.dateFormat.format(order.getTime()), order.getSendAddress(), order.getReceiveAddress(), goods.getName(), order.getStatus(), userMapper.selectById(order.getUserId()).getUserName(), order.getNumber(), goods.getShopName(), goods.getPrice());
@@ -136,18 +139,22 @@ public class OrdersServiceImpl implements OrdersService {
      */
     @Override
     public ResultSet refund(Refund refund) {
+        if(refund.getDescription() == null || refund.getDescription().length() == 0){
+            refund.setDescription("无");
+        }
         //查找订单
         Orders select = ordersMapper.select(refund.getOrderId());
         ResultSet resultSet = null;
-        if (select != null) {
+        if (select != null && select.getStatus() != 5 && select.getStatus() != 4) {
             //订单存在且没有重复申请
-            List<Refund> refunds = refundMapper.selectByOrderId(select.getId());
-            //超过两次就不能继续申请了
-            if (refunds == null || (refunds.size() < 2 && refunds.get(0).getStatus() != 0)) {
+            Refund refund1 = refundMapper.selectApplyingByOrderId(select.getId());
+            //不能继续申请了
+            if (refund1 == null) {
                 synchronized (refundMapper) {
-                    refunds = refundMapper.selectByOrderId(select.getId());
-                    if (refunds == null || (refunds.size() < 2 && refunds.get(0).getStatus() != 0)) {
-                        if (ordersMapper.updateStatus(4, refund.getOrderId()) == 1 && refundMapper.insert(refund.getOrderId(), refund.getCause(), refund.getDescription()) == 1) {
+                    select = ordersMapper.select(refund.getOrderId());
+                    refund1 = refundMapper.selectApplyingByOrderId(select.getId());
+                    if (refund1 == null && select.getStatus() != 5 && select.getStatus() != 4) {
+                        if (ordersMapper.updateStatus(4, refund.getOrderId()) == 1 && refundMapper.insert(refund.getOrderId(), refund.getCause(), refund.getDescription(),System.currentTimeMillis(),select.getShopId()) == 1) {
                             resultSet = ResultSet.success();
                             SqlSessionUtil.commit();
                         }

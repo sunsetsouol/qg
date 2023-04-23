@@ -7,13 +7,14 @@
 <body>
 <div id="app">
 
-    <el-button type="primary" plain @click="selectNotSend">未发货订单</el-button>
-    <el-button type="primary" plain @click="selectSended">已发货订单</el-button>
     <!--按钮-->
 
     <el-row>
 
-        <el-button type="primary" plain @click="dialogVisible = true">新增</el-button>
+        <el-button type="primary" plain @click="dialogVisible = true">新增商品</el-button>
+        <el-button type="primary" plain @click="selectNotSend">未发货订单</el-button>
+        <el-button type="primary" plain @click="selectSended">已发货订单</el-button>
+        <el-button type="primary" plain @click="refund">申请退款订单</el-button>
 
     </el-row>
     <!--添加数据对话框表单-->
@@ -33,12 +34,11 @@
                     <div class="block">
                         <el-slider
                                 v-model="push.price"
-                                show-input max="2147483647" >
+                                show-input max="2147483647">
                         </el-slider>
                     </div>
                 </template>
             </el-form-item>
-
 
 
             <el-form-item label="介绍">
@@ -79,7 +79,7 @@
                 </el-result>
             </el-col>
         </el-row>
-        <span slot="footer" class="dialog-footer" >
+        <span slot="footer" class="dialog-footer">
     <el-button type="primary" @click="pushError = false">确 定</el-button>
   </span>
     </el-dialog>
@@ -145,9 +145,7 @@
                     align="center"
                     label="操作">
                 <template slot-scope="scope">
-                    <el-row >
                         <el-button type="primary" @click="send(scope.row)">已发货</el-button>
-                    </el-row>
                 </template>
             </el-table-column>
 
@@ -172,13 +170,15 @@
 <script>
     new Vue({
         el: "#app",
-        mounted(){
+        mounted() {
             this.selectNotSend();
         },
         methods: {
-            send(row){
+            refund(){
+              window.open("ApplyRefund.html","_self");
+            },
+            send(row) {
                 var _this = this;
-                if(row.status == '未发货'){
                     this.$confirm('确认已发货？', '已发货', {
                         confirmButtonText: '确定',
                         cancelButtonText: '取消',
@@ -188,44 +188,43 @@
                             type: 'success',
                             message: '修改成功'
                         });
-                        axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
+                        axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
                         axios({
-                            method:"post",
-                            url:"http://localhost:8080/ShoppingSystem/shop/send",
-                            data:row
-                        }).then(function (resp){
+                            method: "post",
+                            url: "http://localhost:8080/ShoppingSystem/shop/send",
+                            data: row
+                        }).then(function (resp) {
                             _this.selectNotSend();
                         })
                     }).catch(() => {
                         this.$message({
                             type: 'info',
-                            message: '已取消下单'
+                            message: '修改失败'
                         });
                     });
 
-                }
             },
-            selectNotSend(){
+            selectNotSend() {
                 var _this = this;
-                axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
+                axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
                 axios({
-                    method:"post",
-                    url:"http://localhost:8080/ShoppingSystem/shop/selectOrders?status=1&currentPage="+this.currentPage+"&pageSize="+this.pageSize,
-                    data:"shopId="+localStorage.getItem('shopId')
-                }).then(function (resp){
+                    method: "post",
+                    url: "http://localhost:8080/ShoppingSystem/shop/selectOrders?status=1&currentPage=" + this.currentPage + "&pageSize=" + this.pageSize,
+                    data: "shopId=" + localStorage.getItem('shopId')
+                }).then(function (resp) {
                     _this.tableData = resp.data.data;
                     _this.totalCount = resp.data.length;
                 })
 
             },
-            selectSended(){
+            selectSended() {
                 var _this = this;
-                axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
+                axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
                 axios({
-                    method:"post",
-                    url:"http://localhost:8080/ShoppingSystem/shop/selectOrders?status=2&currentPage="+this.currentPage+"&pageSize="+this.pageSize,
-                    data:"shopId="+localStorage.getItem('shopId')
-                }).then(function (resp){
+                    method: "post",
+                    url: "http://localhost:8080/ShoppingSystem/shop/selectOrders?status=2&currentPage=" + this.currentPage + "&pageSize=" + this.pageSize,
+                    data: "shopId=" + localStorage.getItem('shopId')
+                }).then(function (resp) {
                     _this.tableData = resp.data.data;
                     _this.totalCount = resp.data.length;
                 })
@@ -246,17 +245,17 @@
                 console.log(this.multipleSelection)
             },
             // 添加数据
-            addPush(){
+            addPush() {
                 var _this = this;
                 axios({
-                    method:"post",
-                    url:"http://localhost:8080/ShoppingSystem/shop/addPush",
-                    data:_this.push
-                }).then(function (resp){
-                    if(resp.data.code == 1){
+                    method: "post",
+                    url: "http://localhost:8080/ShoppingSystem/shop/addPush",
+                    data: _this.push
+                }).then(function (resp) {
+                    if (resp.data.code == 1) {
                         _this.dialogVisible = false;
                         _this.pushSuccess = true;
-                    }else {
+                    } else {
                         _this.dialogVisible = false;
                         _this.pushError = true;
                     }
@@ -273,44 +272,44 @@
         },
         data() {
             return {
-                shopId:localStorage.getItem("shopId"),
-                pageSize:20,
+                shopId: localStorage.getItem("shopId"),
+                pageSize: 20,
                 // 当前页码
                 currentPage: 1,
 
-                totalCount:'',
+                totalCount: '',
                 dialogVisible: false,
-                pushSuccess:false,
-                pushError:false,
+                pushSuccess: false,
+                pushError: false,
 
-                push:{
-                  shopId:localStorage.getItem("shopId"),
-                  name:'',
-                  price:'',
-                  description:'',
-                  picture:''
+                push: {
+                    shopId: localStorage.getItem("shopId"),
+                    name: '',
+                    price: '',
+                    description: '',
+                    picture: ''
                 },
-                orders:{
-                    id:'',
-                    time:'',
-                    receiveAddress:'',
-                    goods:'',
-                    userName:'',
-                    number:'',
+                orders: {
+                    id: '',
+                    time: '',
+                    receiveAddress: '',
+                    goods: '',
+                    userName: '',
+                    number: '',
                     status: ''
                 },
                 //被选中的id数组
-                selectedIds:[],
+                selectedIds: [],
                 // 复选框选中数据集合
                 multipleSelection: [],
                 // 表格数据
                 tableData: [{
-                    id:'',
-                    time:'',
-                    receiveAddress:'',
-                    goodsName:'',
-                    userName:'',
-                    number:'',
+                    id: '',
+                    time: '',
+                    receiveAddress: '',
+                    goodsName: '',
+                    userName: '',
+                    number: '',
                     status: ''
 
                 }]

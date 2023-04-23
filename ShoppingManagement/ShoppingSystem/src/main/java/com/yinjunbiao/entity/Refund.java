@@ -17,6 +17,8 @@ public class Refund {
 
     private String description;
 
+    private Long time;
+
     @Override
     public String toString() {
         return "Refund{" +
@@ -25,6 +27,7 @@ public class Refund {
                 ", cause=" + cause +
                 ", status=" + status +
                 ", description='" + description + '\'' +
+                ", time=" + time +
                 '}';
     }
 
@@ -68,14 +71,23 @@ public class Refund {
         this.description = description;
     }
 
+    public Long getTime() {
+        return time;
+    }
+
+    public void setTime(Long time) {
+        this.time = time;
+    }
+
     public Refund() {
     }
 
-    public Refund(Long id, Long orderId, Integer cause, Integer status, String description) {
+    public Refund(Long id, Long orderId, Integer cause, Integer status, String description, Long time) {
         this.id = id;
         this.orderId = orderId;
         this.cause = cause;
         this.status = status;
         this.description = description;
+        this.time = time;
     }
 }

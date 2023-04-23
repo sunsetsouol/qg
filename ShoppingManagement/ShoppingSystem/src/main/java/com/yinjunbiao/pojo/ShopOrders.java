@@ -1,5 +1,7 @@
 package com.yinjunbiao.pojo;
 
+import com.yinjunbiao.util.CONST;
+
 import java.time.LocalDateTime;
 
 public class ShopOrders {
@@ -139,17 +141,7 @@ public class ShopOrders {
         this.sendAddress = sendAddress;
         this.receiveAddress = receiveAddress;
         this.goodsName = goodsName;
-        if (status == 1){
-            this.status = "未发货";
-        }else if (status == 2){
-            this.status = "已发货";
-        }else if(status == 3){
-            this.status = "已收货";
-        }else if (status == 4){
-            this.status = "退款中";
-        }else {
-            this.status = "已退款";
-        }
+        this.status = CONST.STATUS[status-1];
         this.userName = userName;
         this.number = number;
         this.shopName = shopName;

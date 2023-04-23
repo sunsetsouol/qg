@@ -4,15 +4,18 @@ import com.yinjunbiao.MySpring.Annotation.Autowired;
 import com.yinjunbiao.MySpring.Annotation.Component;
 import com.yinjunbiao.MySpring.Annotation.Scope;
 import com.yinjunbiao.entity.Cart;
+import com.yinjunbiao.entity.Consultation;
 import com.yinjunbiao.entity.Goods;
 import com.yinjunbiao.entity.Orders;
 import com.yinjunbiao.mapper.*;
+import com.yinjunbiao.pojo.GoodsConsultations;
 import com.yinjunbiao.pojo.ResultSet;
 import com.yinjunbiao.service.GoodsService;
 import com.yinjunbiao.util.SqlSessionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component("goodsService")
@@ -38,6 +41,9 @@ public class GoodsServiceImpl implements GoodsService {
 
     @Autowired
     private CartMapper cartMapper;
+
+    @Autowired
+    private ConsultationMapper consultationMapper;
 
     @Override
     public ResultSet selectByPage(Integer currentPage, Integer pageSize) {
@@ -81,5 +87,18 @@ public class GoodsServiceImpl implements GoodsService {
         return ResultSet.success(null,"修改成功");
     }
 
-
+    /**
+     * 查找商品评价
+     * @param id
+     * @return
+     */
+    @Override
+    public ResultSet selectConsultation(Long id) {
+        List<Consultation> consultations = consultationMapper.selectByGoodsId(id);
+        List<GoodsConsultations> goodsConsultations = new ArrayList<>();
+        for (Consultation consultation : consultations) {
+            goodsConsultations.add(new GoodsConsultations(consultation.getId(),userMapper.selectById(consultation.getUserId()).getUserName(),consultation.getConsultation()));
+        }
+        return ResultSet.success(goodsConsultations,null);
+    }
 }

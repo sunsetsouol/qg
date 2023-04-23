@@ -14,4 +14,6 @@ public interface GoodsService {
     ResultSet selectByName(String name,Integer currentPage, Integer pageSize);
 
     ResultSet changeShoppingCart(Cart cart);
+
+    ResultSet selectConsultation(Long id);
 }

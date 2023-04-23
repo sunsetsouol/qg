@@ -27,4 +27,8 @@ public class CONST {
 
     public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
+    public static final String[] STATUS = {"未发货","已发货", "已收货", "退款中","已退款","退款失败"};
+
+    public static final String[] CAUSE = {"无理由","质量问题"};
+
 }

@@ -6,6 +6,7 @@ import com.yinjunbiao.MySpring.Annotation.Autowired;
 import com.yinjunbiao.MySpring.Annotation.Scope;
 import com.yinjunbiao.entity.PushGood;
 import com.yinjunbiao.mapper.OrdersMapper;
+import com.yinjunbiao.pojo.RefundApply;
 import com.yinjunbiao.pojo.ResultSet;
 import com.yinjunbiao.pojo.ShopOrders;
 import com.yinjunbiao.service.OrdersService;
@@ -31,6 +32,12 @@ public class ShopServlet extends BaseServlet {
     private ShopService shopService = ((ShopService) ApplicationUtil.getApplicationContext().getBean("shopService"));
 
 
+    /**
+     * 查询订单
+     * @param request
+     * @param response
+     * @throws IOException
+     */
     public void selectOrders(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
             Integer status = Integer.valueOf(request.getParameter("status"));
@@ -46,6 +53,12 @@ public class ShopServlet extends BaseServlet {
         }
     }
 
+    /**
+     * 申请添加商品
+     * @param request
+     * @param response
+     * @throws IOException
+     */
     public void addPush(HttpServletRequest request, HttpServletResponse response) throws IOException {
         BufferedReader reader = request.getReader();
         String s = reader.readLine();
@@ -56,11 +69,69 @@ public class ShopServlet extends BaseServlet {
         response.getWriter().write(JSON.toJSONString(resultSet));
     }
 
+    /**
+     * 商品已发货
+     * @param request
+     * @param response
+     * @throws IOException
+     */
     public void send(HttpServletRequest request, HttpServletResponse response) throws IOException {
         BufferedReader reader = request.getReader();
         String s = reader.readLine();
         ShopOrders shopOrders = JSON.parseObject(s, ShopOrders.class);
-        ResultSet resultSet = ordersService.send(shopOrders);
+        ResultSet resultSet = null;
+        if (shopOrders.getStatus().equals("未发货")){
+            resultSet = ordersService.send(shopOrders);
+        }else {
+            resultSet = ResultSet.error();
+        }
+        response.setStatus(200);
+        response.setContentType("application/json;charset=utf-8");
+        response.getWriter().write(JSON.toJSONString(resultSet));
+    }
+
+
+    /**
+     * 查看退款申请
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    public void selectRefund(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        Integer shopId = Integer.valueOf(request.getParameter("shopId"));
+        ResultSet resultSet = shopService.selectRefund(shopId);
+        response.setStatus(200);
+        response.setContentType("application/json;charset=utf-8");
+        response.getWriter().write(JSON.toJSONString(resultSet));
+    }
+
+    /**
+     * 同意退款
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    public void agree(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        BufferedReader reader = request.getReader();
+        String s = reader.readLine();
+        RefundApply refundApply = JSON.parseObject(s, RefundApply.class);
+        ResultSet resultSet = shopService.agree(refundApply);
+        response.setStatus(200);
+        response.setContentType("application/json;charset=utf-8");
+        response.getWriter().write(JSON.toJSONString(resultSet));
+    }
+
+    /**
+     * 拒绝退款
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    public void disagree(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        BufferedReader reader = request.getReader();
+        String s = reader.readLine();
+        RefundApply refundApply = JSON.parseObject(s, RefundApply.class);
+        ResultSet resultSet = shopService.disagree(refundApply);
         response.setStatus(200);
         response.setContentType("application/json;charset=utf-8");
         response.getWriter().write(JSON.toJSONString(resultSet));

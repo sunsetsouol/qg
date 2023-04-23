@@ -61,8 +61,36 @@ public class GoodsServlet extends BaseServlet {
         response.setContentType("application/json;charset=utf-8");
         response.getWriter().write(JSON.toJSONString(resultSet));
     }
-
-
+    /**
+     * 查询商品评价
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    public void selectConsultation(HttpServletRequest request, HttpServletResponse response) throws IOException{
+        BufferedReader reader = request.getReader();
+        String s = reader.readLine();
+        Long id = JSON.parseObject(s, Long.class);
+        ResultSet resultSet = goodsService.selectConsultation(id);
+        response.setStatus(200);
+        response.setContentType("application/json;charset=utf-8");
+        response.getWriter().write(JSON.toJSONString(resultSet));
+    }
+    /**
+     * 查询商品评价
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    public void snedConsultation(HttpServletRequest request, HttpServletResponse response) throws IOException{
+        BufferedReader reader = request.getReader();
+        String s = reader.readLine();
+        Long id = JSON.parseObject(s, Long.class);
+        ResultSet resultSet = goodsService.selectConsultation(id);
+        response.setStatus(200);
+        response.setContentType("application/json;charset=utf-8");
+        response.getWriter().write(JSON.toJSONString(resultSet));
+    }
 
 
 }

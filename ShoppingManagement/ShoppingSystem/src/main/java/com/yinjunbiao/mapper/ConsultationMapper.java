@@ -17,7 +17,7 @@ public interface ConsultationMapper {
 
     @Select(sql = "select * from consultation where goods_id = #{goodsId}")
     @ResultMap(id = "consultationResultMap")
-    List<Consultation> selectByGoodsId(@Param("userId")Long goodsId);
+    List<Consultation> selectByGoodsId(@Param("goodsId")Long goodsId);
 
     @Insert(sql = "insert into consultation values (null,#{goodsId},#{consultation},#{userId})")
     @ResultMap(id = "consultationResultMap")

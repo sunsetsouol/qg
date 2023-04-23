@@ -5,7 +5,7 @@
 <mapper namespace="com.yinjunbiao.mapper.RefundMapper">
 
     <resultMap id="refundResultMap" type="com.yinjunbiao.entity.Refund">
-        <result property="orderId" column="orders_id"/>
+        <result property="orderId" column="order_id"/>
     </resultMap>
 
 </mapper>

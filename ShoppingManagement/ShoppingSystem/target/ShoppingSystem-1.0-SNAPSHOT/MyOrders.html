@@ -21,8 +21,8 @@
     >
 
         <el-form ref="form" :model="refund" :required="true" label-width="80px">
-            <el-form-item label="订单号">
-                <el-input v-model="refund.orderId"></el-input>
+            <el-form-item label="订单号" disabled="true">
+                <el-input  v-model="refund.orderId"></el-input>
             </el-form-item>
 
             <el-form-item label="退款原因">
@@ -145,6 +145,17 @@
                 this.dialogVisible = true;
             },
             submitRefund(){
+                if(this.refund.cause == ''){
+                    this.$alert('请选择退款原因', '申请失败', {
+                        confirmButtonText: '确定',
+                        callback: action => {
+                            this.$message({
+                                type: 'info',
+                                message: `action: ${ action }`
+                            });
+                        }
+                    });
+                }else {
                     this.$confirm('确认申请退款？', '退款', {
                         confirmButtonText: '确定',
                         cancelButtonText: '取消',
@@ -181,6 +192,8 @@
                             message: '已取消'
                         });
                     });
+                }
+
             },
             confirmReceipt(row){
 

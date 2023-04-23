@@ -48,6 +48,7 @@ public class JdbcTransaction implements Transaction {
                 MyConnectionPool pool = pooledDataSource.getPool();
                 if (THREAD.get() != null){
                     pool.releaseConnection(THREAD.get());
+                    THREAD.remove();
                 }
             }
             //非连接池
