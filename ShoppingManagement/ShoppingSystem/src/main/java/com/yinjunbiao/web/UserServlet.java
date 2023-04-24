@@ -356,5 +356,21 @@ public class UserServlet extends BaseServlet {
             response.sendRedirect("/ShoppingSystem/login.html");
         }
     }
+    public void searchUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            String authorization = request.getHeader("Authorization");
+            Claims claims = JwtUtil.parseJWT(authorization);
+            BufferedReader reader = request.getReader();
+            String s = reader.readLine();
+            User user = JSON.parseObject(s, User.class);
+            ResultSet resultSet = userService.selectUser(user);
+            response.setStatus(200);
+            response.setContentType("application/json;charset=utf-8");
+            response.getWriter().write(JSON.toJSONString(resultSet));
+        } catch (Exception e) {
+            SqlSessionUtil.close();
+            response.sendRedirect("/ShoppingSystem/login.html");
+        }
+    }
 
 }

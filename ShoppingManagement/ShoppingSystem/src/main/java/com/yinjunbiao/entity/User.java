@@ -1,12 +1,11 @@
 package com.yinjunbiao.entity;
 
-import com.mysql.cj.jdbc.Blob;
 
 /**
  * @author yinjunbiao
  * 与数据库对应的用户
  */
-public class User {
+public class User{
     private Integer id;
 
     private Integer identify;

@@ -30,11 +30,9 @@
     <el-form :inline="true" :model="goods" class="demo-form-inline">
 
 
-        <el-form-item label="搜素">
+        <el-form-item label="搜素商品">
             <el-input v-model="goods.name" placeholder="商品名称"></el-input>
         </el-form-item>
-
-
 
         <el-form-item>
             <el-button type="primary" @click="onSubmit">查询</el-button>
@@ -42,11 +40,61 @@
 
     </el-form>
 
+    <el-form :inline="true" :model="searchUser" class="demo-form-inline">
+
+
+        <el-form-item label="搜素用户">
+            <el-input v-model="searchUser.userName" placeholder="用户名称"></el-input>
+        </el-form-item>
+
+        <el-form-item>
+            <el-button type="primary" @click="submitSearchUser">查询</el-button>
+        </el-form-item>
+
+    </el-form>
+
+
 
     <el-button type="primary" plain @click="MyShop">我的店铺</el-button>
 
     <el-button type="primary" icon="el-icon-shopping-cart-full" @click="searchMyCart">购物车</el-button>
     <el-button type="primary" icon="el-icon-shopping-bag-1" @click="searchMyOrders">我的订单</el-button>
+
+    <el-dialog
+            title="搜索详情"
+            :visible.sync="dialogUser"
+            width="30%">
+            <template >
+                <el-table
+                        :data="user"
+                        style="width: 100%"
+                        :row-class-name="tableRowClassName"
+                        @selection-change="handleSelectionChange"
+                >
+                    <el-table-column
+                            prop=headshot"
+                            label="头像"
+                            align="center"
+                    >
+                        <template slot-scope="scope">
+                            <img :src="scope.headshot">
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                            prop="userName"
+                            label="用户"
+                            align="center"
+                    >
+                    </el-table-column>
+
+                </el-table>
+            </template>
+        <el-button type="primary" @click="dialogUser = false">确 定</el-button>
+    </el-dialog>
+
+
+
+
 
 
     <el-dialog
@@ -118,7 +166,7 @@
 
 
     <el-dialog
-            title="商品详情"
+            title="详情"
             :visible.sync="dialogReply"
             width="30%">
         <template >
@@ -335,8 +383,23 @@
             this.selectAll();
         },
         methods: {
+            submitSearchUser(){
+                var _this = this;
+                axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
+                axios({
+                    method:"post",
+                    url:"http://localhost:8080/ShoppingSystem/user/searchUser",
+                    data:this.searchUser
+                }).then(function (resp){
+                    if (resp.data.code == 1){
+                        _this.user = resp.data.data;
+                        _this.dialogUser = true;
+                    }else {
+                        alert("fail");
+                    }
+                })
+            },
             sendReply(){
-
                 var _this = this;
                 axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
                 axios({
@@ -554,6 +617,7 @@
                     shopName:''
                 },
                 searchName:'',
+                dialogUser:false,
                 dialogReply:false,
                 dialogAsk:false,
                 dialogConsultation:false,
@@ -620,6 +684,13 @@
                 myReply:{
                     consultationId:'',
                     reply:''
+                },
+                user:[{
+                    userName:'',
+                    headshot:''
+                }],
+                searchUser:{
+                    userName:''
                 }
 
             }

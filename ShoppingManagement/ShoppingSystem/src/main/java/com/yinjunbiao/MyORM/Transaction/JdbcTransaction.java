@@ -32,6 +32,11 @@ public class JdbcTransaction implements Transaction {
     @Override
     public void commit() {
         try {
+            if (THREAD.get() == null){
+                Connection connection = dataSource.getConnection();
+                connection.setAutoCommit(autoCommit);
+                THREAD.set(connection);
+            }
             THREAD.get().commit();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -41,6 +46,11 @@ public class JdbcTransaction implements Transaction {
     @Override
     public void close() {
         try {
+            if (THREAD.get() == null){
+                Connection connection = dataSource.getConnection();
+                connection.setAutoCommit(autoCommit);
+                THREAD.set(connection);
+            }
             //数据库连接池
             if(dataSource instanceof PooledDataSource){
                 commit();

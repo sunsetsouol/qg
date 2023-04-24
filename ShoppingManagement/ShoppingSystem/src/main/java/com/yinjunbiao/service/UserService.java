@@ -52,4 +52,5 @@ public interface UserService {
 
     ResultSet buyCarts(Long[] ids);
 
+    ResultSet selectUser(User user);
 }

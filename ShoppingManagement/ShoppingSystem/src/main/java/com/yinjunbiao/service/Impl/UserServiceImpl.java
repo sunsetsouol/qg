@@ -539,4 +539,12 @@ public class UserServiceImpl implements UserService {
         return resultSet;
     }
 
+    @Override
+    public ResultSet selectUser(User user) {
+        String userName = "%" + user.getUserName() + "%";
+        List<User> users = userMapper.selectByName(userName);
+        SqlSessionUtil.commit();
+        SqlSessionUtil.close();
+        return ResultSet.success(users,null);
+    }
 }

@@ -20,7 +20,7 @@ public interface UserMapper {
     @ResultMap(id = "userResultMap")
     User selectByPhone(@Param("phone")String phone);
 
-    @Select(sql = "select * from user where user_name like #{userName}")
+    @Select(sql = "select user_name,headshot from user where user_name like #{userName} and isprivate = 0")
     @ResultMap(id = "userResultMap")
     List<User> selectByName(@Param("userName")String userName);
 
