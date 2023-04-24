@@ -1,6 +1,8 @@
 package com.yinjunbiao.pojo;
 
 public class GoodsReply {
+    private Long id;
+
     private String userName;
 
     private String reply;
@@ -10,7 +12,8 @@ public class GoodsReply {
     @Override
     public String toString() {
         return "GoodsReply{" +
-                "userName='" + userName + '\'' +
+                "id=" + id +
+                ", userName='" + userName + '\'' +
                 ", reply='" + reply + '\'' +
                 ", consultationId=" + consultationId +
                 '}';
@@ -40,10 +43,19 @@ public class GoodsReply {
         this.consultationId = consultationId;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public GoodsReply() {
     }
 
-    public GoodsReply(String userName, String reply, Long consultationId) {
+    public GoodsReply(Long id, String userName, String reply, Long consultationId) {
+        this.id = id;
         this.userName = userName;
         this.reply = reply;
         this.consultationId = consultationId;

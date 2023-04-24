@@ -57,15 +57,14 @@ public class UserServlet extends BaseServlet {
             response.setContentType("application/json;charset=utf-8");
             response.getWriter().write(JSON.toJSONString(ResultSet.error()));
         }
-        System.out.println(user);
         LOGGER.info(user.toString());
         //查找并判断密码是否正确
         ResultSet resultSet = userService.login(user);
 
         if (resultSet.getCode() == 1) {
             Map<String, Object> claims = new HashMap<>();
-
             claims.put("id", ((User) resultSet.getData()).getId());
+            claims.put("identify",((User) resultSet.getData()).getIdentify());
             String jwt = JwtUtil.generateJwt(claims);
             resultSet.setData(jwt);
         }

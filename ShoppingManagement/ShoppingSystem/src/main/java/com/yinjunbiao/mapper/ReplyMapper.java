@@ -27,4 +27,8 @@ public interface ReplyMapper {
     @ResultMap(id = "replyResultMap")
     int deleteById(@Param("id")Long id);
 
+    @Delete(sql = "delete from reply where consultation_id = #{consultationId}")
+    @ResultMap(id = "replyResultMap")
+    int deleteByConsultationId(@Param("consultationd")Long id);
+
 }

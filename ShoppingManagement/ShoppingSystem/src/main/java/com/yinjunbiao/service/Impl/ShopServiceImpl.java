@@ -3,9 +3,7 @@ package com.yinjunbiao.service.Impl;
 import com.yinjunbiao.MySpring.Annotation.Autowired;
 import com.yinjunbiao.MySpring.Annotation.Component;
 import com.yinjunbiao.MySpring.Annotation.Scope;
-import com.yinjunbiao.entity.Orders;
-import com.yinjunbiao.entity.PushGood;
-import com.yinjunbiao.entity.Refund;
+import com.yinjunbiao.entity.*;
 import com.yinjunbiao.mapper.*;
 import com.yinjunbiao.pojo.RefundApply;
 import com.yinjunbiao.pojo.ResultSet;
@@ -35,6 +33,12 @@ public class ShopServiceImpl implements ShopService {
 
     @Autowired
     private GoodsMapper goodsMapper;
+
+    @Autowired
+    private TweetsMapper tweetsMapper;
+
+    @Autowired
+    private ShopMapper shopMapper;
 
     /**
      * 添加商品
@@ -133,5 +137,21 @@ public class ShopServiceImpl implements ShopService {
         }
         SqlSessionUtil.close();
         return resultSet;
+    }
+
+    @Override
+    public ResultSet sendTweets(Tweets tweets) {
+        tweetsMapper.insert(tweets.getShopId(),tweets.getTweets());
+        SqlSessionUtil.commit();
+        SqlSessionUtil.close();
+        return ResultSet.success();
+    }
+
+    @Override
+    public ResultSet searchShop(Shop shop) {
+        List<Shop> shops = shopMapper.selectIdByName("%" + shop.getName() + "%");
+        SqlSessionUtil.commit();
+        SqlSessionUtil.close();
+        return ResultSet.success(shops,null);
     }
 }

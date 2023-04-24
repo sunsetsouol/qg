@@ -125,10 +125,35 @@ public class GoodsServiceImpl implements GoodsService {
         List<Reply> replies = replyMapper.selectByCId(id);
         List<GoodsReply> goodsReplies = new ArrayList<>();
         for (Reply reply : replies) {
-            goodsReplies.add(new GoodsReply(userMapper.selectById(reply.getUserId()).getUserName(),reply.getReply(),reply.getConsultationId()));
+            goodsReplies.add(new GoodsReply(reply.getId(),userMapper.selectById(reply.getUserId()).getUserName(),reply.getReply(),reply.getConsultationId()));
         }
         SqlSessionUtil.commit();
         SqlSessionUtil.close();
         return ResultSet.success(goodsReplies,null);
+    }
+
+    @Override
+    public ResultSet deleteGoods(Long id) {
+        goodsMapper.deleteById(id);
+        SqlSessionUtil.commit();
+        SqlSessionUtil.close();
+        return ResultSet.success();
+    }
+
+    @Override
+    public ResultSet deleteReply(GoodsReply goodsReply) {
+        replyMapper.deleteById(goodsReply.getId());
+        SqlSessionUtil.commit();
+        SqlSessionUtil.close();
+        return ResultSet.success();
+    }
+
+    @Override
+    public ResultSet deleteConsultations(GoodsConsultations goodsConsultations) {
+        replyMapper.deleteByConsultationId(goodsConsultations.getId());
+        consultationMapper.deleteById(goodsConsultations.getId());
+        SqlSessionUtil.commit();
+        SqlSessionUtil.close();
+        return ResultSet.success();
     }
 }

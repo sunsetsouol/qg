@@ -19,6 +19,7 @@ public class CONST {
     public static final String [] SENSITIVE = {"敏感词"};
 
     public static final String SELECT = "select";
+
     public static final String SET = "set";
 
     public static final String SINGLETON = "singleton";

@@ -53,8 +53,20 @@
 
     </el-form>
 
+    <el-form :inline="true" :model="searchShop" class="demo-form-inline">
 
 
+        <el-form-item label="搜素店铺">
+            <el-input v-model="searchShop.name" placeholder="店铺名称"></el-input>
+        </el-form-item>
+
+        <el-form-item>
+            <el-button type="primary" @click="submitSearchShop">查询</el-button>
+        </el-form-item>
+
+    </el-form>
+
+    <el-button type="primary" plain @click="Manager">管理员入口</el-button>
     <el-button type="primary" plain @click="MyShop">我的店铺</el-button>
 
     <el-button type="primary" icon="el-icon-shopping-cart-full" @click="searchMyCart">购物车</el-button>
@@ -77,7 +89,7 @@
                             align="center"
                     >
                         <template slot-scope="scope">
-                            <img :src="scope.headshot">
+                            <img :src="scope.row.headshot" style="width: 30px;height: 30px">
                         </template>
                     </el-table-column>
                     <el-table-column
@@ -86,13 +98,62 @@
                             align="center"
                     >
                     </el-table-column>
-
                 </el-table>
             </template>
         <el-button type="primary" @click="dialogUser = false">确 定</el-button>
     </el-dialog>
 
 
+    <el-dialog
+            title="搜索详情"
+            :visible.sync="dialogShop"
+            width="30%">
+        <template >
+            <el-table
+                    :data="shop"
+                    style="width: 100%"
+                    :row-class-name="tableRowClassName"
+                    @selection-change="handleSelectionChange"
+            >
+                <el-table-column
+                        prop=name"
+                        label="店铺名"
+                        align="center"
+                >
+
+                </el-table-column>
+
+                <el-table-column
+                        prop="sales"
+                        label="销量"
+                        align="center"
+                >
+                </el-table-column>
+
+                <el-table-column
+                        prop="description"
+                        label="介绍"
+                        align="center"
+                >
+                </el-table-column>
+                <el-table-column
+                        prop="fans"
+                        label="粉丝数"
+                        align="center"
+                >
+                </el-table-column>
+                <el-table-column
+                        align="center">
+                    <template slot-scope="scope">
+                        <el-row>
+                            <el-button type="primary"  @click="subscrible(scope.row)">关注</el-button>
+                        </el-row>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </template>
+        <el-button type="primary" @click="dialogUser = false">确 定</el-button>
+    </el-dialog>
 
 
 
@@ -383,6 +444,41 @@
             this.selectAll();
         },
         methods: {
+            Manager(){
+                var _this = this;
+                axios({
+                    method:"post",
+                    url:"http://localhost:8080/ShoppingSystem/manager/entrance",
+                }).then(function (resp){
+                    if (resp.data.code == 1){
+                        window.open("Manager.html","_self");
+                    }else {
+                        _this.$message({
+                            type: 'info',
+                            message: '你没有权限'
+                        });
+                    }
+                })
+            },
+            submitSearchShop(){
+                var _this = this;
+                axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
+                axios({
+                    method:"post",
+                    url:"http://localhost:8080/ShoppingSystem/shop/searchShop",
+                    data:this.searchShop
+                }).then(function (resp){
+                    if (resp.data.code == 1){
+                        _this.shop = resp.data.data;
+                        _this.dialogShop = true;
+                    }else {
+                        _this.$message({
+                            type: 'info',
+                            message: '查找失败'
+                        });
+                    }
+                })
+            },
             submitSearchUser(){
                 var _this = this;
                 axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
@@ -395,7 +491,10 @@
                         _this.user = resp.data.data;
                         _this.dialogUser = true;
                     }else {
-                        alert("fail");
+                        _this.$message({
+                            type: 'info',
+                            message: '查找失败'
+                        });
                     }
                 })
             },
@@ -408,9 +507,16 @@
                     data:this.myReply
                 }).then(function (resp){
                     if (resp.data.code == 1){
-                        alert("success");
+                        _this.$message({
+                            type: 'info',
+                            message: '发送成功'
+                        });
+
                     }else {
-                        alert("fail");
+                        _this.$message({
+                            type: 'info',
+                            message: '发送失败'
+                        });
                     }
                 })
             },
@@ -427,7 +533,10 @@
                         _this.reply = resp.data.data;
                         _this.dialogReply = true;
                     }else {
-                        alert("fail");
+                        _this.$message({
+                            type: 'info',
+                            message: '发送失败'
+                        });
                     }
                 })
 
@@ -475,7 +584,7 @@
                 }).then(function (resp){
                     if (resp.data.code == 1){
                         localStorage.setItem('shopId',resp.data.data);
-                       window.open("MyShop.html","_self")
+                        window.open("MyShop.html","_self")
                     }else {
                         _this.dialogApply = true;
                     }
@@ -590,7 +699,7 @@
                       data:this.goods
                   }).then(function (resp){
                        _this.tableData = resp.data.data;
-                      _this.totalCount = resp.data.length;
+                        _this.totalCount = resp.data.length;
                   })
               }else {
                     this.selectAll();
@@ -617,6 +726,7 @@
                     shopName:''
                 },
                 searchName:'',
+                dialogShop:false,
                 dialogUser:false,
                 dialogReply:false,
                 dialogAsk:false,
@@ -691,7 +801,17 @@
                 }],
                 searchUser:{
                     userName:''
-                }
+                },
+                searchShop:{
+                    name:''
+                },
+                shop:[{
+                    id:'',
+                    name:'',
+                    sales:'',
+                    fans:'',
+                    description:''
+                }]
 
             }
         }

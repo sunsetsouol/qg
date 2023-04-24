@@ -8,10 +8,31 @@
 <div id="app">
 
     <!--按钮-->
+    <el-row>
+        <el-button type="primary" plain @click="dialogVisible = true">新增商品</el-button>
+        <el-button type="primary" plain @click="openDialogTweets">发送推文</el-button>
+    </el-row>
+
+    <el-dialog
+            title="推送品牌"
+            :visible.sync="dialogTweets"
+            width="30%"
+    >
+
+        <el-form :model="tweets" label-width="80px">
+            <el-form-item label="提问内容">
+                <el-input type="textarea" v-model="tweets.tweets"></el-input>
+            </el-form-item>
+        </el-form>
+        <el-button type="primary" @click="sendTweets">确 定</el-button>
+
+    </el-dialog>
+
+
 
     <el-row>
 
-        <el-button type="primary" plain @click="dialogVisible = true">新增商品</el-button>
+
         <el-button type="primary" plain @click="selectNotSend">未发货订单</el-button>
         <el-button type="primary" plain @click="selectSended">已发货订单</el-button>
         <el-button type="primary" plain @click="refund">申请退款订单</el-button>
@@ -174,6 +195,38 @@
             this.selectNotSend();
         },
         methods: {
+            sendTweets(){
+                var _this = this;
+                this.$confirm('确认发送？', '发送推文', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+
+                    axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
+                    axios({
+                        method: "post",
+                        url: "http://localhost:8080/ShoppingSystem/shop/sendTweets",
+                        data: _this.tweets
+                    }).then(function (resp) {
+                        if (resp.data.code==1){
+                            _this.$message({
+                                type: 'success',
+                                message: '修改成功'
+                            });
+                        }
+                    })
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '修改失败'
+                    });
+                });
+            },
+            openDialogTweets(){
+              this.tweets.shopId = this.shopId;
+              this.dialogTweets = true;
+            },
             refund(){
               window.open("ApplyRefund.html","_self");
             },
@@ -276,6 +329,7 @@
                 pageSize: 20,
                 // 当前页码
                 currentPage: 1,
+                dialogTweets:false,
 
                 totalCount: '',
                 dialogVisible: false,
@@ -297,6 +351,10 @@
                     userName: '',
                     number: '',
                     status: ''
+                },
+                tweets:{
+                    tweets: "",
+                    shopId:''
                 },
                 //被选中的id数组
                 selectedIds: [],

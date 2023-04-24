@@ -9,7 +9,7 @@ import com.yinjunbiao.MySpring.Annotation.Mapper;
 public interface TweetsMapper {
     @Insert(sql = "insert into tweet values(null,#{shopId},#{tweet})")
     @ResultMap(id = "tweetsResultMap")
-    int insert(@Param("shopId") Insert shopId, @Param("tweet")String tweet);
+    int insert(@Param("shopId") Integer shopId, @Param("tweet")String tweet);
 
     @Delete(sql = "delete from tweet where id = #{id}")
     @ResultMap(id = "tweetsResultMap")

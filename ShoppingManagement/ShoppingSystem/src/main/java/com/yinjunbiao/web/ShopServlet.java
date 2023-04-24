@@ -5,6 +5,8 @@ import com.alibaba.fastjson.JSON;
 import com.yinjunbiao.MySpring.Annotation.Autowired;
 import com.yinjunbiao.MySpring.Annotation.Scope;
 import com.yinjunbiao.entity.PushGood;
+import com.yinjunbiao.entity.Shop;
+import com.yinjunbiao.entity.Tweets;
 import com.yinjunbiao.mapper.OrdersMapper;
 import com.yinjunbiao.pojo.RefundApply;
 import com.yinjunbiao.pojo.ResultSet;
@@ -132,6 +134,38 @@ public class ShopServlet extends BaseServlet {
         String s = reader.readLine();
         RefundApply refundApply = JSON.parseObject(s, RefundApply.class);
         ResultSet resultSet = shopService.disagree(refundApply);
+        response.setStatus(200);
+        response.setContentType("application/json;charset=utf-8");
+        response.getWriter().write(JSON.toJSONString(resultSet));
+    }
+
+    /**
+     * 发送推文
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    public void sendTweets(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        BufferedReader reader = request.getReader();
+        String s = reader.readLine();
+        Tweets tweets = JSON.parseObject(s, Tweets.class);
+        ResultSet resultSet = shopService.sendTweets(tweets);
+        response.setStatus(200);
+        response.setContentType("application/json;charset=utf-8");
+        response.getWriter().write(JSON.toJSONString(resultSet));
+    }
+
+    /**
+     * 查找店铺
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    public void searchShop(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        BufferedReader reader = request.getReader();
+        String s = reader.readLine();
+        Shop shop = JSON.parseObject(s, Shop.class);
+        ResultSet resultSet = shopService.searchShop(shop);
         response.setStatus(200);
         response.setContentType("application/json;charset=utf-8");
         response.getWriter().write(JSON.toJSONString(resultSet));

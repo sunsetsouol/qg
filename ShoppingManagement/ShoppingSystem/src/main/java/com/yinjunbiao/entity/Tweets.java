@@ -9,14 +9,14 @@ public class Tweets {
 
     private Integer shopId;
 
-    private String tweet;
+    private String tweets;
 
     @Override
     public String toString() {
         return "Tweets{" +
                 "id=" + id +
                 ", shopId=" + shopId +
-                ", tweet='" + tweet + '\'' +
+                ", tweets='" + tweets + '\'' +
                 '}';
     }
 
@@ -36,20 +36,20 @@ public class Tweets {
         this.shopId = shopId;
     }
 
-    public String getTweet() {
-        return tweet;
+    public String getTweets() {
+        return tweets;
     }
 
-    public void setTweet(String tweet) {
-        this.tweet = tweet;
+    public void setTweets(String tweets) {
+        this.tweets = tweets;
     }
 
     public Tweets() {
     }
 
-    public Tweets(Long id, Integer shopId, String tweet) {
+    public Tweets(Long id, Integer shopId, String tweets) {
         this.id = id;
         this.shopId = shopId;
-        this.tweet = tweet;
+        this.tweets = tweets;
     }
 }

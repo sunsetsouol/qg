@@ -121,9 +121,22 @@ public class OrdersServiceImpl implements OrdersService {
     @Override
     public ResultSet confirm(Long id) {
         ResultSet resultSet = null;
-        if (ordersMapper.updateStatus(3, id) == 1) {
-            SqlSessionUtil.commit();
-        } else {
+        Orders orders = ordersMapper.select(id);
+        if (orders.getStatus() == 2){
+            synchronized (shopMapper){
+                if (ordersMapper.select(id).getStatus() == 2){
+                    ordersMapper.updateStatus(3,id);
+                    synchronized (goodsMapper){
+                        Integer sales = goodsMapper.selectById(orders.getGoodsId()).getSales();
+                        goodsMapper.updateSales(sales+orders.getNumber(),orders.getGoodsId());
+                        SqlSessionUtil.commit();
+                        resultSet = ResultSet.success();
+                    }
+                }
+            }
+        }
+        if (resultSet == null){
+            resultSet = ResultSet.error();
             SqlSessionUtil.rollback();
         }
         SqlSessionUtil.close();

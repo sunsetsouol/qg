@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .el-table .warning-row {
+            background: oldlace;
+        }
+
+        .el-table .success-row {
+            background: #f0f9eb;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+
+    <template>
+        <el-row class="demo-avatar demo-basic">
+            <el-col :span="12">
+                <div class="demo-basic--circle">
+                    <div class="block">
+                        <el-avatar :size="50" :src="circleUrl"></el-avatar>
+                    </div>
+                </div>
+            </el-col>
+        </el-row>
+    </template>
+
+    <el-button type="primary" plain @click="pushApply">上架申请</el-button>
+    <el-button type="primary" plain @click="reportApply">举报记录</el-button>
+
+
+    <el-dialog
+            title="商品详情"
+            :visible.sync="dialogConsultation"
+            width="30%">
+        <!--表格-->
+        <template>
+            <el-table
+                    :data="consultation"
+                    style="width: 100%"
+                    :row-class-name="tableRowClassName"
+                    @selection-change="handleSelectionChange"
+            >
+                <el-table-column
+                        prop="userName"
+                        label="用户"
+                        align="center"
+                >
+                </el-table-column>
+                <el-table-column
+                        prop="consultation"
+                        label="评论"
+                        align="center"
+                >
+                </el-table-column>
+                <el-table-column
+                        align="center">
+                    <template slot-scope="scope">
+                        <el-row>
+                            <el-button type="primary" @click="answer(scope.row)">回复</el-button>
+                            <el-button type="danger" @click="deleteAnswer(scope.row)">删除</el-button>
+                        </el-row>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </template>
+        <span slot="footer" class="dialog-footer is-align-middle">
+    <el-button type="primary" @click="dialogConsultation = false">确 定</el-button>
+    <el-button type="primary" @click="askP">商品好不好？问大家</el-button>
+  </span>
+    </el-dialog>
+
+    <el-dialog
+            title="商品详情"
+            :visible.sync="dialogAsk"
+            width="30%">
+        <el-form :model="ask" label-width="80px">
+            <el-form-item label="提问内容">
+                <el-input type="textarea" v-model="ask.consultation"></el-input>
+            </el-form-item>
+        </el-form>
+        <el-button type="primary" @click="sendQuestion">确 定</el-button>
+    </el-dialog>
+
+
+    <el-dialog
+            title="详情"
+            :visible.sync="dialogReply"
+            width="30%">
+        <template>
+            <el-table
+                    :data="reply"
+                    style="width: 100%"
+                    :row-class-name="tableRowClassName"
+                    @selection-change="handleSelectionChange"
+            >
+                <el-table-column
+                        prop="userName"
+                        label="用户"
+                        align="center"
+                >
+                </el-table-column>
+                <el-table-column
+                        prop="reply"
+                        label="回复"
+                        align="center"
+                >
+                </el-table-column>
+                <el-table-column
+                        align="center">
+                    <template slot-scope="scope">
+                        <el-row>
+                            <el-button type="danger" @click="deleteReply(scope.row)">删除</el-button>
+                        </el-row>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </template>
+
+        <el-input type="textarea" v-model="myReply.reply"></el-input>
+        <el-button type="primary" @click="sendReply">确 定</el-button>
+
+        </span>
+    </el-dialog>
+
+
+    <el-dialog
+            title="提示"
+            :visible.sync="dialogSuccess"
+            width="30%">
+        <el-row>
+            <el-col :sm="12" :lg="6" align="center">
+                <el-result icon="success" title="操作成功" subTitle="请根据提示进行操作">
+                </el-result>
+            </el-col>
+        </el-row>
+        <span slot="footer" class="dialog-footer is-align-middle">
+    <el-button type="primary" @click="dialogSuccess = false">确 定</el-button>
+  </span>
+    </el-dialog>
+
+    <el-dialog
+            title="提示"
+            :visible.sync="dialogError"
+            width="30%">
+        <el-row>
+            <el-col :sm="12" :lg="6">
+                <el-result icon="error" title="操作失败，可能是库存不足" subTitle="请根据提示进行操作">
+                </el-result>
+            </el-col>
+        </el-row>
+        <span slot="footer" class="dialog-footer">
+    <el-button type="primary" @click="dialogError = false">确 定</el-button>
+  </span>
+    </el-dialog>
+
+    <el-dialog
+            title="提示"
+            :visible.sync="dialogApplyError"
+            width="30%">
+        <el-row>
+            <el-col :sm="12" :lg="6">
+                <el-result icon="error" title="申请失败，请勿重复申请" subTitle="请根据提示进行操作">
+                </el-result>
+            </el-col>
+        </el-row>
+        <span slot="footer" class="dialog-footer">
+    <el-button type="primary" @click="dialogApplyError = false">确 定</el-button>
+  </span>
+    </el-dialog>
+
+    <!--表格-->
+    <template>
+        <el-table
+                :data="tableData"
+                style="width: 100%"
+                :row-class-name="tableRowClassName"
+                @selection-change="handleSelectionChange"
+        >
+
+            <el-table-column
+                    type="index"
+                    width="50">
+            </el-table-column>
+
+            <el-table-column
+                    prop="name"
+                    label="商品名称"
+                    align="center"
+            >
+            </el-table-column>
+            <el-table-column
+                    prop="price"
+                    label="价格"
+                    align="center"
+            >
+            </el-table-column>
+            <el-table-column
+                    prop="sales"
+                    align="center"
+                    label="销量">
+            </el-table-column>
+
+            <el-table-column
+                    prop="inventory"
+                    align="center"
+                    label="库存">
+            </el-table-column>
+
+            <el-table-column
+                    prop="shopName"
+                    align="center"
+                    label="店名">
+            </el-table-column>
+
+            <el-table-column
+                    prop="description"
+                    align="center"
+                    label="介绍">
+            </el-table-column>
+
+            <el-table-column
+                    prop="picture"
+                    align="center"
+                    label="图片">
+                <template>
+                    <el-image :src="picture"/>
+                </template>
+            </el-table-column>
+
+
+            <el-table-column
+                    align="center"
+                    label="操作">
+                <template slot-scope="scope">
+                    <el-row>
+                        <el-button type="primary" @click="searchConsultation(scope.row)">查看评论</el-button>
+                        <el-button type="danger" @click="deleteGoods(scope.row)">删除商品</el-button>
+                    </el-row>
+                </template>
+            </el-table-column>
+
+        </el-table>
+    </template>
+
+    <el-pagination
+            @current-change="handleCurrentChange"
+            :current-page="currentPage"
+            layout="total, prev, pager, next, jumper"
+            :total="totalCount">
+    </el-pagination>
+
+
+</div>
+
+
+<script src="js/vue.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+<script src="js/axios-0.18.0.js"></script>
+<script>
+    new Vue({
+        el: "#app",
+        mounted() {
+            this.selectAll()
+        },
+        methods: {
+            deleteAnswer(row) {
+                this.$confirm('确认要删除该评论？', '删除', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.$message({
+                        type: 'success',
+                        message: '处理中'
+                    });
+                    var _this = this;
+                    axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
+                    axios({
+                        method: "post",
+                        url: "http://localhost:8080/ShoppingSystem/manager/deleteAnswer",
+                        data: _this.row
+                    }).then(function (resp) {
+                        if (resp.data.code == 1) {
+                            _this.$message({
+                                type: 'info',
+                                message: '删除成功'
+                            });
+                        } else {
+                            _this.$message({
+                                type: 'info',
+                                message: '已取消'
+                            });
+                        }
+                    })
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消'
+                    });
+                });
+            },
+        },
+        deleteReply(row) {
+            this.$confirm('确认要删除该回复？', '删除', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                this.$message({
+                    type: 'success',
+                    message: '处理中'
+                });
+                var _this = this;
+                axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/ShoppingSystem/manager/deleteReply",
+                    data: _this.row
+                }).then(function (resp) {
+                    if (resp.data.code == 1) {
+                        _this.$message({
+                            type: 'info',
+                            message: '删除成功'
+                        });
+                    } else {
+                        _this.$message({
+                            type: 'info',
+                            message: '已取消'
+                        });
+                    }
+                })
+            }).catch(() => {
+                this.$message({
+                    type: 'info',
+                    message: '已取消'
+                });
+            });
+        },
+        deleteGoods(row) {
+            this.$confirm('确认要下架该商品？', '下架', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                this.$message({
+                    type: 'success',
+                    message: '处理中'
+                });
+                var _this = this;
+                axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/ShoppingSystem/manager/deleteGoods",
+                    data: _this.row
+                }).then(function (resp) {
+                    if (resp.data.code == 1) {
+                        _this.$message({
+                            type: 'info',
+                            message: '下架成功'
+                        });
+                    } else {
+                        _this.$message({
+                            type: 'info',
+                            message: '已取消'
+                        });
+                    }
+                })
+            }).catch(() => {
+                this.$message({
+                    type: 'info',
+                    message: '已取消下单'
+                });
+            });
+        },
+        submitSearchUser() {
+            var _this = this;
+            axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
+            axios({
+                method: "post",
+                url: "http://localhost:8080/ShoppingSystem/user/searchUser",
+                data: this.searchUser
+            }).then(function (resp) {
+                if (resp.data.code == 1) {
+                    _this.user = resp.data.data;
+                    _this.dialogUser = true;
+                } else {
+                    alert("fail");
+                }
+            })
+        },
+        sendReply() {
+            var _this = this;
+            axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
+            axios({
+                method: "post",
+                url: "http://localhost:8080/ShoppingSystem/goods/sendReply",
+                data: this.myReply
+            }).then(function (resp) {
+                if (resp.data.code == 1) {
+                    alert("success");
+                } else {
+                    alert("fail");
+                }
+            })
+        },
+        answer(row) {
+            this.myReply.consultationId = row.id;
+            var _this = this;
+            axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
+            axios({
+                method: "post",
+                url: "http://localhost:8080/ShoppingSystem/goods/selectReply",
+                data: row
+            }).then(function (resp) {
+                if (resp.data.code == 1) {
+                    _this.reply = resp.data.data;
+                    _this.dialogReply = true;
+                } else {
+                    alert("fail");
+                }
+            })
+
+        },
+        sendQuestion() {
+            var _this = this;
+            axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
+            axios({
+                method: "post",
+                url: "http://localhost:8080/ShoppingSystem/goods/sendConsultation",
+                data: this.ask
+            }).then(function (resp) {
+                if (resp.data.code == 1) {
+                    alert("success");
+                } else {
+                    alert("fail");
+                }
+            })
+        },
+        askP() {
+            this.ask.goodsId = this.consultation.goodsId;
+            this.dialogAsk = true;
+        },
+        deleteGoods(row) {
+            var _this = this;
+            axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
+            axios({
+                method: "post",
+                url: "http://localhost:8080/ShoppingSystem/manager/deleteGoods",
+                data: row
+            }).then(function (resp) {
+                if (resp.data.code == 1) {
+                    _this.$message({
+                        message: '删除成功',
+                        type: 'success'
+                    });
+                }
+            })
+        },
+        searchConsultation(row) {
+            var _this = this;
+            axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
+            axios({
+                method: "post",
+                url: "http://localhost:8080/ShoppingSystem/goods/selectConsultation",
+                data: row.id
+            }).then(function (resp) {
+                if (resp.data.code == 1) {
+                    _this.consultation = resp.data.data;
+                    _this.consultation.goodsId = row.id;
+                    _this.dialogConsultation = true;
+                }
+            })
+        },
+
+        handleAdd(row) {
+            this.orders.goodsId = row.id;
+            this.orders.name = row.name;
+            this.orders.singlePrice = row.price;
+            this.orders.picture = row.picture;
+            this.orders.shopId = row.shopId;
+            this.dialogVisible = true;
+        },
+        handleCurrentChange(val) {
+            this.currentPage = val;
+            this.selectAll();
+        },
+
+        onSubmit() {
+            var _this = this;
+            if (this.goods.name.length > 0) {
+                axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/ShoppingSystem/goods/selectByName?currentPage=" + this.currentPage + "&pageSize=" + this.pageSize,
+                    data: this.goods
+                }).then(function (resp) {
+                    _this.tableData = resp.data.data;
+                    _this.totalCount = resp.data.length;
+                })
+            } else {
+                this.selectAll();
+            }
+        },
+        selectAll() {
+            var _this = this;
+            axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
+            axios({
+                method: "post",
+                url: "http://localhost:8080/ShoppingSystem/goods/selectAll?currentPage=" + this.currentPage + "&pageSize=" + this.pageSize,
+                data: this.goods,
+            }).then(function (resp) {
+                _this.tableData = resp.data.data;
+                _this.totalCount = resp.data.length;
+            })
+
+        },
+
+        data() {
+            return {
+                apply: {
+                    shopName: ''
+                },
+                searchName: '',
+                dialogUser: false,
+                dialogReply: false,
+                dialogAsk: false,
+                dialogConsultation: false,
+                dialogApplyError: false,
+                dialogApply: false,
+                dialogVisible: false,
+                dialogSuccess: false,
+                dialogError: false,
+
+                circleUrl: "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
+                sizeList: ["large", "medium", "small"],
+
+                pageSize: 20,
+                // 当前页码
+                currentPage: 1,
+
+                totalCount: '',
+                // 品牌模型数据
+                goods: {
+                    id: '',
+                    name: '',
+                    price: '',
+                    sales: '',
+                    inventory: "",
+                    picture: "",
+                    description: "",
+                    shopId: '',
+                },
+                orders: {
+                    name: '',
+                    number: '',
+                    goodsId: '',
+                    singlePrice: '',
+                    price: '',
+                    picture: '',
+                    shopId: ''
+                },
+                tableData: [{
+                    id: '',
+                    name: '',
+                    price: '',
+                    sales: '',
+                    inventory: "",
+                    picture: "",
+                    description: "",
+                    shopName: '',
+                    shopId: ''
+                }],
+                consultation: [{
+                    id: '',
+                    goodsId: '',
+                    userName: '',
+                    consultation: ''
+                }],
+                ask: {
+                    goodsId: '',
+                    consultation: '',
+                },
+                reply: [{
+                    id:'',
+                    consultationId: '',
+                    reply: '',
+                    userName: ''
+                }],
+                myReply: {
+                    consultationId: '',
+                    reply: ''
+                },
+                user: [{
+                    userName: '',
+                    headshot: ''
+                }],
+                searchUser: {
+                    userName: ''
+                },
+                searchShop: {
+                    shopName: ''
+                }
+
+            }
+        }
+
+    })
+
+</script>
+
+
+</body>
+</html>
