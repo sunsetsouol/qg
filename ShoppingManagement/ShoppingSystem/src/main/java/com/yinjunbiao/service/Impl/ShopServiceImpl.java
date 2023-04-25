@@ -139,6 +139,12 @@ public class ShopServiceImpl implements ShopService {
         return resultSet;
     }
 
+
+    /**
+     * 发送推文
+     * @param tweets
+     * @return
+     */
     @Override
     public ResultSet sendTweets(Tweets tweets) {
         tweetsMapper.insert(tweets.getShopId(),tweets.getTweets());
@@ -147,6 +153,11 @@ public class ShopServiceImpl implements ShopService {
         return ResultSet.success();
     }
 
+    /**
+     * 搜索店铺
+     * @param shop
+     * @return
+     */
     @Override
     public ResultSet searchShop(Shop shop) {
         List<Shop> shops = shopMapper.selectIdByName("%" + shop.getName() + "%");

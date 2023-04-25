@@ -28,8 +28,50 @@
         </el-row>
     </template>
 
+    <el-button type="primary" plain @click="shopApply">店铺申请</el-button>
     <el-button type="primary" plain @click="pushApply">上架申请</el-button>
     <el-button type="primary" plain @click="reportApply">举报记录</el-button>
+
+
+    <el-dialog
+            title="店铺申请"
+            :visible.sync="dialogShopApply"
+            width="30%">
+        <!--表格-->
+        <template>
+            <el-table
+                    :data="shop"
+                    style="width: 100%"
+                    :row-class-name="tableRowClassName"
+                    @selection-change="handleSelectionChange"
+            >
+                <el-table-column
+                        prop="userName"
+                        label="申请用户"
+                        align="center"
+                >
+                </el-table-column>
+                <el-table-column
+                        prop="shopName"
+                        label="申请店名 "
+                        align="center"
+                >
+                </el-table-column>
+                <el-table-column
+                        align="center">
+                    <template slot-scope="scope">
+                        <el-row>
+                            <el-button type="primary" @click="agreeShop(scope.row)">同意申请</el-button>
+                            <el-button type="danger" @click="disagreeShop(scope.row)">拒绝申请</el-button>
+                        </el-row>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </template>
+        <span slot="footer" class="dialog-footer is-align-middle">
+    <el-button type="primary" @click="dialogShopApply = false">关 闭</el-button>
+  </span>
+    </el-dialog>
 
 
     <el-dialog
@@ -122,7 +164,6 @@
 
         <el-input type="textarea" v-model="myReply.reply"></el-input>
         <el-button type="primary" @click="sendReply">确 定</el-button>
-
         </span>
     </el-dialog>
 
@@ -265,9 +306,69 @@
     new Vue({
         el: "#app",
         mounted() {
-            this.selectAll()
+            this.selectGoods();
         },
         methods: {
+            agreeShop(row){
+                var _this = this;
+                axios.post("http://localhost:8080/ShoppingSystem/manager/agreeShop",row).then(function (resp) {
+                    if (resp.data.code == 1) {
+                        _this.$message({
+                            type: 'info',
+                            message: '设置成功'
+                        });
+                    }else {
+                        _this.$message({
+                            type: 'info',
+                            message: '设置失败，申请不存在'
+                        });
+                    }
+                });
+
+            },
+            disagreeShop(row){
+                var _this = this;
+                axios.post("http://localhost:8080/ShoppingSystem/manager/disagreeShop",row).then(function (resp) {
+                    if (resp.data.code == 1) {
+                        _this.$message({
+                            type: 'info',
+                            message: '设置成功'
+                        });
+                    }else {
+                        _this.$message({
+                            type: 'info',
+                            message: '设置失败'
+                        });
+                    }
+                });
+
+            },
+            pushApply(){
+                var _this = this;
+                axios.post("http://localhost:8080/ShoppingSystem/manager/pushApply").then(function (resp) {
+                    if (resp.data.code == 1) {
+                        _this.push = resp.data.data;
+                        _this.dialogPushApply = true;
+                    } else {
+                        _this.$alert(resp.data.msg, '查询失败', {
+                            confirmButtonText: '确定'
+                        });
+                    }
+                });
+            },
+            shopApply() {
+                var _this = this;
+                axios.post("http://localhost:8080/ShoppingSystem/manager/shopApply").then(function (resp) {
+                    if (resp.data.code == 1) {
+                        _this.shop = resp.data.data;
+                        _this.dialogShopApply = true;
+                    } else {
+                        _this.$alert(resp.data.msg, '查询失败', {
+                            confirmButtonText: '确定'
+                        });
+                    }
+                });
+            },
             deleteAnswer(row) {
                 this.$confirm('确认要删除该评论？', '删除', {
                     confirmButtonText: '确定',
@@ -283,7 +384,7 @@
                     axios({
                         method: "post",
                         url: "http://localhost:8080/ShoppingSystem/manager/deleteAnswer",
-                        data: _this.row
+                        data: row
                     }).then(function (resp) {
                         if (resp.data.code == 1) {
                             _this.$message({
@@ -304,220 +405,234 @@
                     });
                 });
             },
-        },
-        deleteReply(row) {
-            this.$confirm('确认要删除该回复？', '删除', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning'
-            }).then(() => {
-                this.$message({
-                    type: 'success',
-                    message: '处理中'
+            deleteReply(row) {
+                this.$confirm('确认要删除该回复？', '删除', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.$message({
+                        type: 'success',
+                        message: '处理中'
+                    });
+                    var _this = this;
+                    axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
+                    axios({
+                        method: "post",
+                        url: "http://localhost:8080/ShoppingSystem/manager/deleteReply",
+                        data: row
+                    }).then(function (resp) {
+                        if (resp.data.code == 1) {
+                            _this.$message({
+                                type: 'info',
+                                message: '删除成功'
+                            });
+                        } else {
+                            _this.$message({
+                                type: 'info',
+                                message: '已取消'
+                            });
+                        }
+                    })
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消'
+                    });
                 });
+            },
+            deleteGoods(row) {
+                this.$confirm('确认要下架该商品？', '下架', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.$message({
+                        type: 'success',
+                        message: '处理中'
+                    });
+                    var _this = this;
+                    axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
+                    axios({
+                        method: "post",
+                        url: "http://localhost:8080/ShoppingSystem/manager/deleteGoods",
+                        data: row
+                    }).then(function (resp) {
+                        if (resp.data.code == 1) {
+                            _this.$message({
+                                type: 'info',
+                                message: '下架成功'
+                            });
+                        } else {
+                            _this.$message({
+                                type: 'info',
+                                message: '已取消'
+                            });
+                        }
+                    })
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消下单'
+                    });
+                });
+            },
+            submitSearchUser() {
                 var _this = this;
                 axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
                 axios({
                     method: "post",
-                    url: "http://localhost:8080/ShoppingSystem/manager/deleteReply",
-                    data: _this.row
+                    url: "http://localhost:8080/ShoppingSystem/user/searchUser",
+                    data: this.searchUser
                 }).then(function (resp) {
                     if (resp.data.code == 1) {
-                        _this.$message({
+                        _this.user = resp.data.data;
+                        _this.dialogUser = true;
+                    } else {
+                        alert("fail");
+                    }
+                })
+            },
+            sendReply() {
+                var _this = this;
+                axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/ShoppingSystem/goods/sendReply",
+                    data: this.myReply
+                }).then(function (resp) {
+                    if (resp.data.code == 1) {
+                        this.$message({
                             type: 'info',
-                            message: '删除成功'
+                            message: '发送成功'
                         });
                     } else {
-                        _this.$message({
+                        this.$message({
                             type: 'info',
-                            message: '已取消'
+                            message: '发送失败'
                         });
                     }
                 })
-            }).catch(() => {
-                this.$message({
-                    type: 'info',
-                    message: '已取消'
-                });
-            });
-        },
-        deleteGoods(row) {
-            this.$confirm('确认要下架该商品？', '下架', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning'
-            }).then(() => {
-                this.$message({
-                    type: 'success',
-                    message: '处理中'
-                });
+            },
+            answer(row) {
+                this.myReply.consultationId = row.id;
+                var _this = this;
+                axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/ShoppingSystem/goods/selectReply",
+                    data: row
+                }).then(function (resp) {
+                    if (resp.data.code == 1) {
+                        _this.reply = resp.data.data;
+                        _this.dialogReply = true;
+                    } else {
+                        this.$message({
+                            type: 'info',
+                            message: '发送失败'
+                        });
+                    }
+                })
+
+            },
+            sendQuestion() {
+                var _this = this;
+                axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/ShoppingSystem/goods/sendConsultation",
+                    data: this.ask
+                }).then(function (resp) {
+                    if (resp.data.code == 1) {
+                        this.$message({
+                            type: 'info',
+                            message: '发送成功'
+                        });
+                    } else {
+                        this.$message({
+                            type: 'info',
+                            message: '发送失败'
+                        });
+                    }
+                })
+            },
+            askP() {
+                this.ask.goodsId = this.consultation.goodsId;
+                this.dialogAsk = true;
+            },
+            deleteGoods(row) {
                 var _this = this;
                 axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
                 axios({
                     method: "post",
                     url: "http://localhost:8080/ShoppingSystem/manager/deleteGoods",
-                    data: _this.row
+                    data: row
                 }).then(function (resp) {
                     if (resp.data.code == 1) {
                         _this.$message({
-                            type: 'info',
-                            message: '下架成功'
-                        });
-                    } else {
-                        _this.$message({
-                            type: 'info',
-                            message: '已取消'
+                            message: '删除成功',
+                            type: 'success'
                         });
                     }
                 })
-            }).catch(() => {
-                this.$message({
-                    type: 'info',
-                    message: '已取消下单'
-                });
-            });
-        },
-        submitSearchUser() {
-            var _this = this;
-            axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
-            axios({
-                method: "post",
-                url: "http://localhost:8080/ShoppingSystem/user/searchUser",
-                data: this.searchUser
-            }).then(function (resp) {
-                if (resp.data.code == 1) {
-                    _this.user = resp.data.data;
-                    _this.dialogUser = true;
-                } else {
-                    alert("fail");
-                }
-            })
-        },
-        sendReply() {
-            var _this = this;
-            axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
-            axios({
-                method: "post",
-                url: "http://localhost:8080/ShoppingSystem/goods/sendReply",
-                data: this.myReply
-            }).then(function (resp) {
-                if (resp.data.code == 1) {
-                    alert("success");
-                } else {
-                    alert("fail");
-                }
-            })
-        },
-        answer(row) {
-            this.myReply.consultationId = row.id;
-            var _this = this;
-            axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
-            axios({
-                method: "post",
-                url: "http://localhost:8080/ShoppingSystem/goods/selectReply",
-                data: row
-            }).then(function (resp) {
-                if (resp.data.code == 1) {
-                    _this.reply = resp.data.data;
-                    _this.dialogReply = true;
-                } else {
-                    alert("fail");
-                }
-            })
-
-        },
-        sendQuestion() {
-            var _this = this;
-            axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
-            axios({
-                method: "post",
-                url: "http://localhost:8080/ShoppingSystem/goods/sendConsultation",
-                data: this.ask
-            }).then(function (resp) {
-                if (resp.data.code == 1) {
-                    alert("success");
-                } else {
-                    alert("fail");
-                }
-            })
-        },
-        askP() {
-            this.ask.goodsId = this.consultation.goodsId;
-            this.dialogAsk = true;
-        },
-        deleteGoods(row) {
-            var _this = this;
-            axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
-            axios({
-                method: "post",
-                url: "http://localhost:8080/ShoppingSystem/manager/deleteGoods",
-                data: row
-            }).then(function (resp) {
-                if (resp.data.code == 1) {
-                    _this.$message({
-                        message: '删除成功',
-                        type: 'success'
-                    });
-                }
-            })
-        },
-        searchConsultation(row) {
-            var _this = this;
-            axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
-            axios({
-                method: "post",
-                url: "http://localhost:8080/ShoppingSystem/goods/selectConsultation",
-                data: row.id
-            }).then(function (resp) {
-                if (resp.data.code == 1) {
-                    _this.consultation = resp.data.data;
-                    _this.consultation.goodsId = row.id;
-                    _this.dialogConsultation = true;
-                }
-            })
-        },
-
-        handleAdd(row) {
-            this.orders.goodsId = row.id;
-            this.orders.name = row.name;
-            this.orders.singlePrice = row.price;
-            this.orders.picture = row.picture;
-            this.orders.shopId = row.shopId;
-            this.dialogVisible = true;
-        },
-        handleCurrentChange(val) {
-            this.currentPage = val;
-            this.selectAll();
-        },
-
-        onSubmit() {
-            var _this = this;
-            if (this.goods.name.length > 0) {
+            },
+            searchConsultation(row) {
+                var _this = this;
                 axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
                 axios({
                     method: "post",
-                    url: "http://localhost:8080/ShoppingSystem/goods/selectByName?currentPage=" + this.currentPage + "&pageSize=" + this.pageSize,
-                    data: this.goods
+                    url: "http://localhost:8080/ShoppingSystem/goods/selectConsultation",
+                    data: row.id
+                }).then(function (resp) {
+                    if (resp.data.code == 1) {
+                        _this.consultation = resp.data.data;
+                        _this.consultation.goodsId = row.id;
+                        _this.dialogConsultation = true;
+                    }
+                })
+            },
+
+            handleAdd(row) {
+                this.orders.goodsId = row.id;
+                this.orders.name = row.name;
+                this.orders.singlePrice = row.price;
+                this.orders.picture = row.picture;
+                this.orders.shopId = row.shopId;
+                this.dialogVisible = true;
+            },
+            handleCurrentChange(val) {
+                this.currentPage = val;
+                this.selectGoods();
+            },
+
+            onSubmit() {
+                var _this = this;
+                if (this.goods.name.length > 0) {
+                    axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
+                    axios({
+                        method: "post",
+                        url: "http://localhost:8080/ShoppingSystem/goods/selectByName?currentPage=" + this.currentPage + "&pageSize=" + this.pageSize,
+                        data: this.goods
+                    }).then(function (resp) {
+                        _this.tableData = resp.data.data;
+                        _this.totalCount = resp.data.length;
+                    })
+                } else {
+                    this.selectAll();
+                }
+            },
+            selectGoods() {
+                var _this = this;
+                axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/ShoppingSystem/goods/selectAll?currentPage=" + this.currentPage + "&pageSize=" + this.pageSize
                 }).then(function (resp) {
                     _this.tableData = resp.data.data;
                     _this.totalCount = resp.data.length;
                 })
-            } else {
-                this.selectAll();
-            }
-        },
-        selectAll() {
-            var _this = this;
-            axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
-            axios({
-                method: "post",
-                url: "http://localhost:8080/ShoppingSystem/goods/selectAll?currentPage=" + this.currentPage + "&pageSize=" + this.pageSize,
-                data: this.goods,
-            }).then(function (resp) {
-                _this.tableData = resp.data.data;
-                _this.totalCount = resp.data.length;
-            })
 
+            },
         },
 
         data() {
@@ -525,7 +640,6 @@
                 apply: {
                     shopName: ''
                 },
-                searchName: '',
                 dialogUser: false,
                 dialogReply: false,
                 dialogAsk: false,
@@ -535,6 +649,7 @@
                 dialogVisible: false,
                 dialogSuccess: false,
                 dialogError: false,
+                dialogShopApply: false,
 
                 circleUrl: "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
                 sizeList: ["large", "medium", "small"],
@@ -545,6 +660,15 @@
 
                 totalCount: '',
                 // 品牌模型数据
+                shop: {
+                    id:'',
+                    userId:'',
+                    userName: '',
+                    shopName:''
+                },
+                push:{
+
+                },
                 goods: {
                     id: '',
                     name: '',
@@ -586,7 +710,7 @@
                     consultation: '',
                 },
                 reply: [{
-                    id:'',
+                    id: '',
                     consultationId: '',
                     reply: '',
                     userName: ''
@@ -594,16 +718,6 @@
                 myReply: {
                     consultationId: '',
                     reply: ''
-                },
-                user: [{
-                    userName: '',
-                    headshot: ''
-                }],
-                searchUser: {
-                    userName: ''
-                },
-                searchShop: {
-                    shopName: ''
                 }
 
             }

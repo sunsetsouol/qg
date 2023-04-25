@@ -2,6 +2,7 @@ package com.yinjunbiao.web;
 
 import com.alibaba.fastjson.JSON;
 import com.yinjunbiao.MySpring.Annotation.Scope;
+import com.yinjunbiao.entity.Apply;
 import com.yinjunbiao.entity.Goods;
 import com.yinjunbiao.entity.Reply;
 import com.yinjunbiao.entity.User;
@@ -10,8 +11,10 @@ import com.yinjunbiao.pojo.GoodsConsultations;
 import com.yinjunbiao.pojo.GoodsReply;
 import com.yinjunbiao.pojo.ResultSet;
 import com.yinjunbiao.service.GoodsService;
+import com.yinjunbiao.service.ManagerService;
 import com.yinjunbiao.util.ApplicationUtil;
 import com.yinjunbiao.util.JwtUtil;
+import com.yinjunbiao.util.UploadUtil;
 import io.jsonwebtoken.Claims;
 
 import javax.imageio.ImageIO;
@@ -37,8 +40,14 @@ public class ManagerServlet extends BaseServlet{
 
     private GoodsService goodsService = ((GoodsService) ApplicationUtil.getApplicationContext().getBean("goodsService"));
 
-    private UserMapper userMapper = ((UserMapper) ApplicationUtil.getApplicationContext().getBean("userMapper"));
+    private ManagerService managerService = ((ManagerService) ApplicationUtil.getApplicationContext().getBean("managerService"));
 
+    /**
+     * 管理员入口
+     * @param request
+     * @param response
+     * @throws IOException
+     */
     public void entrance(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String token = request.getHeader("Authorization");
         try {
@@ -57,6 +66,12 @@ public class ManagerServlet extends BaseServlet{
         }
     }
 
+    /**
+     * 删除商品
+     * @param request
+     * @param response
+     * @throws IOException
+     */
     public void deleteGoods(HttpServletRequest request, HttpServletResponse response) throws IOException {
         BufferedReader reader = request.getReader();
         String s = reader.readLine();
@@ -67,6 +82,12 @@ public class ManagerServlet extends BaseServlet{
         response.getWriter().write(JSON.toJSONString(resultSet));
     }
 
+    /**
+     * 删除回复
+     * @param request
+     * @param response
+     * @throws IOException
+     */
     public void deleteReply(HttpServletRequest request, HttpServletResponse response) throws IOException {
         BufferedReader reader = request.getReader();
         String s = reader.readLine();
@@ -77,7 +98,13 @@ public class ManagerServlet extends BaseServlet{
         response.getWriter().write(JSON.toJSONString(resultSet));
     }
 
-    public void deleteConsultation(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    /**
+     * 删除评论
+      * @param request
+     * @param response
+     * @throws IOException
+     */
+    public void deleteAnswer(HttpServletRequest request, HttpServletResponse response) throws IOException {
         BufferedReader reader = request.getReader();
         String s = reader.readLine();
         GoodsConsultations goodsConsultations = JSON.parseObject(s, GoodsConsultations.class);
@@ -87,30 +114,66 @@ public class ManagerServlet extends BaseServlet{
         response.getWriter().write(JSON.toJSONString(resultSet));
     }
 
+    /**
+     * 查找店铺申请
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    public void shopApply(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        ResultSet resultSet = managerService.selectShopApply();
+        response.setStatus(200);
+        response.setContentType("application/json;charset=utf-8");
+        response.getWriter().write(JSON.toJSONString(resultSet));
+    }
 
+    /**
+     * 同意店铺申请
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    public void agreeShop(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        BufferedReader reader = request.getReader();
+        String s = reader.readLine();
+        Apply apply = JSON.parseObject(s, Apply.class);
+        ResultSet resultSet = managerService.agreeShopApply(apply);
+        response.setStatus(200);
+        response.setContentType("application/json;charset=utf-8");
+        response.getWriter().write(JSON.toJSONString(resultSet));
+    }
 
+    /**
+     * 拒绝店铺申请
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    public void disagreeShop(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        BufferedReader reader = request.getReader();
+        String s = reader.readLine();
+        Apply apply = JSON.parseObject(s, Apply.class);
+        ResultSet resultSet = managerService.disagreeShopApply(apply);
+        response.setStatus(200);
+        response.setContentType("application/json;charset=utf-8");
+        response.getWriter().write(JSON.toJSONString(resultSet));
+    }
 
 
     public void test(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try{
-            System.out.println("request.getContentType(): " + request.getContentType());
 
-            if(!request.getContentType().split(";")[0].equals("multipart/form-data")){
-                return;
-            }
+            Part imageUrl = request.getPart("file");
+            InputStream inputStream = imageUrl.getInputStream();
+            String upload = UploadUtil.upload(inputStream);
+            System.out.println(upload);
+            inputStream.close();
 
-            Collection<Part> parts = request.getParts();
-            System.out.println(parts);
-            for(Part part:parts){
-                FileProcess(part);
-            }
-
-            response.getWriter().print("end");
         }catch (Exception e){
 
         }
     }
-    private void FileProcess(Part part) throws IOException {
+   /* private void FileProcess(Part part) throws IOException {
         if(part.getName().equals("fileUploader")){
             String cd = part.getHeader("Content-Disposition");
             String[] cds = cd.split(";");
@@ -126,9 +189,6 @@ public class ManagerServlet extends BaseServlet{
             else{
                 commonFileProcess(filename, is);
             }
-
-
-
         }
     }
     private void commonFileProcess(String filename, InputStream is) {
@@ -168,7 +228,7 @@ public class ManagerServlet extends BaseServlet{
             BufferedImage bi = ir.read(imageIndex,rp);
             ImageIO.write(bi, ext, new File(getClass().getResource("/").getPath()+filename));
         }
-    }
+    }*/
 
 
 }

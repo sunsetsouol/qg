@@ -116,11 +116,10 @@
                     @selection-change="handleSelectionChange"
             >
                 <el-table-column
-                        prop=name"
+                        prop="name"
                         label="店铺名"
                         align="center"
                 >
-
                 </el-table-column>
 
                 <el-table-column
@@ -146,13 +145,13 @@
                         align="center">
                     <template slot-scope="scope">
                         <el-row>
-                            <el-button type="primary"  @click="subscrible(scope.row)">关注</el-button>
+                            <el-button type="primary"  @click="subscrible(scope.row)">关 注</el-button>
                         </el-row>
                     </template>
                 </el-table-column>
             </el-table>
         </template>
-        <el-button type="primary" @click="dialogUser = false">确 定</el-button>
+        <el-button type="primary" @click="dialogShop = false">确 定</el-button>
     </el-dialog>
 
 
@@ -165,6 +164,10 @@
         <el-form :model="apply" label-width="80px">
             <el-form-item label="店铺名称">
                 <el-input v-model="apply.shopName"></el-input>
+            </el-form-item>
+
+            <el-form-item label="店铺描述">
+                <el-input v-model="apply.description"></el-input>
             </el-form-item>
         </el-form>
 
@@ -398,12 +401,13 @@
                     label="介绍">
             </el-table-column>
 
+
             <el-table-column
                     prop="picture"
                     align="center"
                     label="图片">
-                <template >
-                    <el-image :src="picture" />
+                <template slot-scope="scope">
+                    <img :src="scope.row.picture" style="width: 30px;height: 30px">
                 </template>
             </el-table-column>
 
@@ -442,8 +446,37 @@
         el: "#app",
         mounted(){
             this.selectAll();
+            var _this = this;
+            axios({
+                method:"post",
+                url:"http://localhost:8080/ShoppingSystem/user/getHeadshot"
+            }).then(function (resp){
+                if (resp.data.code == 1){
+                    _this.circleUrl = resp.data.data;
+                }
+            })
         },
         methods: {
+            subscrible(row){
+                var _this = this;
+                axios({
+                    method:"post",
+                    url:"http://localhost:8080/ShoppingSystem/user/subscrible",
+                    data:row
+                }).then(function (resp){
+                    if (resp.data.code == 1){
+                        _this.$message({
+                            type: 'info',
+                            message: '关注成功'
+                        });
+                    }else {
+                        _this.$message({
+                            type: 'info',
+                            message: '你已经关注过啦'
+                        });
+                    }
+                })
+            },
             Manager(){
                 var _this = this;
                 axios({
@@ -550,9 +583,15 @@
                     data:this.ask
                 }).then(function (resp){
                     if (resp.data.code == 1){
-                        alert("success");
+                        _this.$message({
+                            type: 'info',
+                            message: '发送成功'
+                        });
                     }else {
-                        alert("fail");
+                        _this.$message({
+                            type: 'info',
+                            message: '发送失败'
+                        });
                     }
                 })
             },
@@ -723,7 +762,8 @@
         data() {
             return {
                 apply:{
-                    shopName:''
+                    shopName:'',
+                    description:''
                 },
                 searchName:'',
                 dialogShop:false,
@@ -787,6 +827,7 @@
                     consultation:'',
                 },
                 reply:[{
+                    id:'',
                     consultationId:'',
                     reply:'',
                     userName:''

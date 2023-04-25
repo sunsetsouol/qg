@@ -13,12 +13,22 @@ public class Apply {
 
     private String shopName;
 
+    private String description;
+
     public String getShopName() {
         return shopName;
     }
 
     public void setShopName(String shopName) {
         this.shopName = shopName;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override
@@ -28,14 +38,16 @@ public class Apply {
                 ", userId=" + userId +
                 ", status=" + status +
                 ", shopName='" + shopName + '\'' +
+                ", description='" + description + '\'' +
                 '}';
     }
 
-    public Apply(Integer id, Integer userId, Integer status, String shopName) {
+    public Apply(Integer id, Integer userId, Integer status, String shopName, String description) {
         this.id = id;
         this.userId = userId;
         this.status = status;
         this.shopName = shopName;
+        this.description = description;
     }
 
     public Apply() {

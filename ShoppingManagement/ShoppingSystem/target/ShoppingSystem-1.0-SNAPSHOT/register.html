@@ -161,7 +161,7 @@
                 this.$refs[formName].validate((valid) => {
                     var _this = this;
                     if (valid) {
-                        axios.post("http://localhost:8080/ShoppingSystem/user/register",this.ruleForm,headshot).then(function (resp){
+                        axios.post("http://localhost:8080/ShoppingSystem/user/register",this.ruleForm).then(function (resp){
                             if(resp.data.code==1){
                                 _this.$alert('你已注册成功，快去登录吧！', '注册成功', {
                                     confirmButtonText: '确定'

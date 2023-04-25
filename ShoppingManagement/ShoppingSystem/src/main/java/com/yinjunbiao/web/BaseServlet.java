@@ -1,5 +1,7 @@
 package com.yinjunbiao.web;
 
+import com.yinjunbiao.util.SqlSessionUtil;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +23,7 @@ public class BaseServlet extends HttpServlet {
             Method declaredMethod = aClass.getDeclaredMethod(methodName, HttpServletRequest.class, HttpServletResponse.class);
             declaredMethod.invoke(this,req,resp);
         } catch (Exception e) {
+            SqlSessionUtil.close();
             e.printStackTrace();
         }
     }

@@ -36,4 +36,7 @@ public interface OrdersMapper {
     List<Orders> selectByShopId(@Param("shopId")Integer shopId,@Param("status")Integer status,@Param("begin")Integer begin,@Param("size")Integer size);
 
 
+    @Delete(sql = "delete from orders where goods_id = #{goodsId}")
+    @ResultMap(id = "ordersResultMap")
+    int deleteByGoodsId(@Param("goodsId") Long id);
 }

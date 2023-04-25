@@ -26,8 +26,6 @@ public interface UserService {
 
     ResultSet selectMyOrders(Integer userId,Integer status);
 
-    ResultSet subscrible(Subscrible subscrible);
-
     ResultSet selectSub(Subscrible subscrible);
 
     ResultSet selectMySubs(Integer userId);
@@ -53,4 +51,8 @@ public interface UserService {
     ResultSet buyCarts(Long[] ids);
 
     ResultSet selectUser(User user);
+
+    ResultSet subscrible(Subscrible subscrible);
+
+    ResultSet getHeadshot(Integer id);
 }

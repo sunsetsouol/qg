@@ -98,12 +98,19 @@ public class GoodsServiceImpl implements GoodsService {
     public ResultSet selectConsultation(Long id) {
         List<Consultation> consultations = consultationMapper.selectByGoodsId(id);
         List<GoodsConsultations> goodsConsultations = new ArrayList<>();
-        for (Consultation consultation : consultations) {
-            goodsConsultations.add(new GoodsConsultations(consultation.getId(),userMapper.selectById(consultation.getUserId()).getUserName(),consultation.getConsultation()));
+        if (consultations != null){
+            for (Consultation consultation : consultations) {
+                goodsConsultations.add(new GoodsConsultations(consultation.getId(),userMapper.selectById(consultation.getUserId()).getUserName(),consultation.getConsultation()));
+            }
         }
         return ResultSet.success(goodsConsultations,null);
     }
 
+    /**
+     * 发送评论
+     * @param consultation
+     * @return
+     */
     @Override
     public ResultSet sendConsultation(Consultation consultation) {
         consultationMapper.insert(consultation.getGoodsId(), consultation.getConsultation(), consultation.getUserId());
@@ -112,6 +119,11 @@ public class GoodsServiceImpl implements GoodsService {
         return ResultSet.success();
     }
 
+    /**
+     * 发送回复
+     * @param reply
+     * @return
+     */
     @Override
     public ResultSet sendReply(Reply reply) {
         replyMapper.insert(reply.getConsultationId(),reply.getReply(),reply.getUserId());
@@ -120,26 +132,45 @@ public class GoodsServiceImpl implements GoodsService {
         return ResultSet.success();
     }
 
+    /**
+     * 查询回复
+     * @param id
+     * @return
+     */
     @Override
     public ResultSet selectReply(Long id) {
         List<Reply> replies = replyMapper.selectByCId(id);
         List<GoodsReply> goodsReplies = new ArrayList<>();
-        for (Reply reply : replies) {
-            goodsReplies.add(new GoodsReply(reply.getId(),userMapper.selectById(reply.getUserId()).getUserName(),reply.getReply(),reply.getConsultationId()));
+        if (replies != null){
+            for (Reply reply : replies) {
+                goodsReplies.add(new GoodsReply(reply.getId(),userMapper.selectById(reply.getUserId()).getUserName(),reply.getReply(),reply.getConsultationId()));
+            }
         }
         SqlSessionUtil.commit();
         SqlSessionUtil.close();
         return ResultSet.success(goodsReplies,null);
     }
 
+    /**
+     * 删除货物
+     * @param id
+     * @return
+     */
     @Override
     public ResultSet deleteGoods(Long id) {
+        cartMapper.deleteByGoodsId(id);
+        ordersMapper.deleteByGoodsId(id);
         goodsMapper.deleteById(id);
         SqlSessionUtil.commit();
         SqlSessionUtil.close();
         return ResultSet.success();
     }
 
+    /**
+     * 删除回复
+     * @param goodsReply
+     * @return
+     */
     @Override
     public ResultSet deleteReply(GoodsReply goodsReply) {
         replyMapper.deleteById(goodsReply.getId());
@@ -148,6 +179,11 @@ public class GoodsServiceImpl implements GoodsService {
         return ResultSet.success();
     }
 
+    /**
+     * 删除评论
+     * @param goodsConsultations
+     * @return
+     */
     @Override
     public ResultSet deleteConsultations(GoodsConsultations goodsConsultations) {
         replyMapper.deleteByConsultationId(goodsConsultations.getId());

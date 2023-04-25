@@ -19,13 +19,13 @@ public interface ApplyMapper {
     @ResultMap(id = "applyResultMap")
     Apply selectByUserId(@Param("userId")Integer id);
 
-    @Insert(sql = "insert into apply values (null,#{userId},0,#{shopName})")
+    @Insert(sql = "insert into apply values (null,#{userId},0,#{shopName},#{description})")
     @ResultMap(id = "applyResultMap")
-    int insert (@Param("userId")Integer userId,@Param("shopName")String shopName);
+    int insert (@Param("userId")Integer userId,@Param("shopName")String shopName,@Param("description")String description);
 
-    @Update(sql = "update apply set status = #{status}")
+    @Update(sql = "update apply set status = #{status} where id = #{id}")
     @ResultMap(id = "applyResultMap")
-    int updateStatus(@Param("status")Integer status);
+    int updateStatus(@Param("status")Integer status,@Param("id")Integer id);
 
 
 }

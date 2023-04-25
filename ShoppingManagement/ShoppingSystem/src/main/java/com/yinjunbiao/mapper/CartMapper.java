@@ -35,4 +35,7 @@ public interface CartMapper {
     @ResultMap(id = "cartResultMap")
     int deleteById(@Param("id")Long id);
 
+    @Delete(sql = "delete from cart where goods_id = #{goodsId}")
+    @ResultMap(id = "cartResultMap")
+    int deleteByGoodsId(@Param("goodsId")Long goodsId);
 }

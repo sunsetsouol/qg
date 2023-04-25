@@ -44,7 +44,12 @@ public class UserServlet extends BaseServlet {
     @Autowired
     private OrdersService ordersService = ((OrdersService) ApplicationUtil.getApplicationContext().getBean("ordersService"));
 
-    //登录
+    /**
+     * 登录
+     * @param request
+     * @param response
+     * @throws IOException
+     */
     public void login(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         //获取数据转换成user对象，如果数据是空直接返回
@@ -72,6 +77,21 @@ public class UserServlet extends BaseServlet {
         response.setContentType("application/json;charset=utf-8");
         response.getWriter().write(JSON.toJSONString(resultSet));
     }
+    public void getHeadshot(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            String token = request.getHeader("Authorization");
+            Claims claims = JwtUtil.parseJWT(token);
+            Integer id = (Integer) claims.get("id");
+            ResultSet resultSet = userService.getHeadshot(id);
+            response.setStatus(200);
+            response.setContentType("application/json;charset=utf-8");
+            response.getWriter().write(JSON.toJSONString(resultSet));
+        }catch (Exception e){
+            return;
+        }
+
+    }
+
 
     /**
      * 注册
@@ -323,6 +343,13 @@ public class UserServlet extends BaseServlet {
             response.sendRedirect("/ShoppingSystem/login.html");
         }
     }
+
+    /**
+     * 确认收货
+     * @param request
+     * @param response
+     * @throws IOException
+     */
     public void confirmReceipt(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
             String authorization = request.getHeader("Authorization");
@@ -339,6 +366,13 @@ public class UserServlet extends BaseServlet {
             response.sendRedirect("/ShoppingSystem/login.html");
         }
     }
+
+    /**
+     * 申请退款
+     * @param request
+     * @param response
+     * @throws IOException
+     */
     public void refund(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
             String authorization = request.getHeader("Authorization");
@@ -355,6 +389,13 @@ public class UserServlet extends BaseServlet {
             response.sendRedirect("/ShoppingSystem/login.html");
         }
     }
+
+    /**
+     * 搜搜用户
+     * @param request
+     * @param response
+     * @throws IOException
+     */
     public void searchUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
             String authorization = request.getHeader("Authorization");
@@ -372,4 +413,29 @@ public class UserServlet extends BaseServlet {
         }
     }
 
+    /**
+     * 订阅店铺
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    public void subscrible(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            String authorization = request.getHeader("Authorization");
+            Claims claims = JwtUtil.parseJWT(authorization);
+            BufferedReader reader = request.getReader();
+            String s = reader.readLine();
+            Shop shop = JSON.parseObject(s, Shop.class);
+            Subscrible subscrible = new Subscrible();
+            subscrible.setShopId(shop.getId());
+            subscrible.setUserId(((Integer) claims.get("id")));
+            ResultSet resultSet = userService.subscrible(subscrible);
+            response.setStatus(200);
+            response.setContentType("application/json;charset=utf-8");
+            response.getWriter().write(JSON.toJSONString(resultSet));
+        } catch (Exception e) {
+            SqlSessionUtil.close();
+            response.sendRedirect("/ShoppingSystem/login.html");
+        }
+    }
 }

@@ -27,9 +27,9 @@ public interface ShopMapper {
     @ResultMap(id = "shopResultMap")
     Shop selectByBossId(@Param("id")Integer id);
 
-    @Insert(sql = "insert into shop values(null,#{bossId},0,#{description},#{sales}")
+    @Insert(sql = "insert into shop values(null,#{bossId},0,#{description},0,#{shopName})")
     @ResultMap(id = "shopResultMap")
-    int insert(@Param("bossId")Integer bossId,@Param("description")String description,@Param("sales")Integer sales);
+    int insert(@Param("bossId")Integer bossId,@Param("shopName")String shopName,@Param("description")String description);
 
     @Update(sql = "update shop set fans = #{fans} where id = #{id}")
     @ResultMap(id = "shopResultMap")

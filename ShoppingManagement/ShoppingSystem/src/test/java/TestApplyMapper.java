@@ -17,7 +17,6 @@ public class TestApplyMapper {
     public void testInsert(){
         SqlSession sqlSession = SqlSessionUtil.getSqlSession();
         ApplyMapper mapper = sqlSession.getMapper(ApplyMapper.class);
-        mapper.insert(3,"asd");
         SqlSessionUtil.commit();
         SqlSessionUtil.close();
     }
