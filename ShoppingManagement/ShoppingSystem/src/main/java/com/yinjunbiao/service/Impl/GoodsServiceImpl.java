@@ -158,6 +158,9 @@ public class GoodsServiceImpl implements GoodsService {
      */
     @Override
     public ResultSet deleteGoods(Long id) {
+        if (goodsMapper.selectById(id) == null) {
+            ResultSet.error();
+        }
         cartMapper.deleteByGoodsId(id);
         ordersMapper.deleteByGoodsId(id);
         goodsMapper.deleteById(id);

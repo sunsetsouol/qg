@@ -2,10 +2,7 @@ package com.yinjunbiao.web;
 
 import com.alibaba.fastjson.JSON;
 import com.yinjunbiao.MySpring.Annotation.Scope;
-import com.yinjunbiao.entity.Apply;
-import com.yinjunbiao.entity.Goods;
-import com.yinjunbiao.entity.Reply;
-import com.yinjunbiao.entity.User;
+import com.yinjunbiao.entity.*;
 import com.yinjunbiao.mapper.UserMapper;
 import com.yinjunbiao.pojo.GoodsConsultations;
 import com.yinjunbiao.pojo.GoodsReply;
@@ -159,6 +156,52 @@ public class ManagerServlet extends BaseServlet{
         response.getWriter().write(JSON.toJSONString(resultSet));
     }
 
+    /**
+     * 查看商品商家申请
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    public void pushApply(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        ResultSet resultSet = managerService.selectPushApply();
+        response.setStatus(200);
+        response.setContentType("application/json;charset=utf-8");
+        response.getWriter().write(JSON.toJSONString(resultSet));
+    }
+
+    /**
+     * 同意推送商品
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    public void agreeGoods(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        BufferedReader reader = request.getReader();
+        String s = reader.readLine();
+        PushGood pushGood = JSON.parseObject(s, PushGood.class);
+        ResultSet resultSet = managerService.agreePushGoods(pushGood);
+        response.setStatus(200);
+        response.setContentType("application/json;charset=utf-8");
+        response.getWriter().write(JSON.toJSONString(resultSet));
+    }
+
+    /**
+     * 拒绝推送商品
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    public void disagreeGoods(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        BufferedReader reader = request.getReader();
+        String s = reader.readLine();
+        PushGood pushGood = JSON.parseObject(s, PushGood.class);
+        ResultSet resultSet = managerService.disagreePushGoods(pushGood);
+        response.setStatus(200);
+        response.setContentType("application/json;charset=utf-8");
+        response.getWriter().write(JSON.toJSONString(resultSet));
+    }
+
+
 
     public void test(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try{
@@ -167,6 +210,14 @@ public class ManagerServlet extends BaseServlet{
             InputStream inputStream = imageUrl.getInputStream();
             String upload = UploadUtil.upload(inputStream);
             System.out.println(upload);
+
+//            OutputStream os = new FileOutputStream("C:\\Users\\28246\\Desktop\\source\\a.jpg");
+//            byte[] bytes = new byte[1024];
+//            int read;
+//            while ((read = inputStream.read(bytes)) != -1){
+//                os.write(bytes,0,read);
+//            }
+//            os.close();
             inputStream.close();
 
         }catch (Exception e){

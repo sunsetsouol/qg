@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
@@ -70,13 +71,24 @@ public class UserServlet extends BaseServlet {
             Map<String, Object> claims = new HashMap<>();
             claims.put("id", ((User) resultSet.getData()).getId());
             claims.put("identify",((User) resultSet.getData()).getIdentify());
+
             String jwt = JwtUtil.generateJwt(claims);
+            Cookie c_jwt = new Cookie("token",jwt);
+            c_jwt.setMaxAge(60*60*24*7);
+            response.addCookie(c_jwt);
             resultSet.setData(jwt);
         }
         response.setStatus(200);
         response.setContentType("application/json;charset=utf-8");
         response.getWriter().write(JSON.toJSONString(resultSet));
     }
+
+    /**
+     * 获取头像
+     * @param request
+     * @param response
+     * @throws IOException
+     */
     public void getHeadshot(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
             String token = request.getHeader("Authorization");
@@ -89,7 +101,6 @@ public class UserServlet extends BaseServlet {
         }catch (Exception e){
             return;
         }
-
     }
 
 
@@ -438,4 +449,31 @@ public class UserServlet extends BaseServlet {
             response.sendRedirect("/ShoppingSystem/login.html");
         }
     }
+
+    /**
+     * 举报商品
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    public void reportGoods(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            BufferedReader reader = request.getReader();
+            String s = reader.readLine();
+            Report report = JSON.parseObject(s, Report.class);
+            String authorization = request.getHeader("Authorization");
+            Claims claims = JwtUtil.parseJWT(authorization);
+            Integer id = (Integer) claims.get("id");
+            report.setUserId(id);
+            ResultSet resultSet = userService.reportGoods(report);
+            response.setStatus(200);
+            response.setContentType("application/json;charset=utf-8");
+            response.getWriter().write(JSON.toJSONString(resultSet));
+        } catch (Exception e) {
+            SqlSessionUtil.close();
+            response.sendRedirect("/ShoppingSystem/login.html");
+        }
+    }
+
+
 }

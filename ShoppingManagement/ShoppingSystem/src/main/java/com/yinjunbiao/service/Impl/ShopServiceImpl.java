@@ -51,7 +51,7 @@ public class ShopServiceImpl implements ShopService {
         if (pushGoodsMapper.selectByShopIdAndName(pushGood.getShopId(), pushGood.getName()) == null) {
             synchronized (pushGoodsMapper){
                 if (pushGoodsMapper.selectByShopIdAndName(pushGood.getShopId(), pushGood.getName()) == null) {
-                    pushGoodsMapper.insert(pushGood.getName(),pushGood.getPrice(),pushGood.getDescription(),pushGood.getShopId());
+                    pushGoodsMapper.insert(pushGood.getName(),pushGood.getPrice(),pushGood.getDescription(),pushGood.getShopId(),pushGood.getInventory());
                     resultSet= ResultSet.success();
                 }
             }

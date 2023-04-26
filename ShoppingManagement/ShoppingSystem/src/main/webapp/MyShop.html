@@ -55,7 +55,17 @@
                     <div class="block">
                         <el-slider
                                 v-model="push.price"
-                                show-input max="2147483647">
+                                show-input max="10000">
+                        </el-slider>
+                    </div>
+                </template>
+            </el-form-item>
+            <el-form-item label="库存">
+                <template>
+                    <div class="block">
+                        <el-slider
+                                v-model="push.inventory"
+                                show-input max="10000">
                         </el-slider>
                     </div>
                 </template>
@@ -341,7 +351,8 @@
                     name: '',
                     price: '',
                     description: '',
-                    picture: ''
+                    picture: '',
+                    inventory:''
                 },
                 orders: {
                     id: '',

@@ -496,6 +496,34 @@ public class UserServiceImpl implements UserService {
     }
 
 
+    /**
+     * 举报商品
+     * @param report
+     * @return
+     */
+    @Override
+    public ResultSet reportGoods(Report report) {
+        ResultSet resultSet = null;
+        if (reportMapper.selectByUAGId(report.getUserId(), report.getGoodsId()) == null) {
+            synchronized (reportMapper) {
+                if (reportMapper.selectByUAGId(report.getUserId(), report.getGoodsId()) == null) {
+                    reportMapper.insert(report.getGoodsId(), report.getUserId(), 0, report.getDescription());
+                    resultSet = ResultSet.success(null, "举报成功");
+                }
+            }
+        }
+        if (resultSet == null) {
+            resultSet = ResultSet.error(null, "请勿重复举报");
+        }
+        SqlSessionUtil.commit();
+        SqlSessionUtil.close();
+        return resultSet;
+    }
+
+
+
+
+
     @Override
     public ResultSet selectSub(Subscrible subscrible) {
         Subscrible select = subscribleMapper.selectByUASId(subscrible.getUserId(), subscrible.getShopId());
@@ -548,24 +576,6 @@ public class UserServiceImpl implements UserService {
         return delete == 1 ? ResultSet.success(null, "删除成功") : ResultSet.error(null, "回复不存在，可能已经删除");
     }
 
-    @Override
-    public ResultSet reportGoods(Report report) {
-        ResultSet resultSet = null;
-        if (reportMapper.selectByUAGId(report.getUserId(), report.getGoodId()) == null) {
-            synchronized (reportMapper) {
-                if (reportMapper.selectByUAGId(report.getUserId(), report.getGoodId()) == null) {
-                    reportMapper.insert(report.getGoodId(), report.getUserId(), report.getStatus(), report.getDescription());
-                    resultSet = ResultSet.success(null, "举报成功");
-                }
-            }
-        }
-        if (resultSet == null) {
-            resultSet = ResultSet.error(null, "请勿重复举报");
-        }
-        SqlSessionUtil.commit();
-        SqlSessionUtil.close();
-        return resultSet;
-    }
 
 
 }

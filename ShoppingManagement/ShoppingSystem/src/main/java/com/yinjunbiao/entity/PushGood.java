@@ -21,6 +21,8 @@ public class PushGood {
 
     private Integer shopId;
 
+    private Integer inventory;
+
     @Override
     public String toString() {
         return "PushGood{" +
@@ -31,7 +33,19 @@ public class PushGood {
                 ", picture='" + picture + '\'' +
                 ", description='" + description + '\'' +
                 ", shopId=" + shopId +
+                ", inventory=" + inventory +
                 '}';
+    }
+
+    public PushGood(Long id, String name, Integer price, Integer status, String picture, String description, Integer shopId, Integer inventory) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.status = status;
+        this.picture = picture;
+        this.description = description;
+        this.shopId = shopId;
+        this.inventory = inventory;
     }
 
     public Long getId() {
@@ -90,16 +104,16 @@ public class PushGood {
         this.shopId = shopId;
     }
 
+    public Integer getInventory() {
+        return inventory;
+    }
+
+    public void setInventory(Integer inventory) {
+        this.inventory = inventory;
+    }
+
     public PushGood() {
     }
 
-    public PushGood(Long id, String name, Integer price, Integer status, String picture, String description, Integer shopId) {
-        this.id = id;
-        this.name = name;
-        this.price = price;
-        this.status = status;
-        this.picture = picture;
-        this.description = description;
-        this.shopId = shopId;
-    }
+
 }

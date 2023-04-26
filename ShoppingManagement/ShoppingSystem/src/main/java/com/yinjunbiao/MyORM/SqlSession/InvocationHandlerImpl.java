@@ -8,10 +8,7 @@ import com.yinjunbiao.util.CONST;
 import com.yinjunbiao.util.ParseSql;
 
 import java.lang.reflect.*;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -87,7 +84,9 @@ public class InvocationHandlerImpl implements InvocationHandler {
                 throw new MapperException("没有找到需要的参数"+paramMaps.get(i));
             }
             Class<?> type = value.getClass();
-            SqlSession.getTypeHandlerMap().get(type).setParam(preparedStatement,i+1,value);
+            if (value != null){
+                SqlSession.getTypeHandlerMap().get(type).setParam(preparedStatement,i+1,value);
+            }
         }
         if(!sql.startsWith(CONST.SELECT)){
             return preparedStatement.executeUpdate();

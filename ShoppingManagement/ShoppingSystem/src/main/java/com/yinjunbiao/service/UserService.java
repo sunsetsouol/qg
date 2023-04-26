@@ -38,8 +38,6 @@ public interface UserService {
 
     ResultSet deleteReply(Long id);
 
-    ResultSet reportGoods(Report report);
-
     ResultSet selectMyShop(Integer id);
 
     ResultSet addCart(Cart cart);
@@ -55,4 +53,6 @@ public interface UserService {
     ResultSet subscrible(Subscrible subscrible);
 
     ResultSet getHeadshot(Integer id);
+
+    ResultSet reportGoods(Report report);
 }

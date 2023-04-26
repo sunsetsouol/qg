@@ -75,6 +75,64 @@
 
 
     <el-dialog
+            title="商品申请"
+            :visible.sync="dialogPushApply"
+            width="30%">
+        <!--表格-->
+        <template>
+            <el-table
+                    :data="pushGoods"
+                    style="width: 100%"
+                    :row-class-name="tableRowClassName"
+                    @selection-change="handleSelectionChange"
+            >
+                <el-table-column
+                        prop="name"
+                        label="商品名称"
+                        align="center"
+                >
+                </el-table-column>
+                <el-table-column
+                        prop="price"
+                        label="价格"
+                        align="center"
+                >
+                </el-table-column>
+                <el-table-column
+                        prop="description"
+                        label="介绍"
+                        align="center"
+                >
+                </el-table-column>
+                <el-table-column
+                        prop="picture"
+                        label="图片"
+                        align="center"
+                >
+                    <template slot-scope="scope">
+                        <img :src="scope.row.picture" style="width: 30px;height: 30px">
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        align="center">
+                    <template slot-scope="scope">
+                        <el-row>
+                            <el-button type="primary" @click="agreeGoods(scope.row)">同意申请</el-button>
+                            <el-button type="danger" @click="disagreeGoods(scope.row)">拒绝申请</el-button>
+                        </el-row>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </template>
+        <span slot="footer" class="dialog-footer is-align-middle">
+    <el-button type="primary" @click="dialogShopApply = false">关 闭</el-button>
+  </span>
+    </el-dialog>
+
+
+
+
+    <el-dialog
             title="商品详情"
             :visible.sync="dialogConsultation"
             width="30%">
@@ -309,6 +367,38 @@
             this.selectGoods();
         },
         methods: {
+            agreeGoods(row){
+                var _this = this;
+                axios.post("http://localhost:8080/ShoppingSystem/manager/agreeGoods",row).then(function (resp) {
+                    if (resp.data.code == 1) {
+                        _this.$message({
+                            type: 'info',
+                            message: '设置成功'
+                        });
+                    }else {
+                        _this.$message({
+                            type: 'info',
+                            message: '设置失败，申请不存在'
+                        });
+                    }
+                });
+            },
+            disagreeGoods(row){
+                var _this = this;
+                axios.post("http://localhost:8080/ShoppingSystem/manager/disagreeGoods",row).then(function (resp) {
+                    if (resp.data.code == 1) {
+                        _this.$message({
+                            type: 'info',
+                            message: '设置成功'
+                        });
+                    }else {
+                        _this.$message({
+                            type: 'info',
+                            message: '设置失败'
+                        });
+                    }
+                });
+            },
             agreeShop(row){
                 var _this = this;
                 axios.post("http://localhost:8080/ShoppingSystem/manager/agreeShop",row).then(function (resp) {
@@ -347,7 +437,7 @@
                 var _this = this;
                 axios.post("http://localhost:8080/ShoppingSystem/manager/pushApply").then(function (resp) {
                     if (resp.data.code == 1) {
-                        _this.push = resp.data.data;
+                        _this.pushGoods = resp.data.data;
                         _this.dialogPushApply = true;
                     } else {
                         _this.$alert(resp.data.msg, '查询失败', {
@@ -650,6 +740,7 @@
                 dialogSuccess: false,
                 dialogError: false,
                 dialogShopApply: false,
+                dialogPushApply: false,
 
                 circleUrl: "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
                 sizeList: ["large", "medium", "small"],
@@ -666,8 +757,13 @@
                     userName: '',
                     shopName:''
                 },
-                push:{
-
+                pushGoods:{
+                    id:'',
+                    shopId:'',
+                    name:'',
+                    price:'',
+                    description:'',
+                    picture:''
                 },
                 goods: {
                     id: '',

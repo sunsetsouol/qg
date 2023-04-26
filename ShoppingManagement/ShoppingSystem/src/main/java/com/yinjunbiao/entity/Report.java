@@ -7,7 +7,7 @@ package com.yinjunbiao.entity;
 public class Report {
     private Integer id;
 
-    private Long goodId;
+    private Long goodsId;
 
     private Integer userId;
 
@@ -19,14 +19,11 @@ public class Report {
     public String toString() {
         return "Report{" +
                 "id=" + id +
-                ", goodId=" + goodId +
+                ", goodsId=" + goodsId +
                 ", userId=" + userId +
                 ", status=" + status +
                 ", description='" + description + '\'' +
                 '}';
-    }
-
-    public Report() {
     }
 
     public Integer getId() {
@@ -37,12 +34,12 @@ public class Report {
         this.id = id;
     }
 
-    public Long getGoodId() {
-        return goodId;
+    public Long getGoodsId() {
+        return goodsId;
     }
 
-    public void setGoodId(Long goodId) {
-        this.goodId = goodId;
+    public void setGoodsId(Long goodsId) {
+        this.goodsId = goodsId;
     }
 
     public Integer getUserId() {
@@ -69,9 +66,12 @@ public class Report {
         this.description = description;
     }
 
-    public Report(Integer id, Long goodId, Integer userId, Integer status, String description) {
+    public Report() {
+    }
+
+    public Report(Integer id, Long goodsId, Integer userId, Integer status, String description) {
         this.id = id;
-        this.goodId = goodId;
+        this.goodsId = goodsId;
         this.userId = userId;
         this.status = status;
         this.description = description;

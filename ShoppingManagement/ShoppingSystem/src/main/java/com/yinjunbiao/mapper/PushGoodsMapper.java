@@ -11,20 +11,24 @@ import java.util.List;
 @Component("pushGoodsMapper")
 public interface PushGoodsMapper {
 
-    @Insert(sql = "insert into push values(null,#{name},#{price},0,null,#{description},#{shopId})")
+    @Insert(sql = "insert into push values(null,#{name},#{price},0,null,#{description},#{shopId},#{inventory})")
     @ResultMap(id = "pushGoodsResultMap")
-    int insert(@Param("name")String name,@Param("price")Integer price,@Param("description")String description,@Param("shopId")Integer shopId);
+    int insert(@Param("name")String name,@Param("price")Integer price,@Param("description")String description,@Param("shopId")Integer shopId,@Param("inventory")Integer inventory);
 
 
-    @Select(sql = "select * from push where shop_id = #{shopId}")
+    @Select(sql = "select * from push where shop_id = #{shopId} where status = 0")
     @ResultMap(id = "pushGoodsResultMap")
     List<PushGood> selectByShopId(@Param("shopId")Integer shopId);
+
+    @Select(sql = "select * from push where status = 0")
+    @ResultMap(id = "pushGoodsResultMap")
+    List<PushGood> select();
 
     @Select(sql = "select * from push where shop_id = #{shopId} and name = #{name} and status = 0")
     @ResultMap(id = "pushGoodsResultMap")
     PushGood selectByShopIdAndName(@Param("shopId")Integer shopId,@Param("name")String name);
 
-    @Select(sql = "select * from push where id = #{id}")
+    @Select(sql = "select * from push where id = #{id} where status = 0")
     @ResultMap(id = "pushGoodsResultMap")
     PushGood selectById(@Param("id")Long id);
 

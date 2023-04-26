@@ -20,13 +20,15 @@
         <el-row class="demo-avatar demo-basic">
             <el-col :span="12">
                 <div class="demo-basic--circle">
-                    <div class="block"><el-avatar :size="50" :src="circleUrl"></el-avatar></div>
+                    <div class="block">
+                        <el-avatar :size="50" :src="circleUrl"></el-avatar>
+                    </div>
                 </div>
             </el-col>
         </el-row>
     </template>
 
-        <!--搜索表单-->
+    <!--搜索表单-->
     <el-form :inline="true" :model="goods" class="demo-form-inline">
 
 
@@ -72,34 +74,59 @@
     <el-button type="primary" icon="el-icon-shopping-cart-full" @click="searchMyCart">购物车</el-button>
     <el-button type="primary" icon="el-icon-shopping-bag-1" @click="searchMyOrders">我的订单</el-button>
 
+
+    <el-dialog
+            title="举报商品"
+            :visible.sync="dialogReport"
+            width="30%"
+    >
+
+        <el-form ref="form" :model="report" label-width="80px">
+            <el-form-item label="商品名称">
+                {{report.goodsName}}
+            </el-form-item>
+
+            <el-form-item label="介绍">
+                <el-input type="textarea" v-model="report.description"></el-input>
+            </el-form-item>
+
+            <el-form-item>
+                <el-button type="primary" @click="submitReport">提交</el-button>
+                <el-button @click="dialogReport = false">取消</el-button>
+            </el-form-item>
+        </el-form>
+
+    </el-dialog>
+
+
     <el-dialog
             title="搜索详情"
             :visible.sync="dialogUser"
             width="30%">
-            <template >
-                <el-table
-                        :data="user"
-                        style="width: 100%"
-                        :row-class-name="tableRowClassName"
-                        @selection-change="handleSelectionChange"
+        <template>
+            <el-table
+                    :data="user"
+                    style="width: 100%"
+                    :row-class-name="tableRowClassName"
+                    @selection-change="handleSelectionChange"
+            >
+                <el-table-column
+                        prop="headshot"
+                        label="头像"
+                        align="center"
                 >
-                    <el-table-column
-                            prop=headshot"
-                            label="头像"
-                            align="center"
-                    >
-                        <template slot-scope="scope">
-                            <img :src="scope.row.headshot" style="width: 30px;height: 30px">
-                        </template>
-                    </el-table-column>
-                    <el-table-column
-                            prop="userName"
-                            label="用户"
-                            align="center"
-                    >
-                    </el-table-column>
-                </el-table>
-            </template>
+                    <template slot-scope="scope">
+                        <img :src="scope.row.headshot" style="width: 30px;height: 30px">
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        prop="userName"
+                        label="用户"
+                        align="center"
+                >
+                </el-table-column>
+            </el-table>
+        </template>
         <el-button type="primary" @click="dialogUser = false">确 定</el-button>
     </el-dialog>
 
@@ -108,7 +135,7 @@
             title="搜索详情"
             :visible.sync="dialogShop"
             width="30%">
-        <template >
+        <template>
             <el-table
                     :data="shop"
                     style="width: 100%"
@@ -116,10 +143,11 @@
                     @selection-change="handleSelectionChange"
             >
                 <el-table-column
-                        prop="name"
+                        prop=name"
                         label="店铺名"
                         align="center"
                 >
+
                 </el-table-column>
 
                 <el-table-column
@@ -145,16 +173,14 @@
                         align="center">
                     <template slot-scope="scope">
                         <el-row>
-                            <el-button type="primary"  @click="subscrible(scope.row)">关 注</el-button>
+                            <el-button type="primary" @click="subscrible(scope.row)">关注</el-button>
                         </el-row>
                     </template>
                 </el-table-column>
             </el-table>
         </template>
-        <el-button type="primary" @click="dialogShop = false">确 定</el-button>
+        <el-button type="primary" @click="dialogUser = false">确 定</el-button>
     </el-dialog>
-
-
 
 
     <el-dialog
@@ -164,10 +190,6 @@
         <el-form :model="apply" label-width="80px">
             <el-form-item label="店铺名称">
                 <el-input v-model="apply.shopName"></el-input>
-            </el-form-item>
-
-            <el-form-item label="店铺描述">
-                <el-input v-model="apply.description"></el-input>
             </el-form-item>
         </el-form>
 
@@ -181,7 +203,7 @@
             :visible.sync="dialogConsultation"
             width="30%">
         <!--表格-->
-        <template >
+        <template>
             <el-table
                     :data="consultation"
                     style="width: 100%"
@@ -204,7 +226,7 @@
                         align="center">
                     <template slot-scope="scope">
                         <el-row>
-                            <el-button type="primary"  @click="answer(scope.row)">回复</el-button>
+                            <el-button type="primary" @click="answer(scope.row)">回复</el-button>
                         </el-row>
                     </template>
                 </el-table-column>
@@ -225,7 +247,7 @@
                 <el-input type="textarea" v-model="ask.consultation"></el-input>
             </el-form-item>
         </el-form>
-    <el-button type="primary" @click="sendQuestion">确 定</el-button>
+        <el-button type="primary" @click="sendQuestion">确 定</el-button>
     </el-dialog>
 
 
@@ -233,7 +255,7 @@
             title="详情"
             :visible.sync="dialogReply"
             width="30%">
-        <template >
+        <template>
             <el-table
                     :data="reply"
                     style="width: 100%"
@@ -262,8 +284,6 @@
     </el-dialog>
 
 
-
-
     <el-dialog
             title="购买"
             :visible.sync="dialogVisible"
@@ -271,13 +291,13 @@
     >
 
         <el-form ref="form" :model="orders" label-width="80px">
-            <el-form-item label="商品名称">
+            <el-form-item label="商品名称" v-model="orders.name">
                 {{orders.name}}
             </el-form-item>
 
             <img src="orders.picture" class="image">
 
-            <el-form-item label="价格">
+            <el-form-item label="价格" v-model="orders.singlePrice">
                 {{orders.singlePrice}}
             </el-form-item>
 
@@ -286,13 +306,13 @@
                     <div class="block">
                         <el-slider
                                 v-model="orders.number"
-                                show-input max="20" >
+                                show-input max="20">
                         </el-slider>
                     </div>
                 </template>
             </el-form-item>
             <el-form-item label="总价">
-                <div v-model="orders.price">{{orders.singlePrice*orders.number}}</div>
+                <div>{{orders.singlePrice * orders.number}}</div>
 
             </el-form-item>
 
@@ -331,7 +351,7 @@
                 </el-result>
             </el-col>
         </el-row>
-        <span slot="footer" class="dialog-footer" >
+        <span slot="footer" class="dialog-footer">
     <el-button type="primary" @click="dialogError = false">确 定</el-button>
   </span>
     </el-dialog>
@@ -346,13 +366,13 @@
                 </el-result>
             </el-col>
         </el-row>
-        <span slot="footer" class="dialog-footer" >
+        <span slot="footer" class="dialog-footer">
     <el-button type="primary" @click="dialogApplyError = false">确 定</el-button>
   </span>
     </el-dialog>
 
     <!--表格-->
-    <template >
+    <template>
         <el-table
                 :data="tableData"
                 style="width: 100%"
@@ -401,7 +421,6 @@
                     label="介绍">
             </el-table-column>
 
-
             <el-table-column
                     prop="picture"
                     align="center"
@@ -417,8 +436,9 @@
                     label="操作">
                 <template slot-scope="scope">
                     <el-row>
-                        <el-button type="primary"  @click="searchConsultation(scope.row)">查看评论</el-button>
-                        <el-button type="primary"  @click="handleAdd(scope.row)">购买</el-button>
+                        <el-button type="primary" @click="searchConsultation(scope.row)">查看评论</el-button>
+                        <el-button type="primary" @click="handleAdd(scope.row)">购买</el-button>
+                        <el-button type="danger" @click="reportGoods(scope.row)">举报</el-button>
                     </el-row>
                 </template>
             </el-table-column>
@@ -444,32 +464,51 @@
 <script>
     new Vue({
         el: "#app",
-        mounted(){
+        mounted() {
             this.selectAll();
-            var _this = this;
-            axios({
-                method:"post",
-                url:"http://localhost:8080/ShoppingSystem/user/getHeadshot"
-            }).then(function (resp){
-                if (resp.data.code == 1){
-                    _this.circleUrl = resp.data.data;
-                }
-            })
         },
         methods: {
-            subscrible(row){
+            submitReport(){
                 var _this = this;
+                axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
                 axios({
-                    method:"post",
-                    url:"http://localhost:8080/ShoppingSystem/user/subscrible",
-                    data:row
-                }).then(function (resp){
-                    if (resp.data.code == 1){
+                    method: "post",
+                    url: "http://localhost:8080/ShoppingSystem/user/reportGoods",
+                    data: _this.report
+                }).then(function (resp) {
+                    if (resp.data.code == 1) {
+                        _this.$message({
+                            type: 'info',
+                            message: '举报成功'
+                        });
+                    } else {
+                        _this.$message({
+                            type: 'info',
+                            message: '举报失败。请勿重复举报'
+                        });
+                    }
+                    _this.dialogReport = false;
+                })
+            },
+            reportGoods(row) {
+                this.report.goodsId = row.id;
+                this.report.goodsName = row.name;
+                this.dialogReport = true;
+            },
+            subscrible(row) {
+                var _this = this;
+                axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/ShoppingSystem/user/subscrible",
+                    data: row
+                }).then(function (resp) {
+                    if (resp.data.code == 1) {
                         _this.$message({
                             type: 'info',
                             message: '关注成功'
                         });
-                    }else {
+                    } else {
                         _this.$message({
                             type: 'info',
                             message: '你已经关注过啦'
@@ -477,15 +516,15 @@
                     }
                 })
             },
-            Manager(){
+            Manager() {
                 var _this = this;
                 axios({
-                    method:"post",
-                    url:"http://localhost:8080/ShoppingSystem/manager/entrance",
-                }).then(function (resp){
-                    if (resp.data.code == 1){
-                        window.open("Manager.html","_self");
-                    }else {
+                    method: "post",
+                    url: "http://localhost:8080/ShoppingSystem/manager/entrance",
+                }).then(function (resp) {
+                    if (resp.data.code == 1) {
+                        window.open("Manager.html", "_self");
+                    } else {
                         _this.$message({
                             type: 'info',
                             message: '你没有权限'
@@ -493,18 +532,18 @@
                     }
                 })
             },
-            submitSearchShop(){
+            submitSearchShop() {
                 var _this = this;
-                axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
+                axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
                 axios({
-                    method:"post",
-                    url:"http://localhost:8080/ShoppingSystem/shop/searchShop",
-                    data:this.searchShop
-                }).then(function (resp){
-                    if (resp.data.code == 1){
+                    method: "post",
+                    url: "http://localhost:8080/ShoppingSystem/shop/searchShop",
+                    data: this.searchShop
+                }).then(function (resp) {
+                    if (resp.data.code == 1) {
                         _this.shop = resp.data.data;
                         _this.dialogShop = true;
-                    }else {
+                    } else {
                         _this.$message({
                             type: 'info',
                             message: '查找失败'
@@ -512,18 +551,18 @@
                     }
                 })
             },
-            submitSearchUser(){
+            submitSearchUser() {
                 var _this = this;
-                axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
+                axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
                 axios({
-                    method:"post",
-                    url:"http://localhost:8080/ShoppingSystem/user/searchUser",
-                    data:this.searchUser
-                }).then(function (resp){
-                    if (resp.data.code == 1){
+                    method: "post",
+                    url: "http://localhost:8080/ShoppingSystem/user/searchUser",
+                    data: this.searchUser
+                }).then(function (resp) {
+                    if (resp.data.code == 1) {
                         _this.user = resp.data.data;
                         _this.dialogUser = true;
-                    }else {
+                    } else {
                         _this.$message({
                             type: 'info',
                             message: '查找失败'
@@ -531,21 +570,21 @@
                     }
                 })
             },
-            sendReply(){
+            sendReply() {
                 var _this = this;
-                axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
+                axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
                 axios({
-                    method:"post",
-                    url:"http://localhost:8080/ShoppingSystem/goods/sendReply",
-                    data:this.myReply
-                }).then(function (resp){
-                    if (resp.data.code == 1){
+                    method: "post",
+                    url: "http://localhost:8080/ShoppingSystem/goods/sendReply",
+                    data: this.myReply
+                }).then(function (resp) {
+                    if (resp.data.code == 1) {
                         _this.$message({
                             type: 'info',
                             message: '发送成功'
                         });
 
-                    }else {
+                    } else {
                         _this.$message({
                             type: 'info',
                             message: '发送失败'
@@ -553,19 +592,19 @@
                     }
                 })
             },
-            answer(row){
+            answer(row) {
                 this.myReply.consultationId = row.id;
                 var _this = this;
-                axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
+                axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
                 axios({
-                    method:"post",
-                    url:"http://localhost:8080/ShoppingSystem/goods/selectReply",
-                    data:row
-                }).then(function (resp){
-                    if (resp.data.code == 1){
+                    method: "post",
+                    url: "http://localhost:8080/ShoppingSystem/goods/selectReply",
+                    data: row
+                }).then(function (resp) {
+                    if (resp.data.code == 1) {
                         _this.reply = resp.data.data;
                         _this.dialogReply = true;
-                    }else {
+                    } else {
                         _this.$message({
                             type: 'info',
                             message: '发送失败'
@@ -574,102 +613,96 @@
                 })
 
             },
-            sendQuestion(){
+            sendQuestion() {
                 var _this = this;
-                axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
+                axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
                 axios({
-                    method:"post",
-                    url:"http://localhost:8080/ShoppingSystem/goods/sendConsultation",
-                    data:this.ask
-                }).then(function (resp){
-                    if (resp.data.code == 1){
-                        _this.$message({
-                            type: 'info',
-                            message: '发送成功'
-                        });
-                    }else {
-                        _this.$message({
-                            type: 'info',
-                            message: '发送失败'
-                        });
+                    method: "post",
+                    url: "http://localhost:8080/ShoppingSystem/goods/sendConsultation",
+                    data: this.ask
+                }).then(function (resp) {
+                    if (resp.data.code == 1) {
+                        alert("success");
+                    } else {
+                        alert("fail");
                     }
                 })
             },
-            askP(){
-              this.ask.goodsId = this.consultation.goodsId;
-              this.dialogAsk = true;
+            askP() {
+                this.ask.goodsId = this.consultation.goodsId;
+                this.dialogAsk = true;
             },
-            searchConsultation(row){
+            searchConsultation(row) {
                 var _this = this;
-                axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
+                axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
                 axios({
-                    method:"post",
-                    url:"http://localhost:8080/ShoppingSystem/goods/selectConsultation",
-                    data:row.id
-                }).then(function (resp){
-                    if (resp.data.code == 1){
+                    method: "post",
+                    url: "http://localhost:8080/ShoppingSystem/goods/selectConsultation",
+                    data: row.id
+                }).then(function (resp) {
+                    if (resp.data.code == 1) {
                         _this.consultation = resp.data.data;
                         _this.consultation.goodsId = row.id;
                         _this.dialogConsultation = true;
                     }
                 })
             },
-            MyShop(){
+            MyShop() {
                 var _this = this;
-                axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
+                axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
                 axios({
-                    method:"post",
-                    url:"http://localhost:8080/ShoppingSystem/user/myShop"
-                }).then(function (resp){
-                    if (resp.data.code == 1){
-                        localStorage.setItem('shopId',resp.data.data);
-                        window.open("MyShop.html","_self")
-                    }else {
+                    method: "post",
+                    url: "http://localhost:8080/ShoppingSystem/user/myShop"
+                }).then(function (resp) {
+                    if (resp.data.code == 1) {
+                        localStorage.setItem('shopId', resp.data.data);
+                        window.open("MyShop.html", "_self")
+                    } else {
                         _this.dialogApply = true;
                     }
                 })
             },
-            searchMyOrders(){
-                if (localStorage.getItem('Authorization') != ''){
-                    window.open("MyOrders.html","_self");
-                }else {
-                    window.open("login.html","_self");
+            searchMyOrders() {
+                if (localStorage.getItem('Authorization') != '') {
+                    window.open("MyOrders.html", "_self");
+                } else {
+                    window.open("login.html", "_self");
                 }
             },
-            searchMyCart(){
-                if (localStorage.getItem('Authorization') != ''){
-                    window.open("MyCart.html","_self");
-                }else {
-                    window.open("login.html","_self");
+            searchMyCart() {
+                if (localStorage.getItem('Authorization') != '') {
+                    window.open("MyCart.html", "_self");
+                } else {
+                    window.open("login.html", "_self");
                 }
             },
-            applyShop(){
+            applyShop() {
                 var _this = this;
-                axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
+                axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
                 axios({
-                    method:"post",
-                    url:"http://localhost:8080/ShoppingSystem/user/apply",
-                    data:_this.apply
-                }).then(function (resp){
-                    if (resp.data.code == 1){
+                    method: "post",
+                    url: "http://localhost:8080/ShoppingSystem/user/apply",
+                    data: _this.apply
+                }).then(function (resp) {
+                    if (resp.data.code == 1) {
                         _this.dialogApply = false;
                         _this.dialogSuccess = true;
-                    }else {
+                    } else {
                         _this.dialogApply = false;
                         _this.dialogApplyError = true;
                     }
                 })
             },
 
-            handleAdd(row){
-              this.orders.goodsId = row.id;
-              this.orders.name = row.name;
-              this.orders.singlePrice = row.price;
-              this.orders.picture = row.picture;
-              this.orders.shopId = row.shopId;
-              this.dialogVisible = true;
+            handleAdd(row) {
+                this.orders.goodsId = row.id;
+                this.orders.name = row.name;
+                this.orders.singlePrice = row.price;
+                this.orders.picture = row.picture;
+                this.orders.shopId = row.shopId;
+                this.dialogVisible = true;
             },
-            buy(){
+            buy() {
                 this.$confirm('请付款', '付款', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
@@ -681,16 +714,16 @@
 
                     });
                     var _this = this;
-                    axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
+                    axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
                     axios({
-                        method:"post",
-                        url:"http://localhost:8080/ShoppingSystem/user/buy",
-                        data:this.orders
-                    }).then(function (resp){
-                        if (resp.data.code == 1){
+                        method: "post",
+                        url: "http://localhost:8080/ShoppingSystem/user/buy",
+                        data: this.orders
+                    }).then(function (resp) {
+                        if (resp.data.code == 1) {
                             _this.dialogVisible = false;
                             _this.dialogSuccess = true;
-                        }else {
+                        } else {
                             _this.dialogVisible = false;
                             _this.dialogError = true;
                         }
@@ -704,54 +737,54 @@
                 });
 
             },
-            addCart(){
-              if (this.orders.number>0){
-                  var _this = this;
-                  axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
-                  axios({
-                      method:"post",
-                      url:"http://localhost:8080/ShoppingSystem/user/addCart",
-                      data:this.orders
-                  }).then(function (resp){
-                      if (resp.data.code == 1){
-                          _this.dialogVisible = false;
-                          _this.dialogSuccess = true;
-                      }else {
-                          _this.dialogVisible = false;
-                          _this.dialogError = true;
-                      }
-                  })
-              }
+            addCart() {
+                if (this.orders.number > 0) {
+                    var _this = this;
+                    axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
+                    axios({
+                        method: "post",
+                        url: "http://localhost:8080/ShoppingSystem/user/addCart",
+                        data: this.orders
+                    }).then(function (resp) {
+                        if (resp.data.code == 1) {
+                            _this.dialogVisible = false;
+                            _this.dialogSuccess = true;
+                        } else {
+                            _this.dialogVisible = false;
+                            _this.dialogError = true;
+                        }
+                    })
+                }
             },
             handleCurrentChange(val) {
                 this.currentPage = val;
                 this.selectAll();
             },
 
-            onSubmit(){
+            onSubmit() {
                 var _this = this;
-                if (this.goods.name.length>0)  {
-                axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
-                  axios({
-                      method:"post",
-                      url:"http://localhost:8080/ShoppingSystem/goods/selectByName?currentPage="+this.currentPage+"&pageSize="+this.pageSize,
-                      data:this.goods
-                  }).then(function (resp){
-                       _this.tableData = resp.data.data;
+                if (this.goods.name.length > 0) {
+                    axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
+                    axios({
+                        method: "post",
+                        url: "http://localhost:8080/ShoppingSystem/goods/selectByName?currentPage=" + this.currentPage + "&pageSize=" + this.pageSize,
+                        data: this.goods
+                    }).then(function (resp) {
+                        _this.tableData = resp.data.data;
                         _this.totalCount = resp.data.length;
-                  })
-              }else {
+                    })
+                } else {
                     this.selectAll();
                 }
             },
-            selectAll(){
+            selectAll() {
                 var _this = this;
-                axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
+                axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
                 axios({
-                    method:"post",
-                    url:"http://localhost:8080/ShoppingSystem/goods/selectAll?currentPage="+this.currentPage+"&pageSize="+this.pageSize,
-                    data:this.goods,
-                }).then(function (resp){
+                    method: "post",
+                    url: "http://localhost:8080/ShoppingSystem/goods/selectAll?currentPage=" + this.currentPage + "&pageSize=" + this.pageSize,
+                    data: this.goods,
+                }).then(function (resp) {
                     _this.tableData = resp.data.data;
                     _this.totalCount = resp.data.length;
                 })
@@ -761,97 +794,105 @@
         },
         data() {
             return {
-                apply:{
-                    shopName:'',
-                    description:''
+                apply: {
+                    shopName: '',
+                    description: ''
                 },
-                searchName:'',
-                dialogShop:false,
-                dialogUser:false,
-                dialogReply:false,
-                dialogAsk:false,
-                dialogConsultation:false,
-                dialogApplyError:false,
-                dialogApply:false,
-                dialogVisible:false,
-                dialogSuccess:false,
-                dialogError:false,
+                searchName: '',
+                dialogShop: false,
+                dialogUser: false,
+                dialogReply: false,
+                dialogAsk: false,
+                dialogConsultation: false,
+                dialogApplyError: false,
+                dialogApply: false,
+                dialogVisible: false,
+                dialogSuccess: false,
+                dialogError: false,
+                dialogReport: false,
 
                 circleUrl: "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
                 sizeList: ["large", "medium", "small"],
 
-                pageSize:20,
+                pageSize: 20,
                 // 当前页码
                 currentPage: 1,
 
-                totalCount:'',
+                totalCount: '',
                 // 品牌模型数据
+
+                report: {
+                    goodsName: '',
+                    goodsId: '',
+                    userId: '',
+                    description: ''
+                },
                 goods: {
-                    id:'',
+                    id: '',
                     name: '',
                     price: '',
                     sales: '',
-                    inventory:"",
-                    picture:"",
-                    description:"",
-                    shopId:'',
+                    inventory: "",
+                    picture: "",
+                    description: "",
+                    shopId: '',
                 },
-                orders:{
-                    name:'',
-                    number:'',
-                    goodsId:'',
-                    singlePrice:'',
-                    price:'',
-                    picture:'',
-                    shopId:''
+                orders: {
+                    name: '',
+                    number: '',
+                    goodsId: '',
+                    singlePrice: '',
+                    price: '',
+                    picture: '',
+                    shopId: ''
                 },
-                tableData:[{
-                    id:'',
+                tableData: [{
+                    id: '',
                     name: '',
                     price: '',
                     sales: '',
-                    inventory:"",
-                    picture:"",
-                    description:"",
-                    shopName:'',
-                    shopId:''
+                    inventory: "",
+                    picture: "",
+                    description: "",
+                    shopName: '',
+                    shopId: ''
                 }],
-                consultation:[{
-                    id:'',
-                    goodsId:'',
-                    userName:'',
-                    consultation:''
+                consultation: [{
+                    id: '',
+                    goodsId: '',
+                    userName: '',
+                    consultation: ''
                 }],
-                ask:{
-                    goodsId:'',
-                    consultation:'',
+                ask: {
+                    goodsId: '',
+                    consultation: '',
                 },
-                reply:[{
-                    id:'',
-                    consultationId:'',
-                    reply:'',
-                    userName:''
+                reply: [{
+                    id: '',
+                    consultationId: '',
+                    reply: '',
+                    userName: ''
                 }],
-                myReply:{
-                    consultationId:'',
-                    reply:''
+                myReply: {
+                    consultationId: '',
+                    reply: ''
                 },
-                user:[{
-                    userName:'',
-                    headshot:''
+                user: [{
+                    userName: '',
+                    headshot: ''
                 }],
-                searchUser:{
-                    userName:''
+                searchUser: {
+                    userName: ''
                 },
-                searchShop:{
-                    name:''
+                searchShop: {
+                    name: ''
                 },
-                shop:[{
-                    id:'',
-                    name:'',
-                    sales:'',
-                    fans:'',
-                    description:''
+                shop: [{
+                    id: '',
+                    name: '',
+                    sales: '',
+                    fans: '',
+                    description: ''
                 }]
 
             }
@@ -859,7 +900,6 @@
     })
 
 </script>
-
 
 
 </body>
