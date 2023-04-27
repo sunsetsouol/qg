@@ -73,7 +73,69 @@
 
     <el-button type="primary" icon="el-icon-shopping-cart-full" @click="searchMyCart">购物车</el-button>
     <el-button type="primary" icon="el-icon-shopping-bag-1" @click="searchMyOrders">我的订单</el-button>
+    <el-button type="primary" icon="el-icon-shopping-bag-1" @click="selectSubscrible">查看我的关注</el-button>
+    <el-button type="primary" icon="el-icon-shopping-bag-1" @click="selectTweets">店铺推文</el-button>
 
+    <el-dialog
+            title="我的关注"
+            :visible.sync="dialogSubscrible"
+            width="30%">
+        <template>
+            <el-table
+                    :data="subscrible"
+                    style="width: 100%"
+                    :row-class-name="tableRowClassName"
+                    @selection-change="handleSelectionChange"
+            >
+                <el-table-column
+                        prop="shopName"
+                        label="店铺名称"
+                        align="center"
+                >
+                </el-table-column>
+
+                <el-table-column
+                        align="center"
+                        label="操作">
+                    <template slot-scope="scope">
+                        <el-row>
+                            <el-button type="primary" @click="unfollow(scope.row)">取消关注</el-button>
+                        </el-row>
+                    </template>
+                </el-table-column>
+
+            </el-table>
+        </template>
+        <el-button type="primary" @click="dialogSubscrible = false">确 定</el-button>
+    </el-dialog>
+
+    <el-dialog
+            title="店铺推文"
+            :visible.sync="dialogTweets"
+            width="30%">
+        <template>
+            <el-table
+                    :data="tweets"
+                    style="width: 100%"
+                    :row-class-name="tableRowClassName"
+                    @selection-change="handleSelectionChange"
+            >
+                <el-table-column
+                        prop="shopName"
+                        label="店铺名称"
+                        align="center"
+                >
+                </el-table-column>
+                <el-table-column
+                        prop="tweets"
+                        label="内容"
+                        align="center"
+                >
+                </el-table-column>
+            </el-table>
+        </template>
+        <el-button type="primary" @click="dialogTweets = false">确 定</el-button>
+    </el-dialog>
 
     <el-dialog
             title="举报商品"
@@ -86,7 +148,7 @@
                 {{report.goodsName}}
             </el-form-item>
 
-            <el-form-item label="介绍">
+            <el-form-item label="说明">
                 <el-input type="textarea" v-model="report.description"></el-input>
             </el-form-item>
 
@@ -173,13 +235,13 @@
                         align="center">
                     <template slot-scope="scope">
                         <el-row>
-                            <el-button type="primary" @click="subscrible(scope.row)">关注</el-button>
+                            <el-button type="primary" @click="submitSubscrible(scope.row)">关注</el-button>
                         </el-row>
                     </template>
                 </el-table-column>
             </el-table>
         </template>
-        <el-button type="primary" @click="dialogUser = false">确 定</el-button>
+        <el-button type="primary" @click="dialogShop = false">确 定</el-button>
     </el-dialog>
 
 
@@ -190,6 +252,9 @@
         <el-form :model="apply" label-width="80px">
             <el-form-item label="店铺名称">
                 <el-input v-model="apply.shopName"></el-input>
+            </el-form-item>
+            <el-form-item label="店铺介绍">
+                <el-input type="textarea" v-model="apply.description"></el-input>
             </el-form-item>
         </el-form>
 
@@ -466,8 +531,72 @@
         el: "#app",
         mounted() {
             this.selectAll();
+            var _this = this;
+            axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
+            axios({
+                method: "post",
+                url: "http://localhost:8080/ShoppingSystem/user/getHeadshot",
+                data: _this.headshot
+            }).then(function (resp) {
+                if (resp.data.code == 1) {
+                   _this.circleUrl = resp.data.data
+                }
+            })
         },
         methods: {
+            unfollow(row){
+                var _this = this;
+                axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/ShoppingSystem/user/unfollow",
+                    data:row
+                }).then(function (resp) {
+                    if (resp.data.code == 1) {
+                        _this.$message({
+                            type: 'info',
+                            message: '取关成功'
+                        });
+                    }
+                    _this.selectSubscrible();
+                })
+            },
+            selectSubscrible(){
+                var _this = this;
+                axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/ShoppingSystem/user/selectSubscrible"
+                }).then(function (resp) {
+                    if (resp.data.code == 1) {
+                        _this.subscrible = resp.data.data;
+                        _this.dialogSubscrible = true;
+                    } else {
+                        _this.$message({
+                            type: 'info',
+                            message: '查询失败'
+                        });
+                    }
+                })
+            },
+            selectTweets(){
+                var _this = this;
+                axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/ShoppingSystem/user/selectTweets"
+                }).then(function (resp) {
+                    if (resp.data.code == 1) {
+                        _this.tweets = resp.data.data;
+                        _this.dialogTweets = true;
+                    } else {
+                        _this.$message({
+                            type: 'info',
+                            message: '查询失败'
+                        });
+                    }
+                })
+            },
             submitReport(){
                 var _this = this;
                 axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
@@ -495,7 +624,7 @@
                 this.report.goodsName = row.name;
                 this.dialogReport = true;
             },
-            subscrible(row) {
+            submitSubscrible(row) {
                 var _this = this;
                 axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
                 axios({
@@ -508,6 +637,7 @@
                             type: 'info',
                             message: '关注成功'
                         });
+                        _this.selectSubscrible();
                     } else {
                         _this.$message({
                             type: 'info',
@@ -622,9 +752,15 @@
                     data: this.ask
                 }).then(function (resp) {
                     if (resp.data.code == 1) {
-                        alert("success");
+                        _this.$message({
+                            message: '发送成功',
+                            type: 'success'
+                        });
                     } else {
-                        alert("fail");
+                        _this.$message({
+                            message: '发送失败',
+                            type: 'success'
+                        });
                     }
                 })
             },
@@ -644,6 +780,23 @@
                         _this.consultation = resp.data.data;
                         _this.consultation.goodsId = row.id;
                         _this.dialogConsultation = true;
+                    }
+                })
+            },
+            submitSubscribe(row) {
+                var _this = this;
+                axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/ShoppingSystem/user/subscrible",
+                    data: row
+                }).then(function (resp) {
+                    if (resp.data.code == 1) {
+                        _this.$message({
+                            message: '关注成功',
+                            type: 'success'
+                        });
+                        _this.dialogSubscrible = false;
                     }
                 })
             },
@@ -810,6 +963,8 @@
                 dialogSuccess: false,
                 dialogError: false,
                 dialogReport: false,
+                dialogTweets:false,
+                dialogSubscrible:false,
 
                 circleUrl: "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
                 sizeList: ["large", "medium", "small"],
@@ -820,7 +975,15 @@
 
                 totalCount: '',
                 // 品牌模型数据
-
+                subscrible:[{
+                   shopId:'',
+                   shopName:''
+                }],
+                Tweets:[{
+                    shopId:'',
+                    shopName:'',
+                    tweets:''
+                }],
                 report: {
                     goodsName: '',
                     goodsId: '',

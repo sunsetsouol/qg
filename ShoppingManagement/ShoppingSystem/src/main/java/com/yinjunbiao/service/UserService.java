@@ -3,6 +3,7 @@ package com.yinjunbiao.service;
 
 import com.yinjunbiao.entity.*;
 import com.yinjunbiao.pojo.ResultSet;
+import com.yinjunbiao.pojo.UserSubscrible;
 
 public interface UserService {
 
@@ -27,8 +28,6 @@ public interface UserService {
     ResultSet selectMyOrders(Integer userId,Integer status);
 
     ResultSet selectSub(Subscrible subscrible);
-
-    ResultSet selectMySubs(Integer userId);
 
     ResultSet sendConsultation(Consultation consultation);
 
@@ -55,4 +54,10 @@ public interface UserService {
     ResultSet getHeadshot(Integer id);
 
     ResultSet reportGoods(Report report);
+
+    ResultSet selectTweets(Integer id);
+
+    ResultSet selectSubscrible(Integer id);
+
+    ResultSet unfollow(UserSubscrible userSubscrible, Integer id);
 }

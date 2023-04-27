@@ -22,10 +22,4 @@ public interface GoodsService {
     ResultSet sendReply(Reply reply);
 
     ResultSet selectReply(Long id);
-
-    ResultSet deleteGoods(Long id);
-
-    ResultSet deleteReply(GoodsReply goodsReply);
-
-    ResultSet deleteConsultations(GoodsConsultations goodsConsultations);
 }

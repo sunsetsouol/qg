@@ -222,14 +222,14 @@
                         if (resp.data.code==1){
                             _this.$message({
                                 type: 'success',
-                                message: '修改成功'
+                                message: '发送成功'
                             });
                         }
                     })
                 }).catch(() => {
                     this.$message({
                         type: 'info',
-                        message: '修改失败'
+                        message: '发送失败'
                     });
                 });
             },
@@ -309,20 +309,27 @@
             },
             // 添加数据
             addPush() {
-                var _this = this;
-                axios({
-                    method: "post",
-                    url: "http://localhost:8080/ShoppingSystem/shop/addPush",
-                    data: _this.push
-                }).then(function (resp) {
-                    if (resp.data.code == 1) {
-                        _this.dialogVisible = false;
-                        _this.pushSuccess = true;
-                    } else {
-                        _this.dialogVisible = false;
-                        _this.pushError = true;
-                    }
-                })
+                if ( this.push.price >0 && this.push.inventory >0){
+                    var _this = this;
+                    axios({
+                        method: "post",
+                        url: "http://localhost:8080/ShoppingSystem/shop/addPush",
+                        data: _this.push
+                    }).then(function (resp) {
+                        if (resp.data.code == 1) {
+                            _this.dialogVisible = false;
+                            _this.pushSuccess = true;
+                        } else {
+                            _this.dialogVisible = false;
+                            _this.pushError = true;
+                        }
+                    })
+                }else {
+                    this.$message({
+                        type: 'info',
+                        message: '价格和库存不能为0'
+                    });
+                }
             },
 
             handleCurrentChange(val) {

@@ -3,13 +3,9 @@ package com.yinjunbiao.service.Impl;
 import com.yinjunbiao.MySpring.Annotation.Autowired;
 import com.yinjunbiao.MySpring.Annotation.Component;
 import com.yinjunbiao.MySpring.Annotation.Scope;
-import com.yinjunbiao.entity.Apply;
-import com.yinjunbiao.entity.PushGood;
-import com.yinjunbiao.entity.Shop;
-import com.yinjunbiao.entity.User;
+import com.yinjunbiao.entity.*;
 import com.yinjunbiao.mapper.*;
-import com.yinjunbiao.pojo.ResultSet;
-import com.yinjunbiao.pojo.ShopApply;
+import com.yinjunbiao.pojo.*;
 import com.yinjunbiao.service.ManagerService;
 import com.yinjunbiao.util.SqlSessionUtil;
 
@@ -34,6 +30,68 @@ public class ManagerServiceImpl implements ManagerService {
 
     @Autowired
     private GoodsMapper goodsMapper;
+
+    @Autowired
+    private ReportMapper reportMapper;
+
+    @Autowired
+    private ReplyMapper replyMapper;
+
+    @Autowired
+    private CartMapper cartMapper;
+
+    @Autowired
+    private OrdersMapper ordersMapper;
+
+    @Autowired
+    private ConsultationMapper consultationMapper;
+
+
+
+    /**
+     * 删除货物
+     * @param id
+     * @return
+     */
+    @Override
+    public ResultSet deleteGoods(Long id) {
+        if (goodsMapper.selectById(id) == null) {
+            ResultSet.error();
+        }
+        cartMapper.deleteByGoodsId(id);
+        ordersMapper.deleteByGoodsId(id);
+        goodsMapper.deleteById(id);
+        SqlSessionUtil.commit();
+        SqlSessionUtil.close();
+        return ResultSet.success();
+    }
+
+    /**
+     * 删除回复
+     * @param goodsReply
+     * @return
+     */
+    @Override
+    public ResultSet deleteReply(GoodsReply goodsReply) {
+        replyMapper.deleteById(goodsReply.getId());
+        SqlSessionUtil.commit();
+        SqlSessionUtil.close();
+        return ResultSet.success();
+    }
+
+    /**
+     * 删除评论
+     * @param goodsConsultations
+     * @return
+     */
+    @Override
+    public ResultSet deleteConsultations(GoodsConsultations goodsConsultations) {
+        replyMapper.deleteByConsultationId(goodsConsultations.getId());
+        consultationMapper.deleteById(goodsConsultations.getId());
+        SqlSessionUtil.commit();
+        SqlSessionUtil.close();
+        return ResultSet.success();
+    }
 
     @Override
     public ResultSet selectShopApply() {
@@ -62,11 +120,11 @@ public class ManagerServiceImpl implements ManagerService {
         Apply apply1 = applyMapper.selectByUserId(apply.getUserId());
         ResultSet resultSet = null;
         if(apply1 != null){
-            applyMapper.updateStatus(1,apply.getId());
-            userMapper.updateIdentify(1,apply1.getUserId());
             synchronized (shopMapper){
                 Shop shop = shopMapper.selectByBossId(apply1.getUserId());
                 if (shop == null){
+                    applyMapper.updateStatus(1,apply.getId());
+                    userMapper.updateIdentify(1,apply1.getUserId());
                     shopMapper.insert(apply1.getUserId(),apply1.getShopName(),apply1.getDescription());
                     SqlSessionUtil.commit();
                     resultSet = ResultSet.success();
@@ -154,5 +212,60 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
 
+    /**
+     * 查找举报申请
+     * @return
+     */
+    @Override
+    public ResultSet selectReport() {
+        List<Report> reports = reportMapper.select();
+        ResultSet resultSet = null;
+        if (reports != null && reports.size() > 0){
+            List<GoodsReport> goodsReports = new ArrayList<>();
+            for (Report report : reports) {
+                goodsReports.add(new GoodsReport(report.getId(),report.getGoodsId(),goodsMapper.selectById(report.getGoodsId()).getName(),report.getDescription()));
+            }
+            resultSet = ResultSet.success(goodsReports,"查找成功");
+            SqlSessionUtil.commit();
+        }
+        if (resultSet == null){
+            resultSet = ResultSet.error();
+            SqlSessionUtil.rollback();
+        }
+        SqlSessionUtil.close();
+        return resultSet;
+    }
+
+    /**
+     * 同意下架
+     * @param report
+     * @return
+     */
+    @Override
+    public ResultSet agreeReport(Report report) {
+        if (goodsMapper.selectById(report.getGoodsId()) == null) {
+            ResultSet.error();
+        }
+        cartMapper.deleteByGoodsId(report.getGoodsId());
+        ordersMapper.deleteByGoodsId(report.getGoodsId());
+        goodsMapper.deleteById(report.getGoodsId());
+        reportMapper.updateStatus(1,report.getGoodsId());
+        SqlSessionUtil.commit();
+        SqlSessionUtil.close();
+        return ResultSet.success();
+    }
+
+    /**
+     * 不同意下架
+     * @param report
+     * @return
+     */
+    @Override
+    public ResultSet disagreeReport(Report report) {
+        reportMapper.updateStatus(2,report.getGoodsId());
+        SqlSessionUtil.commit();
+        SqlSessionUtil.close();
+        return ResultSet.success();
+    }
 
 }

@@ -28,7 +28,7 @@ public interface PushGoodsMapper {
     @ResultMap(id = "pushGoodsResultMap")
     PushGood selectByShopIdAndName(@Param("shopId")Integer shopId,@Param("name")String name);
 
-    @Select(sql = "select * from push where id = #{id} where status = 0")
+    @Select(sql = "select * from push where id = #{id} and status = 0")
     @ResultMap(id = "pushGoodsResultMap")
     PushGood selectById(@Param("id")Long id);
 

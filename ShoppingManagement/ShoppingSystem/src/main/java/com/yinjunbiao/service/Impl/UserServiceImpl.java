@@ -11,6 +11,7 @@ import com.yinjunbiao.mapper.*;
 import com.yinjunbiao.pojo.ResultSet;
 import com.yinjunbiao.pojo.ShopOrders;
 import com.yinjunbiao.pojo.ShoppingCart;
+import com.yinjunbiao.pojo.UserSubscrible;
 import com.yinjunbiao.service.UserService;
 import com.yinjunbiao.util.CONST;
 import com.yinjunbiao.util.SqlSessionUtil;
@@ -57,6 +58,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private ReportMapper reportMapper;
+
+    @Autowired
+    private TweetsMapper tweetsMapper;
 
     /**
      * 登录
@@ -310,6 +314,9 @@ public class UserServiceImpl implements UserService {
     public ResultSet newOrders(Orders orders) {
         ResultSet resultSet = null;
         Goods goods = goodsMapper.selectById(orders.getGoodsId());
+        if (shopMapper.selectById(goods.getShopId()).getBossId().equals(orders.getUserId())){
+            return  ResultSet.error(null,"不能购买自己的商品");
+        }
         if (orders.getNumber() <= goods.getInventory()) {
             synchronized (goodsMapper) {
                 goods = goodsMapper.selectById(orders.getGoodsId());
@@ -386,8 +393,10 @@ public class UserServiceImpl implements UserService {
         }
         for (Orders order : orders) {
             Goods goods = goodsMapper.selectById(order.getGoodsId());
-            ShopOrders shopOrder = new ShopOrders(order.getId(), CONST.dateFormat.format(order.getTime()), order.getSendAddress(), order.getReceiveAddress(), goods.getName(), order.getStatus(), userMapper.selectById(order.getUserId()).getUserName(), order.getNumber(), goods.getShopName(), goods.getPrice());
-            shopOrders.add(shopOrder);
+            if (goods != null){
+                ShopOrders shopOrder = new ShopOrders(order.getId(), CONST.dateFormat.format(order.getTime()), order.getSendAddress(), order.getReceiveAddress(), goods.getName(), order.getStatus(), userMapper.selectById(order.getUserId()).getUserName(), order.getNumber(), goods.getShopName(), goods.getPrice());
+                shopOrders.add(shopOrder);
+            }
         }
         SqlSessionUtil.close();
         return ResultSet.success(shopOrders, null);
@@ -425,11 +434,14 @@ public class UserServiceImpl implements UserService {
             if (goods.getInventory() >= cart.getNumber()) {
                 synchronized (ordersMapper) {
                     goods = goodsMapper.selectById(cart.getGoodsId());
+                    if (cart.getUserId().equals(shopMapper.selectById(goods.getShopId()).getBossId())){
+                        resultSet = ResultSet.error(null,"不可以购买自己的店铺的商品");
+                    }
                     if (goods.getInventory() >= cart.getNumber()) {
                         ordersMapper.insert(System.currentTimeMillis(), userMapper.selectById(shopMapper.selectById(cart.getShopId()).getBossId()).getAddress(), userMapper.selectById(cart.getUserId()).getAddress(), cart.getGoodsId(), cart.getShopId(), cart.getUserId(), cart.getNumber(), cart.getSinglePrice());
                         cartMapper.deleteById(cart.getId());
                     } else {
-                        resultSet = ResultSet.error();
+                        resultSet = ResultSet.error(null,"库存不足");
                         break;
                     }
                 }
@@ -520,9 +532,62 @@ public class UserServiceImpl implements UserService {
         return resultSet;
     }
 
+    /**
+     * 查看关注店铺的推文
+     * @param id
+     * @return
+     */
+    @Override
+    public ResultSet selectTweets(Integer id) {
+        List<Subscrible> subscribles = subscribleMapper.selectbyUserId(id);
+        List<Tweets> tweets = new ArrayList<>();
+        if (subscribles != null){
+            for (Subscrible subscrible : subscribles) {
+                List<Tweets> tweets1 = tweetsMapper.selectByShopId(subscrible.getShopId());
+                tweets.addAll(tweets1);
+            }
+        }
+        SqlSessionUtil.commit();
+        SqlSessionUtil.close();
+        return ResultSet.success(tweets,null);
+    }
+
+    /**
+     * 查找关注店铺
+     * @param id
+     * @return
+     */
+    @Override
+    public ResultSet selectSubscrible(Integer id) {
+        List<Subscrible> subscribles = subscribleMapper.selectbyUserId(id);
+        List<UserSubscrible> userSubscribles = new ArrayList<>();
+        if (subscribles != null){
+            for (Subscrible subscrible : subscribles) {
+                userSubscribles.add(new UserSubscrible(subscrible.getId(),subscrible.getShopId(),shopMapper.selectById(subscrible.getShopId()).getName()));
+            }
+        }
+        SqlSessionUtil.close();
+        return ResultSet.success(userSubscribles, "查询成功");
+    }
 
 
-
+    /**
+     * 取关
+     * @param userSubscrible
+     * @param id
+     * @return
+     */
+    @Override
+    public ResultSet unfollow(UserSubscrible userSubscrible, Integer id) {
+        subscribleMapper.deleteByUASId(id,userSubscrible.getShopId());
+        synchronized (shopMapper){
+            Shop shop = shopMapper.selectById(userSubscrible.getShopId());
+            shopMapper.updateFans(shop.getFans() - 1,userSubscrible.getShopId());
+        }
+        SqlSessionUtil.commit();
+        SqlSessionUtil.close();
+        return ResultSet.success();
+    }
 
     @Override
     public ResultSet selectSub(Subscrible subscrible) {
@@ -539,12 +604,6 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    @Override
-    public ResultSet selectMySubs(Integer userId) {
-        List<Subscrible> subscribles = subscribleMapper.selectbyUserId(userId);
-        SqlSessionUtil.close();
-        return ResultSet.success(subscribles, "查询成功");
-    }
 
     @Override
     public ResultSet sendConsultation(Consultation consultation) {

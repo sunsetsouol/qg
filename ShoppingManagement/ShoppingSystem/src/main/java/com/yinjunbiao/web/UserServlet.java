@@ -8,6 +8,7 @@ import com.yinjunbiao.MySpring.Annotation.Scope;
 
 import com.yinjunbiao.entity.*;
 import com.yinjunbiao.pojo.ResultSet;
+import com.yinjunbiao.pojo.UserSubscrible;
 import com.yinjunbiao.service.GoodsService;
 import com.yinjunbiao.service.OrdersService;
 import com.yinjunbiao.service.UserService;
@@ -72,11 +73,11 @@ public class UserServlet extends BaseServlet {
             claims.put("id", ((User) resultSet.getData()).getId());
             claims.put("identify",((User) resultSet.getData()).getIdentify());
 
-            String jwt = JwtUtil.generateJwt(claims);
-            Cookie c_jwt = new Cookie("token",jwt);
-            c_jwt.setMaxAge(60*60*24*7);
-            response.addCookie(c_jwt);
-            resultSet.setData(jwt);
+            String token = JwtUtil.generateJwt(claims);
+            Cookie c_token = new Cookie("token",token);
+            c_token.setMaxAge(60*60*24*7);
+            response.addCookie(c_token);
+            resultSet.setData(token);
         }
         response.setStatus(200);
         response.setContentType("application/json;charset=utf-8");
@@ -475,5 +476,70 @@ public class UserServlet extends BaseServlet {
         }
     }
 
+    /**
+     * 查找关注店铺的推文
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    public void selectTweets(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            String authorization = request.getHeader("Authorization");
+            Claims claims = JwtUtil.parseJWT(authorization);
+            Integer id = (Integer) claims.get("id");
+            ResultSet resultSet = userService.selectTweets(id);
+            response.setStatus(200);
+            response.setContentType("application/json;charset=utf-8");
+            response.getWriter().write(JSON.toJSONString(resultSet));
+        } catch (Exception e) {
+            SqlSessionUtil.close();
+            response.sendRedirect("/ShoppingSystem/login.html");
+        }
+    }
 
+    /**
+     * 查找关注店铺
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    public void selectSubscrible(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            String authorization = request.getHeader("Authorization");
+            Claims claims = JwtUtil.parseJWT(authorization);
+            Integer id = (Integer) claims.get("id");
+            ResultSet resultSet = userService.selectSubscrible(id);
+            response.setStatus(200);
+            response.setContentType("application/json;charset=utf-8");
+            response.getWriter().write(JSON.toJSONString(resultSet));
+        } catch (Exception e) {
+            SqlSessionUtil.close();
+            response.sendRedirect("/ShoppingSystem/login.html");
+        }
+    }
+
+
+    /**
+     * 取关
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    public void unfollow(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            String authorization = request.getHeader("Authorization");
+            Claims claims = JwtUtil.parseJWT(authorization);
+            Integer id = (Integer) claims.get("id");
+            BufferedReader reader = request.getReader();
+            String s = reader.readLine();
+            UserSubscrible userSubscrible = JSON.parseObject(s, UserSubscrible.class);
+            ResultSet resultSet = userService.unfollow(userSubscrible,id);
+            response.setStatus(200);
+            response.setContentType("application/json;charset=utf-8");
+            response.getWriter().write(JSON.toJSONString(resultSet));
+        } catch (Exception e) {
+            SqlSessionUtil.close();
+            response.sendRedirect("/ShoppingSystem/login.html");
+        }
+    }
 }

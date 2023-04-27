@@ -7,7 +7,6 @@ import com.yinjunbiao.entity.*;
 import com.yinjunbiao.mapper.*;
 import com.yinjunbiao.pojo.RefundApply;
 import com.yinjunbiao.pojo.ResultSet;
-import com.yinjunbiao.pojo.ShopOrders;
 import com.yinjunbiao.service.ShopService;
 import com.yinjunbiao.util.CONST;
 import com.yinjunbiao.util.SqlSessionUtil;
@@ -75,7 +74,7 @@ public class ShopServiceImpl implements ShopService {
     public ResultSet selectRefund(Integer shopId) {
         List<Refund> refunds = refundMapper.selectApplyingByShopId(shopId);
         List<RefundApply> refundApplies = new ArrayList<>();
-        if (refundApplies == null){
+        if (refunds == null){
             return ResultSet.error();
         }
         for (Refund refund : refunds) {

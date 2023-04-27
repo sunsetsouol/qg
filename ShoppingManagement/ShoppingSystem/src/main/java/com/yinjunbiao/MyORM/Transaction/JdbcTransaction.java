@@ -47,9 +47,7 @@ public class JdbcTransaction implements Transaction {
     public void close() {
         try {
             if (THREAD.get() == null){
-                Connection connection = dataSource.getConnection();
-                connection.setAutoCommit(autoCommit);
-                THREAD.set(connection);
+                return;
             }
             //数据库连接池
             if(dataSource instanceof PooledDataSource){

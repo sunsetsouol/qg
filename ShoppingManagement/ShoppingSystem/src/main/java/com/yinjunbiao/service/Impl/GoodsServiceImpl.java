@@ -151,48 +151,5 @@ public class GoodsServiceImpl implements GoodsService {
         return ResultSet.success(goodsReplies,null);
     }
 
-    /**
-     * 删除货物
-     * @param id
-     * @return
-     */
-    @Override
-    public ResultSet deleteGoods(Long id) {
-        if (goodsMapper.selectById(id) == null) {
-            ResultSet.error();
-        }
-        cartMapper.deleteByGoodsId(id);
-        ordersMapper.deleteByGoodsId(id);
-        goodsMapper.deleteById(id);
-        SqlSessionUtil.commit();
-        SqlSessionUtil.close();
-        return ResultSet.success();
-    }
 
-    /**
-     * 删除回复
-     * @param goodsReply
-     * @return
-     */
-    @Override
-    public ResultSet deleteReply(GoodsReply goodsReply) {
-        replyMapper.deleteById(goodsReply.getId());
-        SqlSessionUtil.commit();
-        SqlSessionUtil.close();
-        return ResultSet.success();
-    }
-
-    /**
-     * 删除评论
-     * @param goodsConsultations
-     * @return
-     */
-    @Override
-    public ResultSet deleteConsultations(GoodsConsultations goodsConsultations) {
-        replyMapper.deleteByConsultationId(goodsConsultations.getId());
-        consultationMapper.deleteById(goodsConsultations.getId());
-        SqlSessionUtil.commit();
-        SqlSessionUtil.close();
-        return ResultSet.success();
-    }
 }

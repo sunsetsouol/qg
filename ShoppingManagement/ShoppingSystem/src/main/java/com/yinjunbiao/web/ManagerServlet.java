@@ -73,7 +73,7 @@ public class ManagerServlet extends BaseServlet{
         BufferedReader reader = request.getReader();
         String s = reader.readLine();
         Goods goods = JSON.parseObject(s, Goods.class);
-        ResultSet resultSet = goodsService.deleteGoods(goods.getId());
+        ResultSet resultSet = managerService.deleteGoods(goods.getId());
         response.setStatus(200);
         response.setContentType("application/json;charset=utf-8");
         response.getWriter().write(JSON.toJSONString(resultSet));
@@ -89,7 +89,7 @@ public class ManagerServlet extends BaseServlet{
         BufferedReader reader = request.getReader();
         String s = reader.readLine();
         GoodsReply goodsReply = JSON.parseObject(s, GoodsReply.class);
-        ResultSet resultSet = goodsService.deleteReply(goodsReply);
+        ResultSet resultSet = managerService.deleteReply(goodsReply);
         response.setStatus(200);
         response.setContentType("application/json;charset=utf-8");
         response.getWriter().write(JSON.toJSONString(resultSet));
@@ -105,7 +105,7 @@ public class ManagerServlet extends BaseServlet{
         BufferedReader reader = request.getReader();
         String s = reader.readLine();
         GoodsConsultations goodsConsultations = JSON.parseObject(s, GoodsConsultations.class);
-        ResultSet resultSet = goodsService.deleteConsultations(goodsConsultations);
+        ResultSet resultSet = managerService.deleteConsultations(goodsConsultations);
         response.setStatus(200);
         response.setContentType("application/json;charset=utf-8");
         response.getWriter().write(JSON.toJSONString(resultSet));
@@ -200,6 +200,52 @@ public class ManagerServlet extends BaseServlet{
         response.setContentType("application/json;charset=utf-8");
         response.getWriter().write(JSON.toJSONString(resultSet));
     }
+    /**
+     * 查找举报记录
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    public void selectReports(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        ResultSet resultSet = managerService.selectReport();
+        response.setStatus(200);
+        response.setContentType("application/json;charset=utf-8");
+        response.getWriter().write(JSON.toJSONString(resultSet));
+    }
+
+    /**
+     * 同意下架商品
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    public void agreeReport(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        BufferedReader reader = request.getReader();
+        String s = reader.readLine();
+        Report report = JSON.parseObject(s, Report.class);
+        ResultSet resultSet = managerService.agreeReport(report);
+        response.setStatus(200);
+        response.setContentType("application/json;charset=utf-8");
+        response.getWriter().write(JSON.toJSONString(resultSet));
+    }
+    /**
+     * 不同意下架商品
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    public void disagreeReport(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        BufferedReader reader = request.getReader();
+        String s = reader.readLine();
+        Report report = JSON.parseObject(s, Report.class);
+        ResultSet resultSet = managerService.disagreeReport(report);
+        response.setStatus(200);
+        response.setContentType("application/json;charset=utf-8");
+        response.getWriter().write(JSON.toJSONString(resultSet));
+    }
+
+
+
 
 
 

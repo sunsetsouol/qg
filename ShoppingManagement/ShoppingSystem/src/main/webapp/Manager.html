@@ -32,6 +32,47 @@
     <el-button type="primary" plain @click="pushApply">上架申请</el-button>
     <el-button type="primary" plain @click="reportApply">举报记录</el-button>
 
+    <el-dialog
+            title="店铺申请"
+            :visible.sync="dialogReport"
+            width="30%">
+        <!--表格-->
+        <template>
+            <el-table
+                    :data="report"
+                    style="width: 100%"
+                    :row-class-name="tableRowClassName"
+                    @selection-change="handleSelectionChange"
+            >
+                <el-table-column
+                        prop="goodsName"
+                        label="商品名称"
+                        align="center"
+                >
+                </el-table-column>
+                <el-table-column
+                        prop="description"
+                        label="举报描述"
+                        align="center"
+                >
+                </el-table-column>
+                <el-table-column
+                        align="center">
+                    <template slot-scope="scope">
+                        <el-row>
+                            <el-button type="primary" @click="agreeReport(scope.row)">同意下架</el-button>
+                            <el-button type="danger" @click="disagreeReport(scope.row)">拒绝下架</el-button>
+                        </el-row>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </template>
+        <span slot="footer" class="dialog-footer is-align-middle">
+    <el-button type="primary" @click="dialogShopApply = false">关 闭</el-button>
+  </span>
+    </el-dialog>
+
+
 
     <el-dialog
             title="店铺申请"
@@ -125,11 +166,9 @@
             </el-table>
         </template>
         <span slot="footer" class="dialog-footer is-align-middle">
-    <el-button type="primary" @click="dialogShopApply = false">关 闭</el-button>
+    <el-button type="primary" @click="dialogPushApply = false">关 闭</el-button>
   </span>
     </el-dialog>
-
-
 
 
     <el-dialog
@@ -367,25 +406,9 @@
             this.selectGoods();
         },
         methods: {
-            agreeGoods(row){
+            agreeReport(row){
                 var _this = this;
-                axios.post("http://localhost:8080/ShoppingSystem/manager/agreeGoods",row).then(function (resp) {
-                    if (resp.data.code == 1) {
-                        _this.$message({
-                            type: 'info',
-                            message: '设置成功'
-                        });
-                    }else {
-                        _this.$message({
-                            type: 'info',
-                            message: '设置失败，申请不存在'
-                        });
-                    }
-                });
-            },
-            disagreeGoods(row){
-                var _this = this;
-                axios.post("http://localhost:8080/ShoppingSystem/manager/disagreeGoods",row).then(function (resp) {
+                axios.post("http://localhost:8080/ShoppingSystem/manager/agreeReport", row).then(function (resp) {
                     if (resp.data.code == 1) {
                         _this.$message({
                             type: 'info',
@@ -399,26 +422,9 @@
                     }
                 });
             },
-            agreeShop(row){
+            disagreeReport(row){
                 var _this = this;
-                axios.post("http://localhost:8080/ShoppingSystem/manager/agreeShop",row).then(function (resp) {
-                    if (resp.data.code == 1) {
-                        _this.$message({
-                            type: 'info',
-                            message: '设置成功'
-                        });
-                    }else {
-                        _this.$message({
-                            type: 'info',
-                            message: '设置失败，申请不存在'
-                        });
-                    }
-                });
-
-            },
-            disagreeShop(row){
-                var _this = this;
-                axios.post("http://localhost:8080/ShoppingSystem/manager/disagreeShop",row).then(function (resp) {
+                axios.post("http://localhost:8080/ShoppingSystem/manager/disagreeReport", row).then(function (resp) {
                     if (resp.data.code == 1) {
                         _this.$message({
                             type: 'info',
@@ -431,9 +437,83 @@
                         });
                     }
                 });
+            },
+            reportApply() {
+                var _this = this;
+                axios.post("http://localhost:8080/ShoppingSystem/manager/selectReports").then(function (resp) {
+                    if (resp.data.code == 1) {
+                        _this.report = resp.data.data;
+                        _this.dialogReport = true;
+                    }
+                });
+            },
+            agreeGoods(row) {
+                var _this = this;
+                axios.post("http://localhost:8080/ShoppingSystem/manager/agreeGoods", row).then(function (resp) {
+                    if (resp.data.code == 1) {
+                        _this.$message({
+                            type: 'info',
+                            message: '设置成功'
+                        });
+                    } else {
+                        _this.$message({
+                            type: 'info',
+                            message: '设置失败，申请不存在'
+                        });
+                    }
+                });
+            },
+            disagreeGoods(row) {
+                var _this = this;
+                axios.post("http://localhost:8080/ShoppingSystem/manager/disagreeGoods", row).then(function (resp) {
+                    if (resp.data.code == 1) {
+                        _this.$message({
+                            type: 'info',
+                            message: '设置成功'
+                        });
+                    } else {
+                        _this.$message({
+                            type: 'info',
+                            message: '设置失败'
+                        });
+                    }
+                });
+            },
+            agreeShop(row) {
+                var _this = this;
+                axios.post("http://localhost:8080/ShoppingSystem/manager/agreeShop", row).then(function (resp) {
+                    if (resp.data.code == 1) {
+                        _this.$message({
+                            type: 'info',
+                            message: '设置成功'
+                        });
+                    } else {
+                        _this.$message({
+                            type: 'info',
+                            message: '设置失败，申请不存在'
+                        });
+                    }
+                });
 
             },
-            pushApply(){
+            disagreeShop(row) {
+                var _this = this;
+                axios.post("http://localhost:8080/ShoppingSystem/manager/disagreeShop", row).then(function (resp) {
+                    if (resp.data.code == 1) {
+                        _this.$message({
+                            type: 'info',
+                            message: '设置成功'
+                        });
+                    } else {
+                        _this.$message({
+                            type: 'info',
+                            message: '设置失败'
+                        });
+                    }
+                });
+
+            },
+            pushApply() {
                 var _this = this;
                 axios.post("http://localhost:8080/ShoppingSystem/manager/pushApply").then(function (resp) {
                     if (resp.data.code == 1) {
@@ -634,12 +714,12 @@
                     data: this.ask
                 }).then(function (resp) {
                     if (resp.data.code == 1) {
-                        this.$message({
+                        _this.$message({
                             type: 'info',
                             message: '发送成功'
                         });
                     } else {
-                        this.$message({
+                        _this.$message({
                             type: 'info',
                             message: '发送失败'
                         });
@@ -741,6 +821,7 @@
                 dialogError: false,
                 dialogShopApply: false,
                 dialogPushApply: false,
+                dialogReport:false,
 
                 circleUrl: "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
                 sizeList: ["large", "medium", "small"],
@@ -751,20 +832,26 @@
 
                 totalCount: '',
                 // 品牌模型数据
-                shop: {
-                    id:'',
-                    userId:'',
+                report: [{
+                    id: "",
+                    goodsId: '',
+                    goodsName: '',
+                    description: ''
+                }],
+                shop: [{
+                    id: '',
+                    userId: '',
                     userName: '',
-                    shopName:''
-                },
-                pushGoods:{
-                    id:'',
-                    shopId:'',
-                    name:'',
-                    price:'',
-                    description:'',
-                    picture:''
-                },
+                    shopName: ''
+                }],
+                pushGoods: [{
+                    id: '',
+                    shopId: '',
+                    name: '',
+                    price: '',
+                    description: '',
+                    picture: ''
+                }],
                 goods: {
                     id: '',
                     name: '',

@@ -6,7 +6,7 @@
 
     <resultMap id="reportResultMap" type="com.yinjunbiao.entity.Report">
         <result property="userId" column="user_id"/>
-        <result property="goodId" column="goods_id"/>
+        <result property="goodsId" column="goods_id"/>
     </resultMap>
 
 </mapper>

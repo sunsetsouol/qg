@@ -77,16 +77,35 @@ public class InvocationHandlerImpl implements InvocationHandler {
         Connection connection = sqlSession.getSqlSessionFactory().getTransaction().getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
+        ResultMap map = null;
+        com.yinjunbiao.MyORM.Annotation.ResultMap resultMap = method.getAnnotation(com.yinjunbiao.MyORM.Annotation.ResultMap.class);
+        Map<String, String> resultMaps = null;
+        if (resultMap != null){
+            String id = resultMap.id();
+            if(id != null){
+                map = sqlSession.getSqlSessionFactory().getResultMaps().get(id);
+                if (map != null){
+                    resultMaps = map.getResultMaps();
+                }
+            }
+        }
+
         //从map中找到对应的value
         for (int i = 0; i < params.size(); i++) {
             Object value = paramMaps.get(params.get(i));
+            Class<?> type = null;
             if(value == null){
-                throw new MapperException("没有找到需要的参数"+paramMaps.get(i));
+                Class<?> clazz = Class.forName(map.getType());
+                Method declaredMethod = clazz.getDeclaredMethod("get" + params.get(i).toUpperCase().charAt(0) + params.get(i).substring(1));
+                if (declaredMethod != null){
+                    type = declaredMethod.getReturnType();
+                }else {
+                    throw new MapperException("没有找到需要的参数"+paramMaps.get(i));
+                }
+            }else {
+                type = value.getClass();
             }
-            Class<?> type = value.getClass();
-            if (value != null){
-                SqlSession.getTypeHandlerMap().get(type).setParam(preparedStatement,i+1,value);
-            }
+            SqlSession.getTypeHandlerMap().get(type).setParam(preparedStatement,i+1,value);
         }
         if(!sql.startsWith(CONST.SELECT)){
             return preparedStatement.executeUpdate();
@@ -115,17 +134,7 @@ public class InvocationHandlerImpl implements InvocationHandler {
             resultClass = (Class) actualTypeArguments[0];
         }
 
-        com.yinjunbiao.MyORM.Annotation.ResultMap resultMap = method.getAnnotation(com.yinjunbiao.MyORM.Annotation.ResultMap.class);
-        Map<String, String> resultMaps = null;
-        if (resultMap != null){
-            String id = resultMap.id();
-            if(id != null){
-                ResultMap map = sqlSession.getSqlSessionFactory().getResultMaps().get(id);
-                if (map != null){
-                    resultMaps = map.getResultMaps();
-                }
-            }
-        }
+
 
         //根据返回对象查找set方法
         Map<String , Method>setMethodMap = new HashMap<>();

@@ -23,6 +23,7 @@ public class BaseServlet extends HttpServlet {
             Method declaredMethod = aClass.getDeclaredMethod(methodName, HttpServletRequest.class, HttpServletResponse.class);
             declaredMethod.invoke(this, req, resp);
         } catch (Exception e) {
+            SqlSessionUtil.rollback();
             SqlSessionUtil.close();
             e.printStackTrace();
         }

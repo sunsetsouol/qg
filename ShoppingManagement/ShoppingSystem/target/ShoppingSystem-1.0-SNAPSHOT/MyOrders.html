@@ -9,7 +9,7 @@
 
     <el-button type="primary" plain @click="selectNotSend">待发货</el-button>
     <el-button type="primary" plain @click="selectSended">待收货</el-button>
-    <el-button type="primary" plain @click="selectReceive">已收款</el-button>
+    <el-button type="primary" plain @click="selectReceive">已收货</el-button>
     <el-button type="primary" plain @click="selectRefunding">退款中</el-button>
     <el-button type="primary" plain @click="selectRefunded">已退款</el-button>
     <!--按钮-->
@@ -184,6 +184,7 @@
                                     }
                                 });
                             }
+                            _this.selectNotSend();
                         })
 
                     }).catch(() => {
@@ -196,7 +197,6 @@
 
             },
             confirmReceipt(row){
-
                 if (row.status == '已发货'){
                     this.$confirm('确认已经收货？（不能修改）', '已收货', {
                         confirmButtonText: '确定',

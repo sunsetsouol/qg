@@ -11,7 +11,7 @@ import java.util.List;
 @Component("reportMapper")
 public interface ReportMapper {
 
-    @Select(sql = "select * from report")
+    @Select(sql = "select * from report where status = 0")
     @ResultMap(id = "reportResultMap")
     List<Report> select();
 
@@ -19,9 +19,9 @@ public interface ReportMapper {
     @ResultMap(id = "reportResultMap")
     Report selectByUAGId(@Param("userId")Integer userId,@Param("goodsId")Long goodsId);
 
-    @Update(sql = "update report set status = #{status} where id = #{id}")
+    @Update(sql = "update report set status = #{status} where goods_id = #{goodsId}")
     @ResultMap(id = "reportResultMap")
-    int updateStatus(@Param("status")Integer status,@Param("id")Integer id);
+    int updateStatus(@Param("status")Integer status,@Param("goodsId")Long id);
 
     @Insert(sql = "insert into report values(null,#{goodsId},#{userId},0,#{description})")
     @ResultMap(id = "reportResultMap")

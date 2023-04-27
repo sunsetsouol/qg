@@ -27,7 +27,7 @@ public interface GoodsMapper {
     @ResultMap(id = "goodsResultMap")
     Goods selectById(@Param("id")Long id);
 
-    @Insert(sql = "insert into goods values(null,#{shopId},#{shopName},#{description},0,#{inventory},#{price},#{picture},#{name}")
+    @Insert(sql = "insert into goods values(null,#{shopId},#{shopName},#{description},0,#{inventory},#{price},#{picture},#{name})")
     @ResultMap(id = "goodsResultMap")
     int insert(@Param("shopId")Integer shopId,@Param("shopName")String shopName,@Param("description")String description,@Param("inventory")Integer inventory,@Param("price")Integer price,@Param("picture")String picture,@Param("name")String name);
 
