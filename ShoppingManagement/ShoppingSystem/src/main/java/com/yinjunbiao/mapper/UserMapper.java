@@ -65,4 +65,7 @@ public interface UserMapper {
     @ResultMap(id = "userResultMap")
     int updateMessage(@Param("userName")String userName,@Param("address")String address,@Param("isPrivate")Integer isPrivate,@Param("id")Integer id);
 
+    @Update(sql = "update user set cnt = 5")
+    @ResultMap(id = "userResultMap")
+    int updateCnt();
 }

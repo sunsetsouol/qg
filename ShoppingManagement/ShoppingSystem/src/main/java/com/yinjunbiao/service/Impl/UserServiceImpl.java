@@ -1,6 +1,7 @@
 package com.yinjunbiao.service.Impl;
 
 
+import com.yinjunbiao.MyORM.SqlSession.SqlSession;
 import com.yinjunbiao.MySpring.Annotation.Autowired;
 import com.yinjunbiao.MySpring.Annotation.Component;
 import com.yinjunbiao.MySpring.Annotation.Scope;
@@ -18,6 +19,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.TimerTask;
+import java.util.concurrent.*;
 
 @Component("userService")
 @Scope("singleton")
@@ -61,6 +64,24 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private TweetsMapper tweetsMapper;
+
+
+    static {
+
+        UserMapper mapper = SqlSessionUtil.getSqlSession().getMapper(UserMapper.class);
+
+        ScheduledExecutorService pool = new ScheduledThreadPoolExecutor(3,
+                Executors.defaultThreadFactory(), new ThreadPoolExecutor.AbortPolicy());
+        pool.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                mapper.updateCnt();
+                SqlSessionUtil.commit();
+                SqlSessionUtil.close();
+            }
+        }, 5, 5, TimeUnit.MINUTES);
+
+    }
 
     /**
      * 登录
