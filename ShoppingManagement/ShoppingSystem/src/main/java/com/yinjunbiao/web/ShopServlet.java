@@ -11,6 +11,7 @@ import com.yinjunbiao.mapper.OrdersMapper;
 import com.yinjunbiao.pojo.RefundApply;
 import com.yinjunbiao.pojo.ResultSet;
 import com.yinjunbiao.pojo.ShopOrders;
+import com.yinjunbiao.pojo.ShopTweets;
 import com.yinjunbiao.service.OrdersService;
 import com.yinjunbiao.service.ShopService;
 import com.yinjunbiao.util.ApplicationUtil;
@@ -233,6 +234,38 @@ public class ShopServlet extends BaseServlet {
             response.setContentType("application/json;charset=utf-8");
             response.getWriter().write(JSON.toJSONString(resultSet));
         }
+    }
+
+    /**
+     * 查看店铺推文
+     *
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    public void selectTweets(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Integer shopId = Integer.valueOf(request.getParameter("shopId"));
+        ResultSet resultSet = shopService.selectTweets(shopId);
+        response.setStatus(200);
+        response.setContentType("application/json;charset=utf-8");
+        response.getWriter().write(JSON.toJSONString(resultSet));
+    }
+
+    /**
+     * 删除店铺推文
+     *
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    public void deleteTweets(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        BufferedReader reader = request.getReader();
+        String s = reader.readLine();
+        ShopTweets shopTweets = JSON.parseObject(s, ShopTweets.class);
+        ResultSet resultSet = shopService.deleteTweets(shopTweets);
+        response.setStatus(200);
+        response.setContentType("application/json;charset=utf-8");
+        response.getWriter().write(JSON.toJSONString(resultSet));
     }
 
 }

@@ -1027,6 +1027,7 @@
             handleAvatarSuccess(res, file) {
                 this.imageUrl = URL.createObjectURL(file.raw);
                 var _this = this;
+                this.dialogPushing = false;
             },
             beforeAvatarUpload(file) {
                 const isJPG = file.type === 'image/jpeg';

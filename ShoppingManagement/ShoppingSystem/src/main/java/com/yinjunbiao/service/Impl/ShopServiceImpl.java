@@ -7,6 +7,7 @@ import com.yinjunbiao.entity.*;
 import com.yinjunbiao.mapper.*;
 import com.yinjunbiao.pojo.RefundApply;
 import com.yinjunbiao.pojo.ResultSet;
+import com.yinjunbiao.pojo.ShopTweets;
 import com.yinjunbiao.service.ShopService;
 import com.yinjunbiao.util.CONST;
 import com.yinjunbiao.util.SqlSessionUtil;
@@ -203,6 +204,36 @@ public class ShopServiceImpl implements ShopService {
     public ResultSet changePicture(InputStream inputStream, Long pushId) {
         String headshot = UploadUtil.upload(inputStream);
         pushGoodsMapper.updatePicture(headshot,pushId);
+        SqlSessionUtil.commit();
+        SqlSessionUtil.close();
+        return ResultSet.success();
+    }
+
+    /**
+     * 查找店铺推文
+     * @param shopId
+     * @return
+     */
+    @Override
+    public ResultSet selectTweets(Integer shopId) {
+        List<Tweets> tweets = tweetsMapper.selectByShopId(shopId);
+        SqlSessionUtil.commit();
+        SqlSessionUtil.close();
+        List<ShopTweets> tweetsList = new ArrayList<>();
+        for (Tweets tweet : tweets) {
+            tweetsList.add(new ShopTweets(tweet.getId(),tweet.getShopId(),shopMapper.selectById(tweet.getShopId()).getName(),tweet.getTweets()));
+        }
+        return ResultSet.success(tweetsList,null);
+    }
+
+    /**
+     * 删除推文
+     * @param shopTweets
+     * @return
+     */
+    @Override
+    public ResultSet deleteTweets(ShopTweets shopTweets) {
+        tweetsMapper.deleteById(shopTweets.getId());
         SqlSessionUtil.commit();
         SqlSessionUtil.close();
         return ResultSet.success();

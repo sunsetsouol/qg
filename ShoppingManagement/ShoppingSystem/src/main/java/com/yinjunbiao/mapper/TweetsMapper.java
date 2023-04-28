@@ -16,10 +16,10 @@ public interface TweetsMapper {
 
     @Delete(sql = "delete from tweets where id = #{id}")
     @ResultMap(id = "tweetsResultMap")
-    int deleteById(@Param("id")Insert id);
+    int deleteById(@Param("id")Long id);
 
 
-    @Select(sql = "select * from tweets where shop_id = #{shopId}")
+    @Select(sql = "select * from tweets where shop_id = #{shopId} order by id desc")
     @ResultMap(id = "tweetsResultMap")
     List<Tweets> selectByShopId(@Param("shopId")Integer shopId);
 

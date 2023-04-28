@@ -15,6 +15,51 @@
         <el-button type="primary" plain @click="selectTweets">查看推文</el-button>
     </el-row>
 
+
+
+    <el-dialog
+            title="商品申请记录"
+            :visible.sync="dialogShopTweets"
+            width="40%">
+        <template>
+            <el-table
+                    :data="shopTweets"
+                    style="width: 100%"
+                    :row-class-name="tableRowClassName"
+                    @selection-change="handleSelectionChange"
+            >
+                <el-table-column
+                        type="index"
+                        width="50">
+                </el-table-column>
+
+                <el-table-column
+                        prop="tweets"
+                        label="内容"
+                        align="center"
+                >
+                </el-table-column>
+                >
+                </el-table-column>
+                <el-table-column
+                        align="center">
+                    <template slot-scope="scope">
+                        <el-row>
+                            <el-button type="danger" @click="deleteTweets(scope.row)">删除</el-button>
+                        </el-row>
+                    </template>
+                </el-table-column>
+            </el-table>
+
+
+
+
+        </template>
+        <el-button type="primary" @click="dialogShopTweets = false">确 定</el-button>
+    </el-dialog>
+
+
+
     <el-dialog
             title="商品申请记录"
             :visible.sync="dialogPushing"
@@ -273,8 +318,34 @@
             this.selectNotSend();
         },
         methods: {
+            deleteTweets(row){
+                var _this = this;
+                axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/ShoppingSystem/shop/deleteTweets",
+                    data: row
+                }).then(function (resp) {
+                    if (resp.data.code == 1){}
+                    _this.$message({
+                        type: 'info',
+                        message: '删除成功'
+                    });
+                    _this.selectTweets();
+                })
+            },
             selectTweets() {
-
+                var _this = this;
+                axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/ShoppingSystem/shop/selectTweets",
+                    data: "shopId=" + localStorage.getItem('shopId')
+                }).then(function (resp) {
+                    if (resp.data.code == 1){}
+                    _this.shopTweets = resp.data.data;
+                    _this.dialogShopTweets = true;
+                })
             },
             goodsPush(){
                 var _this = this;
@@ -455,6 +526,11 @@
 
                 dialogPushing:false,
                 dialogShopTweets:false,
+
+                shopTweets:[{
+                   id:'',
+                   tweets:''
+                }],
 
                 pushing:[{
                     id:'',

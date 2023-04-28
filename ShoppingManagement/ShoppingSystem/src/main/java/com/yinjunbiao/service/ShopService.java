@@ -6,6 +6,7 @@ import com.yinjunbiao.entity.Tweets;
 import com.yinjunbiao.pojo.RefundApply;
 import com.yinjunbiao.pojo.ResultSet;
 import com.yinjunbiao.pojo.ShopOrders;
+import com.yinjunbiao.pojo.ShopTweets;
 
 import java.io.InputStream;
 
@@ -28,4 +29,8 @@ public interface ShopService {
     ResultSet searchPushingGoods(Integer shopId);
 
     ResultSet changePicture(InputStream inputStream, Long pushId);
+
+    ResultSet selectTweets(Integer shopId);
+
+    ResultSet deleteTweets(ShopTweets shopTweets);
 }
