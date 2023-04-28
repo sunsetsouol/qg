@@ -14,21 +14,13 @@ import com.yinjunbiao.util.JwtUtil;
 import com.yinjunbiao.util.UploadUtil;
 import io.jsonwebtoken.Claims;
 
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReadParam;
-import javax.imageio.ImageReader;
-import javax.servlet.ServletException;
+
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
 
 @WebServlet("/manager/*")
 @Scope("singleton")
@@ -243,89 +235,6 @@ public class ManagerServlet extends BaseServlet{
         response.setContentType("application/json;charset=utf-8");
         response.getWriter().write(JSON.toJSONString(resultSet));
     }
-
-
-
-
-
-
-    public void test(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        try{
-
-            Part imageUrl = request.getPart("file");
-            InputStream inputStream = imageUrl.getInputStream();
-            String upload = UploadUtil.upload(inputStream);
-            System.out.println(upload);
-
-//            OutputStream os = new FileOutputStream("C:\\Users\\28246\\Desktop\\source\\a.jpg");
-//            byte[] bytes = new byte[1024];
-//            int read;
-//            while ((read = inputStream.read(bytes)) != -1){
-//                os.write(bytes,0,read);
-//            }
-//            os.close();
-            inputStream.close();
-
-        }catch (Exception e){
-
-        }
-    }
-   /* private void FileProcess(Part part) throws IOException {
-        if(part.getName().equals("fileUploader")){
-            String cd = part.getHeader("Content-Disposition");
-            String[] cds = cd.split(";");
-            String filename = cds[2].substring(cds[2].indexOf("=")+1).substring(cds[2].lastIndexOf("//")+1).replace("\"", "");
-            String ext = filename.substring(filename.lastIndexOf(".")+1);
-
-
-            InputStream is = part.getInputStream();
-
-            if(Arrays.binarySearch(ImageIO.getReaderFormatNames(),ext) >= 0){
-                imageProcess(filename, ext, is);
-            }
-            else{
-                commonFileProcess(filename, is);
-            }
-        }
-    }
-    private void commonFileProcess(String filename, InputStream is) {
-        FileOutputStream fos = null;
-        try{
-            fos=new FileOutputStream(new File(getClass().getResource("/").getPath()+filename));
-            int b = 0;
-            while((b = is.read())!=-1){
-                fos.write(b);
-            }
-        }catch(Exception e){
-            e.printStackTrace();
-        }finally{
-            try{
-                fos.close();
-            }catch(Exception e){
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void imageProcess(String filename, String ext, InputStream is) throws IOException {
-        Iterator<ImageReader> irs = ImageIO.getImageReadersByFormatName(ext);
-        ImageReader ir = irs.hasNext()?irs.next():null;
-        if(ir == null){
-            return;
-        }
-        ir.setInput(ImageIO.createImageInputStream(is));//必须转换为ImageInputStream，否则异常
-
-        ImageReadParam rp = ir.getDefaultReadParam();
-        Rectangle rect = new Rectangle(0,0,200,200);
-        rp.setSourceRegion(rect);
-
-        int imageNum = ir.getNumImages(true);//allowSearch必须为true，否则有些图片格式imageNum为-1。
-
-        for(int imageIndex = 0;imageIndex < imageNum;imageIndex++){
-            BufferedImage bi = ir.read(imageIndex,rp);
-            ImageIO.write(bi, ext, new File(getClass().getResource("/").getPath()+filename));
-        }
-    }*/
 
 
 }

@@ -2,8 +2,6 @@ package com.yinjunbiao.web;
 
 import com.alibaba.fastjson.JSON;
 import com.yinjunbiao.MySpring.Annotation.Autowired;
-import com.yinjunbiao.MySpring.Annotation.Component;
-import com.yinjunbiao.MySpring.Annotation.ComponentScan;
 import com.yinjunbiao.MySpring.Annotation.Scope;
 import com.yinjunbiao.entity.*;
 import com.yinjunbiao.pojo.GoodsConsultations;

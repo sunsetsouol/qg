@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 80031
 File Encoding         : 65001
 
-Date: 2023-04-19 14:32:41
+Date: 2023-04-28 21:19:58
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -26,8 +26,7 @@ CREATE TABLE `report` (
   `status` int DEFAULT NULL COMMENT '举报状态 0审核中 1举报成功 2举报失败',
   `description` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '描述',
   PRIMARY KEY (`id`),
-  KEY `fk_rep_good_id` (`goods_id`),
   KEY `fk_rep_user_id` (`user_id`),
-  CONSTRAINT `fk_rep_good_id` FOREIGN KEY (`goods_id`) REFERENCES `goods` (`id`),
+  KEY `fk_report_goods_id` (`goods_id`),
   CONSTRAINT `fk_rep_user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

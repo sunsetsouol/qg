@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 80031
 File Encoding         : 65001
 
-Date: 2023-04-19 14:32:38
+Date: 2023-04-28 21:19:55
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -27,4 +27,4 @@ CREATE TABLE `reply` (
   PRIMARY KEY (`id`),
   KEY `fk_cst_id` (`consultation_id`),
   CONSTRAINT `fk_cst_id` FOREIGN KEY (`consultation_id`) REFERENCES `consultation` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

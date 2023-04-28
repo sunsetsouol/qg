@@ -11,12 +11,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-//@WebFilter(urlPatterns = {"/Manager.html","/manager/","/Myshop.html","/shop/"})
+@WebFilter(urlPatterns = {"/Manager.html","/manager/","/Myshop.html","/shop/"})
 public class LoginFilter implements Filter {
 
-    private static String []urls = {"/login.html","/register.html","forgetPassword.html","/css","/user/login","/user/register",".woff",".ttf","/json",".js",".css"};
+//    private static String []urls = {"/login.html","/register.html","forgetPassword.html","/css","/user/login","/user/register",".woff",".ttf","/json",".js",".css"};
 
-    private static String []managers = {"/manager.html","/manager/"};
+    private static String []managers = {"/Manager.html","/manager/"};
 
     private static String []shops = {"/MyShop.html","/shop/"};
     @Override
@@ -39,6 +39,7 @@ public class LoginFilter implements Filter {
                         if (requestUrl.contains(manager)){
                             if (identify == 2){
                                 chain.doFilter(req,resp);
+                                return;
                             }
                         }
                     }
@@ -46,6 +47,7 @@ public class LoginFilter implements Filter {
                         if (requestUrl.contains(shop)){
                             if (identify == 1){
                                 chain.doFilter(req,resp);
+                                return;
                             }
                         }
                     }

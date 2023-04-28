@@ -5,6 +5,8 @@ import com.yinjunbiao.entity.*;
 import com.yinjunbiao.pojo.ResultSet;
 import com.yinjunbiao.pojo.UserSubscrible;
 
+import java.io.InputStream;
+
 public interface UserService {
 
     ResultSet login(User user);
@@ -15,9 +17,7 @@ public interface UserService {
 
     ResultSet changePhone(User user);
 
-    ResultSet changeHeadshot(String headshot,Integer id);
-
-    ResultSet changeMessage(User user);
+    ResultSet changeHeadshot(InputStream headshot, Integer id);
 
     ResultSet applyShop(Apply apply);
 
@@ -60,4 +60,8 @@ public interface UserService {
     ResultSet selectSubscrible(Integer id);
 
     ResultSet unfollow(UserSubscrible userSubscrible, Integer id);
+
+    ResultSet selectPersonal(Integer id);
+
+    ResultSet updatePersonal(User user);
 }

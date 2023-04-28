@@ -19,4 +19,7 @@ public interface ShopService {
     ResultSet sendTweets(Tweets tweets);
 
     ResultSet searchShop(Shop shop);
+
+
+    ResultSet searchShopGoods(Integer id, Integer currentPage, Integer pageSize);
 }

@@ -8,15 +8,15 @@ import com.yinjunbiao.MySpring.Annotation.Scope;
 
 import com.yinjunbiao.entity.*;
 import com.yinjunbiao.mapper.*;
-import com.yinjunbiao.pojo.ResultSet;
-import com.yinjunbiao.pojo.ShopOrders;
-import com.yinjunbiao.pojo.ShoppingCart;
-import com.yinjunbiao.pojo.UserSubscrible;
+import com.yinjunbiao.pojo.*;
 import com.yinjunbiao.service.UserService;
 import com.yinjunbiao.util.CONST;
 import com.yinjunbiao.util.SqlSessionUtil;
+import com.yinjunbiao.util.UploadUtil;
 
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Component("userService")
@@ -204,14 +204,16 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 改头像
-     *
-     * @param headshot 头像的url
-     * @param id       用户id
+     * @param inputStream
+     * @param id
      * @return
      */
     @Override
-    public ResultSet changeHeadshot(String headshot, Integer id) {
+    public ResultSet changeHeadshot(InputStream inputStream, Integer id) {
         ResultSet resultSet = null;
+
+        String headshot = UploadUtil.upload(inputStream);
+
         if (userMapper.updateHeadshot(headshot, id) == 1) {
             SqlSessionUtil.commit();
             resultSet = ResultSet.success(null, "修改成功");
@@ -223,29 +225,7 @@ public class UserServiceImpl implements UserService {
         return resultSet;
     }
 
-    /**
-     * 修改用户个人信息
-     *
-     * @param user 用户信息
-     * @return 是否成功
-     */
-    @Override
-    public ResultSet changeMessage(User user) {
-        ResultSet resultSet = null;
-        //判断敏感词
-        for (String s : CONST.SENSITIVE) {
-            if (user.getAddress().contains(s) || user.getUserName().contains(s)) {
-                resultSet = ResultSet.error("userName", "用户名或地址含有敏感字");
-            }
-        }
-        if (resultSet == null) {
-            userMapper.updateMessage(user.getUserName(), user.getAddress(), user.getIsPrivate());
-            SqlSessionUtil.commit();
-        }
-        SqlSessionUtil.close();
-        resultSet = ResultSet.success(null, "信息修改成功");
-        return resultSet;
-    }
+
 
 
     /**
@@ -540,13 +520,23 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResultSet selectTweets(Integer id) {
         List<Subscrible> subscribles = subscribleMapper.selectbyUserId(id);
-        List<Tweets> tweets = new ArrayList<>();
+        List<ShopTweets> tweets = new ArrayList<>();
         if (subscribles != null){
             for (Subscrible subscrible : subscribles) {
                 List<Tweets> tweets1 = tweetsMapper.selectByShopId(subscrible.getShopId());
-                tweets.addAll(tweets1);
+                if (tweets1 != null){
+                    for (Tweets tweets2 : tweets1) {
+                        tweets.add(new ShopTweets(tweets2.getId(),tweets2.getShopId(),shopMapper.selectById(tweets2.getShopId()).getName(),tweets2.getTweets()));
+                    }
+                }
             }
         }
+        tweets.sort(new Comparator<ShopTweets>() {
+            @Override
+            public int compare(ShopTweets o1, ShopTweets o2) {
+                return o1.getId() > o2.getId() ? 1 : -1;
+            }
+        });
         SqlSessionUtil.commit();
         SqlSessionUtil.close();
         return ResultSet.success(tweets,null);
@@ -588,6 +578,54 @@ public class UserServiceImpl implements UserService {
         SqlSessionUtil.close();
         return ResultSet.success();
     }
+
+
+    /**
+     * 查看个人信息
+     * @param id
+     * @return
+     */
+    @Override
+    public ResultSet selectPersonal(Integer id) {
+        ResultSet resultSet = null;
+        User user = userMapper.selectById(id);
+        SqlSessionUtil.commit();
+        SqlSessionUtil.close();
+        if (user != null){
+            user.setPassword(null);
+            user.setPhone(null);
+            resultSet = ResultSet.success(user,null);
+        }else {
+            resultSet = ResultSet.error();
+        }
+        return resultSet;
+    }
+
+
+    /**
+     * 修改个人信息
+     * @param user
+     * @return
+     */
+    @Override
+    public ResultSet updatePersonal(User user) {
+        ResultSet resultSet = null;
+        //判断敏感词
+        for (String s : CONST.SENSITIVE) {
+            if (user.getAddress().contains(s) || user.getUserName().contains(s)) {
+                resultSet = ResultSet.error("userName", "用户名或地址含有敏感字");
+            }
+        }
+        if (resultSet == null){
+            userMapper.updateMessage(user.getUserName(),user.getAddress(), user.getIsPrivate(),user.getId());
+            SqlSessionUtil.commit();
+            SqlSessionUtil.close();
+            resultSet = ResultSet.success();
+        }
+        return resultSet;
+    }
+
+
 
     @Override
     public ResultSet selectSub(Subscrible subscrible) {

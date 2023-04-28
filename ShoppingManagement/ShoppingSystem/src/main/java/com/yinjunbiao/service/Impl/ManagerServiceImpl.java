@@ -229,7 +229,7 @@ public class ManagerServiceImpl implements ManagerService {
             SqlSessionUtil.commit();
         }
         if (resultSet == null){
-            resultSet = ResultSet.error();
+            resultSet = ResultSet.success();
             SqlSessionUtil.rollback();
         }
         SqlSessionUtil.close();

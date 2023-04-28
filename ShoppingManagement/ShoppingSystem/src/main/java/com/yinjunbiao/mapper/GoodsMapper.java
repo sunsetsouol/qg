@@ -19,9 +19,9 @@ public interface GoodsMapper {
     @ResultMap(id = "goodsResultMap")
     List<Goods> selectByName(@Param("name")String name,@Param("begin")Integer begin,@Param("size")Integer size);
 
-    @Select(sql = "select * from goods where shop_id = #{shopId}")
+    @Select(sql = "select * from goods where shop_id = #{shopId} limit #{begin},#{size}")
     @ResultMap(id = "goodsResultMap")
-    List<Goods> selectByShopId(@Param("shopId")Integer shopId);
+    List<Goods> selectByShopId(@Param("shopId")Integer shopId,@Param("begin")Integer begin,@Param("size")Integer size);
 
     @Select(sql = "select * from goods where id = #{id}")
     @ResultMap(id = "goodsResultMap")

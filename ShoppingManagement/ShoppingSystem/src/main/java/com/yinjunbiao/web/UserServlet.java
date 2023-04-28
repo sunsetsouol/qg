@@ -15,6 +15,7 @@ import com.yinjunbiao.service.UserService;
 import com.yinjunbiao.util.ApplicationUtil;
 import com.yinjunbiao.util.JwtUtil;
 import com.yinjunbiao.util.SqlSessionUtil;
+import com.yinjunbiao.util.UploadUtil;
 import io.jsonwebtoken.Claims;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,6 +77,7 @@ public class UserServlet extends BaseServlet {
             String token = JwtUtil.generateJwt(claims);
             Cookie c_token = new Cookie("token",token);
             c_token.setMaxAge(60*60*24*7);
+            c_token.setPath("/");
             response.addCookie(c_token);
             resultSet.setData(token);
         }
@@ -103,6 +105,45 @@ public class UserServlet extends BaseServlet {
             return;
         }
     }
+    /**
+     * 改头像
+     *
+     * @param request
+     * @param response
+     * @throws Exception
+     */
+    public void changeHeadshot(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        Part imageUrl = request.getPart("file");
+        InputStream inputStream = imageUrl.getInputStream();
+        try(inputStream){
+            Integer id = null;
+            ResultSet resultSet = null;
+            Cookie[] cookies = request.getCookies();
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("token")){
+                    String value = cookie.getValue();
+                    Claims claims = JwtUtil.parseJWT(value);
+                    id = (Integer) claims.get("id");
+                }
+            }
+            if (id != null){
+                resultSet = userService.changeHeadshot(inputStream, id);
+            }else {
+                resultSet = ResultSet.error();
+            }
+            response.setStatus(200);
+            response.setContentType("application/json;charset=utf-8");
+            response.getWriter().write(JSON.toJSONString(resultSet));
+        }catch (Exception e){
+            SqlSessionUtil.close();
+            response.sendRedirect("/ShoppingSystem/login.html");
+        }
+
+        //读取json数据转换成user，并判断是否为空
+
+    }
+
 
 
     /**
@@ -534,6 +575,49 @@ public class UserServlet extends BaseServlet {
             String s = reader.readLine();
             UserSubscrible userSubscrible = JSON.parseObject(s, UserSubscrible.class);
             ResultSet resultSet = userService.unfollow(userSubscrible,id);
+            response.setStatus(200);
+            response.setContentType("application/json;charset=utf-8");
+            response.getWriter().write(JSON.toJSONString(resultSet));
+        } catch (Exception e) {
+            SqlSessionUtil.close();
+            response.sendRedirect("/ShoppingSystem/login.html");
+        }
+    }
+
+    /**
+     * 查看个人信息
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    public void personal(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            String authorization = request.getHeader("Authorization");
+            Claims claims = JwtUtil.parseJWT(authorization);
+            Integer id = (Integer) claims.get("id");
+            ResultSet resultSet = userService.selectPersonal(id);
+            response.setStatus(200);
+            response.setContentType("application/json;charset=utf-8");
+            response.getWriter().write(JSON.toJSONString(resultSet));
+        } catch (Exception e) {
+            SqlSessionUtil.close();
+            response.sendRedirect("/ShoppingSystem/login.html");
+        }
+    }
+
+
+    /**
+     * 修改个人信息
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    public void updatePersonal(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            BufferedReader reader = request.getReader();
+            String s = reader.readLine();
+            User user = JSON.parseObject(s, User.class);
+            ResultSet resultSet = userService.updatePersonal(user);
             response.setStatus(200);
             response.setContentType("application/json;charset=utf-8");
             response.getWriter().write(JSON.toJSONString(resultSet));

@@ -171,4 +171,22 @@ public class ShopServlet extends BaseServlet {
         response.getWriter().write(JSON.toJSONString(resultSet));
     }
 
+    /**
+     * 查找店铺商品
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    public void searchShopGoods(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        BufferedReader reader = request.getReader();
+        String s = reader.readLine();
+        Shop shop = JSON.parseObject(s, Shop.class);
+        Integer currentPage = Integer.valueOf(request.getParameter("currentPage"));
+        Integer pageSize = Integer.valueOf(request.getParameter("pageSize"));
+        ResultSet resultSet = shopService.searchShopGoods(shop.getId(),currentPage,pageSize);
+        response.setStatus(200);
+        response.setContentType("application/json;charset=utf-8");
+        response.getWriter().write(JSON.toJSONString(resultSet));
+    }
+
 }

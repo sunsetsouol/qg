@@ -49,16 +49,15 @@ public class GoodsServiceImpl implements GoodsService {
 
     @Override
     public ResultSet selectByPage(Integer currentPage, Integer pageSize) {
-        List<Goods> goods = goodsMapper.selectAll(currentPage-1, pageSize);
+        List<Goods> goods = goodsMapper.selectAll((currentPage-1)*pageSize, pageSize);
         SqlSessionUtil.close();
-        System.out.println(goods);
         return ResultSet.success(goods,"查找成功");
     }
 
     @Override
     public ResultSet selectByName(String name,Integer currentPage, Integer pageSize) {
         name = "%" + name + "%";
-        List<Goods> goods = goodsMapper.selectByName(name,currentPage-1,pageSize);
+        List<Goods> goods = goodsMapper.selectByName(name,(currentPage-1)*pageSize,pageSize);
         SqlSessionUtil.close();
         System.out.println(goods);
         return  ResultSet.success(goods,"查询成功");
@@ -103,6 +102,7 @@ public class GoodsServiceImpl implements GoodsService {
                 goodsConsultations.add(new GoodsConsultations(consultation.getId(),userMapper.selectById(consultation.getUserId()).getUserName(),consultation.getConsultation()));
             }
         }
+        SqlSessionUtil.close();
         return ResultSet.success(goodsConsultations,null);
     }
 

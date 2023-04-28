@@ -185,6 +185,7 @@
                                 });
                             }
                             _this.selectNotSend();
+                            _this.dialogVisible = false;
                         })
 
                     }).catch(() => {
@@ -210,9 +211,19 @@
                             url:"http://localhost:8080/ShoppingSystem/user/confirmReceipt",
                             data:row.id
                         }).then(function (resp){
+                            if (resp.data.code == 1){
+                                _this.$message({
+                                    type: 'info',
+                                    message: '确认成功'
+                                });
+                            }else {
+                                _this.$message({
+                                    type: 'info',
+                                    message: '设置失败'
+                                });
+                            }
                             _this.selectNotSend();
                         })
-
                     }).catch(() => {
                         this.$message({
                             type: 'info',

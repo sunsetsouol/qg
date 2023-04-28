@@ -79,7 +79,7 @@ public class OrdersServiceImpl implements OrdersService {
      */
     @Override
     public ResultSet selectOrdersByShopId(Integer shopId, Integer status, Integer currentPage, Integer pageSize) {
-        List<Orders> orders = ordersMapper.selectByShopId(shopId, status, currentPage - 1, pageSize);
+        List<Orders> orders = ordersMapper.selectByShopId(shopId, status, (currentPage-1)*pageSize, pageSize);
         List<ShopOrders> shopOrders = new ArrayList<>();
         if (orders == null){
             return ResultSet.error();

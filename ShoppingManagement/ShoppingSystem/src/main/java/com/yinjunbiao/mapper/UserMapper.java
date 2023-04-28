@@ -63,6 +63,6 @@ public interface UserMapper {
 
     @Update(sql = "update user set user_name = #{userName},address = #{address},isprivate = #{isPrivate} where id = #{id}")
     @ResultMap(id = "userResultMap")
-    int updateMessage(@Param("userName")String userName,@Param("address")String address,@Param("isPrivate")Integer isPrivate);
+    int updateMessage(@Param("userName")String userName,@Param("address")String address,@Param("isPrivate")Integer isPrivate,@Param("id")Integer id);
 
 }

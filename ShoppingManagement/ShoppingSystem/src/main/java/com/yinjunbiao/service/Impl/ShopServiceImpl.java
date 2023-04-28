@@ -164,4 +164,18 @@ public class ShopServiceImpl implements ShopService {
         SqlSessionUtil.close();
         return ResultSet.success(shops,null);
     }
+
+    /**
+     * 查找店铺的商品
+     * @param id
+     * @param currentPage
+     * @param pageSize
+     * @return
+     */
+    @Override
+    public ResultSet searchShopGoods(Integer id, Integer currentPage, Integer pageSize) {
+        List<Goods> goods = goodsMapper.selectByShopId(id, (currentPage-1)*pageSize, pageSize);
+        SqlSessionUtil.close();
+        return ResultSet.success(goods,null);
+    }
 }

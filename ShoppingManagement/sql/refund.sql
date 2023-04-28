@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 80031
 File Encoding         : 65001
 
-Date: 2023-04-19 14:32:32
+Date: 2023-04-28 21:19:52
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -25,7 +25,8 @@ CREATE TABLE `refund` (
   `cause` int DEFAULT NULL COMMENT '退款原因 0无理由 1质量问题',
   `status` int DEFAULT NULL COMMENT '退款状态 0退款中 1退款成功 2退款失败',
   `description` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '说明',
+  `time` bigint DEFAULT NULL COMMENT '申请退款时间',
+  `shop_id` int DEFAULT NULL COMMENT '店铺id',
   PRIMARY KEY (`id`),
-  KEY `fk_order_id` (`order_id`),
-  CONSTRAINT `fk_order_id` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  KEY `fk_order_id` (`order_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=106 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

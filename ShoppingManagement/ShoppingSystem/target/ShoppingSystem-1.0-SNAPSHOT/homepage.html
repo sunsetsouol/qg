@@ -21,11 +21,12 @@
             <el-col :span="12">
                 <div class="demo-basic--circle">
                     <div class="block">
-                        <el-avatar :size="50" :src="circleUrl"></el-avatar>
+                        <el-avatar :size="50" :src="circleUrl" @click="changeHeadshot"></el-avatar>
                     </div>
                 </div>
             </el-col>
         </el-row>
+
     </template>
 
     <!--搜索表单-->
@@ -71,10 +72,48 @@
     <el-button type="primary" plain @click="Manager">管理员入口</el-button>
     <el-button type="primary" plain @click="MyShop">我的店铺</el-button>
 
+
+    <el-button type="primary" icon="el-icon-shopping-cart-full" @click="personalMessage">修改个人信息</el-button>
     <el-button type="primary" icon="el-icon-shopping-cart-full" @click="searchMyCart">购物车</el-button>
     <el-button type="primary" icon="el-icon-shopping-bag-1" @click="searchMyOrders">我的订单</el-button>
     <el-button type="primary" icon="el-icon-shopping-bag-1" @click="selectSubscrible">查看我的关注</el-button>
     <el-button type="primary" icon="el-icon-shopping-bag-1" @click="selectTweets">店铺推文</el-button>
+
+
+    <el-dialog
+            title="店铺推文"
+            :visible.sync="dialogMessage"
+            width="30%">
+        <el-form :model="personal" status-icon ref="ruleForm" label-width="100px">
+            <h1 class="title" align="center">注册</h1>
+            <el-form-item label="用户名" prop="userName">
+                <el-input v-model="personal.userName"></el-input>
+            </el-form-item>
+            <el-form-item label="地址" prop="address">
+                <el-input type="text" v-model="personal.address" autocomplete="off"></el-input>
+            </el-form-item>
+
+            <el-form-item label="个人信息" prop="isPrivate">
+                <el-switch v-model="personal.isPrivate" active-text="私密" :active-value="1" inactive-text="公开" :inactive-value="0"></el-switch>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" @click="submitPersonal">提交</el-button>
+            </el-form-item>
+            <el-form-item label="修改头像">
+                <el-upload
+                        class="avatar-uploader"
+                        action="http://localhost:8080/ShoppingSystem/user/changeHeadshot"
+                        :show-file-list="false"
+                        :on-success="handleAvatarSuccess"
+                        :before-upload="beforeAvatarUpload"
+                        align="center">
+                    <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                </el-upload>
+            </el-form-item>
+        </el-form>
+        <el-button type="primary" @click="dialogMessage = false">确 定</el-button>
+    </el-dialog>
 
     <el-dialog
             title="我的关注"
@@ -205,7 +244,7 @@
                     @selection-change="handleSelectionChange"
             >
                 <el-table-column
-                        prop=name"
+                        prop="name"
                         label="店铺名"
                         align="center"
                 >
@@ -236,6 +275,7 @@
                     <template slot-scope="scope">
                         <el-row>
                             <el-button type="primary" @click="submitSubscrible(scope.row)">关注</el-button>
+                            <el-button type="primary" @click="searchShopGoods(scope.row)">查看店铺的商品</el-button>
                         </el-row>
                     </template>
                 </el-table-column>
@@ -535,22 +575,80 @@
             axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
             axios({
                 method: "post",
-                url: "http://localhost:8080/ShoppingSystem/user/getHeadshot",
-                data: _this.headshot
+                url: "http://localhost:8080/ShoppingSystem/user/getHeadshot"
             }).then(function (resp) {
                 if (resp.data.code == 1) {
-                   _this.circleUrl = resp.data.data
+                    _this.circleUrl = resp.data.data
                 }
             })
         },
         methods: {
-            unfollow(row){
+            searchShopGoods(row){
+                var _this = this;
+                axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/ShoppingSystem/shop/searchShopGoods?currentPage=" + this.currentPage + "&pageSize=" + this.pageSize,
+                    data:row
+                }).then(function (resp) {
+                    if (resp.data.code == 1) {
+                        _this.tableData = resp.data.data;
+                        _this.dialogShop = false;
+                    }else {
+                        _this.$message({
+                            type: 'info',
+                            message: '查找失败'
+                        });
+                    }
+                })
+            },
+            submitPersonal(){
+                var _this = this;
+                axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/ShoppingSystem/user/updatePersonal",
+                    data:_this.personal
+                }).then(function (resp) {
+                    if (resp.data.code == 1) {
+                        _this.dialogMessage = false;
+                        _this.$message({
+                            type: 'info',
+                            message: '修改成功'
+                        });
+                    }else {
+                        _this.$message({
+                            type: 'info',
+                            message: '修改失败'
+                        });
+                    }
+                })
+            },
+            personalMessage() {
+                var _this = this;
+                axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/ShoppingSystem/user/personal"
+                }).then(function (resp) {
+                    if (resp.data.code == 1) {
+                        _this.personal = resp.data.data;
+                        _this.dialogMessage = true;
+                    }else {
+                        _this.$message({
+                            type: 'info',
+                            message: '查询失败'
+                        });
+                    }
+                })
+            },
+            unfollow(row) {
                 var _this = this;
                 axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
                 axios({
                     method: "post",
                     url: "http://localhost:8080/ShoppingSystem/user/unfollow",
-                    data:row
+                    data: row
                 }).then(function (resp) {
                     if (resp.data.code == 1) {
                         _this.$message({
@@ -561,7 +659,7 @@
                     _this.selectSubscrible();
                 })
             },
-            selectSubscrible(){
+            selectSubscrible() {
                 var _this = this;
                 axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
                 axios({
@@ -579,7 +677,7 @@
                     }
                 })
             },
-            selectTweets(){
+            selectTweets() {
                 var _this = this;
                 axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
                 axios({
@@ -597,7 +695,7 @@
                     }
                 })
             },
-            submitReport(){
+            submitReport() {
                 var _this = this;
                 axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
                 axios({
@@ -637,6 +735,7 @@
                             type: 'info',
                             message: '关注成功'
                         });
+                        _this.submitSearchShop();
                     } else {
                         _this.$message({
                             type: 'info',
@@ -779,23 +878,6 @@
                         _this.consultation = resp.data.data;
                         _this.consultation.goodsId = row.id;
                         _this.dialogConsultation = true;
-                    }
-                })
-            },
-            submitSubscribe(row) {
-                var _this = this;
-                axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
-                axios({
-                    method: "post",
-                    url: "http://localhost:8080/ShoppingSystem/user/subscrible",
-                    data: row
-                }).then(function (resp) {
-                    if (resp.data.code == 1) {
-                        _this.$message({
-                            message: '关注成功',
-                            type: 'success'
-                        });
-                        _this.dialogSubscrible = false;
                     }
                 })
             },
@@ -962,10 +1044,11 @@
                 dialogSuccess: false,
                 dialogError: false,
                 dialogReport: false,
-                dialogTweets:false,
-                dialogSubscrible:false,
+                dialogTweets: false,
+                dialogSubscrible: false,
+                dialogMessage:false,
 
-                circleUrl: "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
+                headshot: "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
                 sizeList: ["large", "medium", "small"],
 
                 pageSize: 20,
@@ -974,14 +1057,20 @@
 
                 totalCount: '',
                 // 品牌模型数据
-                subscrible:[{
-                   shopId:'',
-                   shopName:''
+                personal:{
+                    id:'',
+                    userName:'',
+                    address:'',
+                    isPrivate:''
+                },
+                subscrible: [{
+                    shopId: '',
+                    shopName: ''
                 }],
-                Tweets:[{
-                    shopId:'',
-                    shopName:'',
-                    tweets:''
+                Tweets: [{
+                    shopId: '',
+                    shopName: '',
+                    tweets: ''
                 }],
                 report: {
                     goodsName: '',
