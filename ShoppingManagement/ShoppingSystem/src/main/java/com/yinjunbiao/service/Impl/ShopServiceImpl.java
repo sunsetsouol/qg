@@ -10,7 +10,9 @@ import com.yinjunbiao.pojo.ResultSet;
 import com.yinjunbiao.service.ShopService;
 import com.yinjunbiao.util.CONST;
 import com.yinjunbiao.util.SqlSessionUtil;
+import com.yinjunbiao.util.UploadUtil;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -177,5 +179,32 @@ public class ShopServiceImpl implements ShopService {
         List<Goods> goods = goodsMapper.selectByShopId(id, (currentPage-1)*pageSize, pageSize);
         SqlSessionUtil.close();
         return ResultSet.success(goods,null);
+    }
+
+    /**
+     * 查找店铺申请中的货物
+     * @param shopId
+     * @return
+     */
+    @Override
+    public ResultSet searchPushingGoods(Integer shopId) {
+        List<PushGood> pushGoods = pushGoodsMapper.selectByShopId(shopId);
+        SqlSessionUtil.close();
+        return ResultSet.success(pushGoods,null);
+    }
+
+    /**
+     * 添加货物图片
+     * @param inputStream
+     * @param pushId
+     * @return
+     */
+    @Override
+    public ResultSet changePicture(InputStream inputStream, Long pushId) {
+        String headshot = UploadUtil.upload(inputStream);
+        pushGoodsMapper.updatePicture(headshot,pushId);
+        SqlSessionUtil.commit();
+        SqlSessionUtil.close();
+        return ResultSet.success();
     }
 }

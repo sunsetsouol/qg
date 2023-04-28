@@ -102,6 +102,7 @@ public class UserServlet extends BaseServlet {
             response.setContentType("application/json;charset=utf-8");
             response.getWriter().write(JSON.toJSONString(resultSet));
         }catch (Exception e){
+            SqlSessionUtil.close();
             return;
         }
     }
@@ -139,9 +140,6 @@ public class UserServlet extends BaseServlet {
             SqlSessionUtil.close();
             response.sendRedirect("/ShoppingSystem/login.html");
         }
-
-        //读取json数据转换成user，并判断是否为空
-
     }
 
 

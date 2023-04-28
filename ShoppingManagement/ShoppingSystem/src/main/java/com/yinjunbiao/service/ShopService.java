@@ -7,6 +7,8 @@ import com.yinjunbiao.pojo.RefundApply;
 import com.yinjunbiao.pojo.ResultSet;
 import com.yinjunbiao.pojo.ShopOrders;
 
+import java.io.InputStream;
+
 public interface ShopService {
     ResultSet addPush(PushGood pushGood);
 
@@ -22,4 +24,8 @@ public interface ShopService {
 
 
     ResultSet searchShopGoods(Integer id, Integer currentPage, Integer pageSize);
+
+    ResultSet searchPushingGoods(Integer shopId);
+
+    ResultSet changePicture(InputStream inputStream, Long pushId);
 }

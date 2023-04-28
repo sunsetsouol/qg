@@ -81,7 +81,7 @@
 
 
     <el-dialog
-            title="店铺推文"
+            title="修改信息"
             :visible.sync="dialogMessage"
             width="30%">
         <el-form :model="personal" status-icon ref="ruleForm" label-width="100px">
@@ -1023,6 +1023,22 @@
                     _this.totalCount = resp.data.length;
                 })
 
+            },
+            handleAvatarSuccess(res, file) {
+                this.imageUrl = URL.createObjectURL(file.raw);
+                var _this = this;
+            },
+            beforeAvatarUpload(file) {
+                const isJPG = file.type === 'image/jpeg';
+                const isLt2M = file.size / 1024 / 1024 < 2;
+
+                if (!isJPG) {
+                    this.$message.error('上传头像图片只能是 JPG 格式!');
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传头像图片大小不能超过 2MB!');
+                }
+                return isJPG && isLt2M;
             },
 
         },

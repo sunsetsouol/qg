@@ -17,12 +17,15 @@ import com.yinjunbiao.util.ApplicationUtil;
 import com.yinjunbiao.util.JwtUtil;
 import io.jsonwebtoken.Claims;
 
+import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 
 @WebServlet("/shop/*")
 @Scope("singleton")
@@ -36,6 +39,7 @@ public class ShopServlet extends BaseServlet {
 
     /**
      * 查询订单
+     *
      * @param request
      * @param response
      * @throws IOException
@@ -46,7 +50,7 @@ public class ShopServlet extends BaseServlet {
             Integer currentPage = Integer.valueOf(request.getParameter("currentPage"));
             Integer pageSize = Integer.valueOf(request.getParameter("pageSize"));
             Integer shopId = Integer.valueOf(request.getParameter("shopId"));
-            ResultSet resultSet = ordersService.selectOrdersByShopId(shopId,status,currentPage,pageSize);
+            ResultSet resultSet = ordersService.selectOrdersByShopId(shopId, status, currentPage, pageSize);
             response.setStatus(200);
             response.setContentType("application/json;charset=utf-8");
             response.getWriter().write(JSON.toJSONString(resultSet));
@@ -57,6 +61,7 @@ public class ShopServlet extends BaseServlet {
 
     /**
      * 申请添加商品
+     *
      * @param request
      * @param response
      * @throws IOException
@@ -73,6 +78,7 @@ public class ShopServlet extends BaseServlet {
 
     /**
      * 商品已发货
+     *
      * @param request
      * @param response
      * @throws IOException
@@ -82,9 +88,9 @@ public class ShopServlet extends BaseServlet {
         String s = reader.readLine();
         ShopOrders shopOrders = JSON.parseObject(s, ShopOrders.class);
         ResultSet resultSet = null;
-        if (shopOrders.getStatus().equals("未发货")){
+        if (shopOrders.getStatus().equals("未发货")) {
             resultSet = ordersService.send(shopOrders);
-        }else {
+        } else {
             resultSet = ResultSet.error();
         }
         response.setStatus(200);
@@ -95,6 +101,7 @@ public class ShopServlet extends BaseServlet {
 
     /**
      * 查看退款申请
+     *
      * @param request
      * @param response
      * @throws IOException
@@ -109,6 +116,7 @@ public class ShopServlet extends BaseServlet {
 
     /**
      * 同意退款
+     *
      * @param request
      * @param response
      * @throws IOException
@@ -125,6 +133,7 @@ public class ShopServlet extends BaseServlet {
 
     /**
      * 拒绝退款
+     *
      * @param request
      * @param response
      * @throws IOException
@@ -141,6 +150,7 @@ public class ShopServlet extends BaseServlet {
 
     /**
      * 发送推文
+     *
      * @param request
      * @param response
      * @throws IOException
@@ -157,6 +167,7 @@ public class ShopServlet extends BaseServlet {
 
     /**
      * 查找店铺
+     *
      * @param request
      * @param response
      * @throws IOException
@@ -173,6 +184,7 @@ public class ShopServlet extends BaseServlet {
 
     /**
      * 查找店铺商品
+     *
      * @param request
      * @param response
      * @throws IOException
@@ -183,10 +195,44 @@ public class ShopServlet extends BaseServlet {
         Shop shop = JSON.parseObject(s, Shop.class);
         Integer currentPage = Integer.valueOf(request.getParameter("currentPage"));
         Integer pageSize = Integer.valueOf(request.getParameter("pageSize"));
-        ResultSet resultSet = shopService.searchShopGoods(shop.getId(),currentPage,pageSize);
+        ResultSet resultSet = shopService.searchShopGoods(shop.getId(), currentPage, pageSize);
         response.setStatus(200);
         response.setContentType("application/json;charset=utf-8");
         response.getWriter().write(JSON.toJSONString(resultSet));
+    }
+
+    /**
+     * 查找店铺推送商品
+     *
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    public void goodsPush(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        Integer shopId = Integer.valueOf(request.getParameter("shopId"));
+        ResultSet resultSet = shopService.searchPushingGoods(shopId);
+        response.setStatus(200);
+        response.setContentType("application/json;charset=utf-8");
+        response.getWriter().write(JSON.toJSONString(resultSet));
+    }
+
+    /**
+     * 修改图片
+     *
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    public void changePicture(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Part imageUrl = request.getPart("file");
+        InputStream inputStream = imageUrl.getInputStream();
+        try (inputStream){
+            Long pushId = Long.valueOf(request.getParameter("pushId"));
+            ResultSet resultSet = shopService.changePicture(inputStream, pushId);
+            response.setStatus(200);
+            response.setContentType("application/json;charset=utf-8");
+            response.getWriter().write(JSON.toJSONString(resultSet));
+        }
     }
 
 }

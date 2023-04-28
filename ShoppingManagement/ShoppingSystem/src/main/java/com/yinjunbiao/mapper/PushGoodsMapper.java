@@ -16,7 +16,7 @@ public interface PushGoodsMapper {
     int insert(@Param("name")String name,@Param("price")Integer price,@Param("description")String description,@Param("shopId")Integer shopId,@Param("inventory")Integer inventory);
 
 
-    @Select(sql = "select * from push where shop_id = #{shopId} where status = 0")
+    @Select(sql = "select * from push where shop_id = #{shopId} and status = 0")
     @ResultMap(id = "pushGoodsResultMap")
     List<PushGood> selectByShopId(@Param("shopId")Integer shopId);
 
