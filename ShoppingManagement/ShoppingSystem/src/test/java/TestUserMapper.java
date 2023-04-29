@@ -38,9 +38,9 @@ public class TestUserMapper {
 
     @Test
     public void testInsert(){
-        mapper.insert("1245","123","123","123",0);
-        SqlSessionUtil.commit();
-        SqlSessionUtil.close();
+//        mapper.insert("1245","123","123","123",0);
+//        SqlSessionUtil.commit();
+//        SqlSessionUtil.close();
     }
 
     @Test

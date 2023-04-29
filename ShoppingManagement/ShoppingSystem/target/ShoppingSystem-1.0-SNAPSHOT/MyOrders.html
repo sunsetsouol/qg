@@ -12,6 +12,7 @@
     <el-button type="primary" plain @click="selectReceive">已收货</el-button>
     <el-button type="primary" plain @click="selectRefunding">退款中</el-button>
     <el-button type="primary" plain @click="selectRefunded">已退款</el-button>
+    <el-button type="primary" plain @click="selectFailRefund">退款失败</el-button>
     <!--按钮-->
 
     <el-dialog
@@ -27,7 +28,7 @@
 
             <el-form-item label="退款原因">
                 <el-select v-model="refund.cause" placeholder="请选择退款原因" default-first-option>
-                    <el-option label="无理由退款" value="0" ></el-option>
+                    <el-option label="无理由退款" value="0"></el-option>
                     <el-option label="质量问题" value="1"></el-option>
                 </el-select>
             </el-form-item>
@@ -44,7 +45,6 @@
         </el-form>
 
     </el-dialog>
-
 
 
     <!--表格-->
@@ -116,8 +116,8 @@
                     label="操作">
                 <template slot-scope="scope">
                     <el-row>
-                        <el-button type="primary"  @click="confirmReceipt(scope.row)">确认收货</el-button>
-                        <el-button type="danger"  @click="applyRefund(scope.row)">申请退款</el-button>
+                        <el-button type="primary" @click="confirmReceipt(scope.row)">确认收货</el-button>
+                        <el-button type="danger" @click="applyRefund(scope.row)">申请退款</el-button>
                     </el-row>
                 </template>
             </el-table-column>
@@ -141,87 +141,96 @@
 <script>
     new Vue({
         el: "#app",
-        mounted(){
+        mounted() {
             this.selectNotSend();
         },
         methods: {
-            applyRefund(row){
+            applyRefund(row) {
                 this.refund.orderId = row.id;
+                this.refund.statusStr = row.status;
                 this.dialogVisible = true;
             },
-            submitRefund(){
-                if(this.refund.cause == ''){
-                    this.$alert('请选择退款原因', '申请失败', {
-                        confirmButtonText: '确定',
-                        callback: action => {
-                            this.$message({
-                                type: 'info',
-                                message: `action: ${ action }`
-                            });
-                        }
-                    });
-                }else {
-                    this.$confirm('确认申请退款？', '退款', {
-                        confirmButtonText: '确定',
-                        cancelButtonText: '取消',
-                        type: 'warning'
-                    }).then(() => {
-                        var _this = this;
-                        axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
-                        axios({
-                            method:"post",
-                            url:"http://localhost:8080/ShoppingSystem/user/refund",
-                            data:this.refund
-                        }).then(function (resp){
-                            if (resp.data.code == 1){
-                                _this.$message({
+            submitRefund() {
+                if(this.refund.statusStr == '未发货' || this.refund.statusStr == '已发货' || this.refund.statusStr == '已收货'){
+                    if (this.refund.cause == '') {
+                        this.$alert('请选择退款原因', '申请失败', {
+                            confirmButtonText: '确定',
+                            callback: action => {
+                                this.$message({
                                     type: 'info',
-                                    message: '申请成功'
-                                });
-                            }else {
-                                _this.$alert('请勿重复申请', '申请失败', {
-                                    confirmButtonText: '确定',
-                                    callback: action => {
-                                        this.$message({
-                                            type: 'info',
-                                            message: `action: ${ action }`
-                                        });
-                                    }
+                                    message: `action: ${action}`
                                 });
                             }
-                            _this.selectNotSend();
-                            _this.dialogVisible = false;
-                        })
-
-                    }).catch(() => {
-                        this.$message({
-                            type: 'info',
-                            message: '已取消'
                         });
+                    } else {
+                        this.$confirm('确认申请退款？', '退款', {
+                            confirmButtonText: '确定',
+                            cancelButtonText: '取消',
+                            type: 'warning'
+                        }).then(() => {
+                            var _this = this;
+                            axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
+                            axios({
+                                method: "post",
+                                url: "http://localhost:8080/ShoppingSystem/user/refund",
+                                data: this.refund
+                            }).then(function (resp) {
+                                if (resp.data.code == 1) {
+                                    _this.$message({
+                                        type: 'info',
+                                        message: '申请成功'
+                                    });
+                                } else {
+                                    _this.$alert('请勿重复申请', '申请失败', {
+                                        confirmButtonText: '确定',
+                                        callback: action => {
+                                            this.$message({
+                                                type: 'info',
+                                                message: `action: ${action}`
+                                            });
+                                        }
+                                    });
+                                }
+                                _this.selectNotSend();
+                                _this.dialogVisible = false;
+                            })
+
+                        }).catch(() => {
+                            this.$message({
+                                type: 'info',
+                                message: '已取消'
+                            });
+                        });
+                    }
+                }else {
+                    this.$message({
+                        type: 'info',
+                        message: '只能请求一次退款'
                     });
                 }
 
+
             },
-            confirmReceipt(row){
-                if (row.status == '已发货'){
+            confirmReceipt(row) {
+                if (row.status == '已发货') {
                     this.$confirm('确认已经收货？（不能修改）', '已收货', {
                         confirmButtonText: '确定',
                         cancelButtonText: '取消',
                         type: 'warning'
                     }).then(() => {
                         var _this = this;
-                        axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
+                        axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
                         axios({
-                            method:"post",
-                            url:"http://localhost:8080/ShoppingSystem/user/confirmReceipt",
-                            data:row.id
-                        }).then(function (resp){
-                            if (resp.data.code == 1){
+                            method: "post",
+                            url: "http://localhost:8080/ShoppingSystem/user/confirmReceipt",
+                            data: row.id
+                        }).then(function (resp) {
+                            if (resp.data.code == 1) {
                                 _this.$message({
                                     type: 'info',
                                     message: '确认成功'
                                 });
-                            }else {
+                            } else {
                                 _this.$message({
                                     type: 'info',
                                     message: '设置失败'
@@ -238,41 +247,46 @@
                 }
             },
 
-            selectNotSend(){
+            selectNotSend() {
                 this.currentPage = 1;
                 this.status = 1;
                 this.select();
 
             },
-            selectSended(){
+            selectSended() {
                 this.currentPage = 1;
                 this.status = 2;
                 this.select();
 
             },
-            selectReceive(){
+            selectReceive() {
                 this.currentPage = 1;
-               this.status = 3;
-               this.select();
+                this.status = 3;
+                this.select();
 
             },
-            selectRefunding(){
+            selectRefunding() {
                 this.currentPage = 1;
                 this.status = 4;
                 this.select();
             },
-            selectRefunded(){
+            selectRefunded() {
                 this.currentPage = 1;
                 this.status = 5;
                 this.select();
             },
-            select(){
+            selectFailRefund() {
+                this.currentPage = 1;
+                this.status = 6;
+                this.select();
+            },
+            select() {
                 var _this = this;
-                axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
+                axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
                 axios({
-                    method:"post",
-                    url:"http://localhost:8080/ShoppingSystem/user/myOrders?currentPage="+_this.currentPage+"&pageSize="+_this.pageSize+"&status="+_this.status
-                }).then(function (resp){
+                    method: "post",
+                    url: "http://localhost:8080/ShoppingSystem/user/myOrders?currentPage=" + _this.currentPage + "&pageSize=" + _this.pageSize + "&status=" + _this.status
+                }).then(function (resp) {
                     _this.tableData = resp.data.data;
                 })
             },
@@ -292,22 +306,24 @@
                 // 当前页码
                 currentPage: 1,
 
-                status:1,
+                status: 1,
                 totalCount: '',
-                refund:{
-                  orderId:'',
-                  cause:'',
-                  description:' '
+                refund: {
+                    statusStr:'',
+                    status: '',
+                    orderId: '',
+                    cause: '',
+                    description: ' '
                 },
                 tableData: [{
-                    id:'',
+                    id: '',
                     goodsName: '',
-                    time:'',
+                    time: '',
                     number: '',
                     price: "",
-                    sendAddress:'',
-                    shopName:'',
-                    status:''
+                    sendAddress: '',
+                    shopName: '',
+                    status: ''
                 }]
             }
         }

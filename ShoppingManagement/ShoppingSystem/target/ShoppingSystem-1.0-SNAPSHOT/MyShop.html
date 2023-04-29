@@ -171,13 +171,13 @@
 
 
     <el-dialog
-            title="推送品牌"
+            title="发送推文"
             :visible.sync="dialogTweets"
             width="30%"
     >
 
         <el-form :model="tweets" label-width="80px">
-            <el-form-item label="提问内容">
+            <el-form-item label="内容">
                 <el-input type="textarea" v-model="tweets.tweets"></el-input>
             </el-form-item>
         </el-form>
@@ -460,6 +460,7 @@
                             });
                         }
                     })
+                    _this.dialogTweets = false;
                 }).catch(() => {
                     this.$message({
                         type: 'info',
@@ -539,7 +540,7 @@
             },
             // 添加数据
             addPush() {
-                if ( this.push.price >0 && this.push.inventory >0){
+                if ( this.push.price >0 && this.push.inventory >0 && this.push.name.length>0){
                     var _this = this;
                     axios({
                         method: "post",
@@ -557,7 +558,7 @@
                 }else {
                     this.$message({
                         type: 'info',
-                        message: '价格和库存不能为0'
+                        message: '价格和库存不能为0,商品名称不能为空'
                     });
                 }
             },
