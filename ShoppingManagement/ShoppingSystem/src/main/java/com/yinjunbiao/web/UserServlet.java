@@ -7,25 +7,21 @@ import com.yinjunbiao.MySpring.Annotation.ComponentScan;
 import com.yinjunbiao.MySpring.Annotation.Scope;
 
 import com.yinjunbiao.entity.*;
+import com.yinjunbiao.pojo.CheckCodeUser;
 import com.yinjunbiao.pojo.ResultSet;
 import com.yinjunbiao.pojo.UserSubscrible;
 import com.yinjunbiao.service.GoodsService;
 import com.yinjunbiao.service.OrdersService;
 import com.yinjunbiao.service.UserService;
-import com.yinjunbiao.util.ApplicationUtil;
-import com.yinjunbiao.util.JwtUtil;
-import com.yinjunbiao.util.SqlSessionUtil;
-import com.yinjunbiao.util.UploadUtil;
+import com.yinjunbiao.util.*;
 import io.jsonwebtoken.Claims;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
+import javax.servlet.http.*;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -88,6 +84,25 @@ public class UserServlet extends BaseServlet {
     }
 
     /**
+     * 登录
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    public void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        Cookie[] cookies = request.getCookies();
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals("token")){
+                cookie.setMaxAge(0);
+                cookie.setPath("/");
+                response.addCookie(cookie);
+            }
+        }
+        return;
+    }
+
+
+    /**
      * 获取头像
      * @param request
      * @param response
@@ -103,8 +118,9 @@ public class UserServlet extends BaseServlet {
             response.setContentType("application/json;charset=utf-8");
             response.getWriter().write(JSON.toJSONString(resultSet));
         }catch (Exception e){
+            e.printStackTrace();
             SqlSessionUtil.close();
-            return;
+            response.sendRedirect("/ShoppingSystem/login.html");
         }
     }
     /**
@@ -138,6 +154,7 @@ public class UserServlet extends BaseServlet {
             response.setContentType("application/json;charset=utf-8");
             response.getWriter().write(JSON.toJSONString(resultSet));
         }catch (Exception e){
+            e.printStackTrace();
             SqlSessionUtil.close();
             response.sendRedirect("/ShoppingSystem/login.html");
         }
@@ -157,15 +174,16 @@ public class UserServlet extends BaseServlet {
         BufferedReader reader = request.getReader();
         String s = reader.readLine();
 
-        System.out.println(s);
-        if (s == null || s.length() == 0) {
+        CheckCodeUser checkCodeUser = JSON.parseObject(s, CheckCodeUser.class);
+        HttpSession session = request.getSession();
+        String checkCode = (String) session.getAttribute("checkCode");
+        if (!checkCodeUser.getCheckCode().equalsIgnoreCase(checkCode)){
             response.setStatus(200);
             response.setContentType("application/json;charset=utf-8");
-            response.getWriter().write(JSON.toJSONString(ResultSet.error("user", "参数传递失败")));
+            response.getWriter().write(JSON.toJSONString(ResultSet.error("checkcode","验证码错误")));
             return;
         }
-        User user = JSON.parseObject(s, User.class);
-
+        User user = new User(null,null,checkCodeUser.getPhone(),null,checkCodeUser.getUserName(),checkCodeUser.getAddress(),checkCodeUser.getPassword(),checkCodeUser.getIsPrivate(),null);
         ResultSet resultSet = userService.register(user);
         response.setStatus(200);
         response.setContentType("application/json;charset=utf-8");
@@ -181,15 +199,20 @@ public class UserServlet extends BaseServlet {
      * @throws IOException
      */
     public void forget(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        //读取json数据转换成user，并判断是否为空
         BufferedReader reader = request.getReader();
         String s = reader.readLine();
-        if (s == null || s.length() == 0) {
+
+        CheckCodeUser checkCodeUser = JSON.parseObject(s, CheckCodeUser.class);
+        HttpSession session = request.getSession();
+        String checkCode = (String) session.getAttribute("checkCode");
+        if (!checkCodeUser.getCheckCode().equalsIgnoreCase(checkCode)){
             response.setStatus(200);
             response.setContentType("application/json;charset=utf-8");
-            response.getWriter().write(JSON.toJSONString(ResultSet.error("user", "参数传递失败")));
+            response.getWriter().write(JSON.toJSONString(ResultSet.error("checkcode","验证码错误")));
             return;
         }
-        User user = JSON.parseObject(s, User.class);
+        User user = new User(null,null,checkCodeUser.getPhone(),null,null,null,checkCodeUser.getPassword(),null,null);
         ResultSet resultSet = userService.changePassword(user);
         response.setStatus(200);
         response.setContentType("application/json;charset=utf-8");
@@ -219,6 +242,7 @@ public class UserServlet extends BaseServlet {
                 response.getWriter().write(JSON.toJSONString(resultSet));
             }
         } catch (Exception e) {
+            e.printStackTrace();
             SqlSessionUtil.close();
             response.sendRedirect("/ShoppingSystem/login.html");
         }
@@ -247,6 +271,7 @@ public class UserServlet extends BaseServlet {
                 response.getWriter().write(JSON.toJSONString(resultSet));
             }
         } catch (Exception e) {
+            e.printStackTrace();
             SqlSessionUtil.close();
             response.sendRedirect("/ShoppingSystem/login.html");
         }
@@ -274,6 +299,7 @@ public class UserServlet extends BaseServlet {
             response.setContentType("application/json;charset=utf-8");
             response.getWriter().write(JSON.toJSONString(resultSet));
         } catch (Exception e) {
+            e.printStackTrace();
             SqlSessionUtil.close();
             response.sendRedirect("/ShoppingSystem/login.html");
         }
@@ -298,6 +324,7 @@ public class UserServlet extends BaseServlet {
             response.setContentType("application/json;charset=utf-8");
             response.getWriter().write(JSON.toJSONString(resultSet));
         } catch (Exception e) {
+            e.printStackTrace();
             SqlSessionUtil.close();
             response.sendRedirect("/ShoppingSystem/login.html");
         }
@@ -321,6 +348,7 @@ public class UserServlet extends BaseServlet {
             response.setContentType("application/json;charset=utf-8");
             response.getWriter().write(JSON.toJSONString(resultSet));
         } catch (Exception e) {
+            e.printStackTrace();
             SqlSessionUtil.close();
             response.sendRedirect("/ShoppingSystem/login.html");
         }
@@ -371,6 +399,7 @@ public class UserServlet extends BaseServlet {
             response.setContentType("application/json;charset=utf-8");
             response.getWriter().write(JSON.toJSONString(resultSet));
         } catch (Exception e) {
+            e.printStackTrace();
             SqlSessionUtil.close();
             response.sendRedirect("/ShoppingSystem/login.html");
         }
@@ -396,6 +425,7 @@ public class UserServlet extends BaseServlet {
             response.setContentType("application/json;charset=utf-8");
             response.getWriter().write(JSON.toJSONString(resultSet));
         } catch (Exception e) {
+            e.printStackTrace();
             SqlSessionUtil.close();
             response.sendRedirect("/ShoppingSystem/login.html");
         }
@@ -419,6 +449,7 @@ public class UserServlet extends BaseServlet {
             response.setContentType("application/json;charset=utf-8");
             response.getWriter().write(JSON.toJSONString(resultSet));
         } catch (Exception e) {
+            e.printStackTrace();
             SqlSessionUtil.close();
             response.sendRedirect("/ShoppingSystem/login.html");
         }
@@ -442,6 +473,7 @@ public class UserServlet extends BaseServlet {
             response.setContentType("application/json;charset=utf-8");
             response.getWriter().write(JSON.toJSONString(resultSet));
         } catch (Exception e) {
+            e.printStackTrace();
             SqlSessionUtil.close();
             response.sendRedirect("/ShoppingSystem/login.html");
         }
@@ -465,6 +497,7 @@ public class UserServlet extends BaseServlet {
             response.setContentType("application/json;charset=utf-8");
             response.getWriter().write(JSON.toJSONString(resultSet));
         } catch (Exception e) {
+            e.printStackTrace();
             SqlSessionUtil.close();
             response.sendRedirect("/ShoppingSystem/login.html");
         }
@@ -491,6 +524,7 @@ public class UserServlet extends BaseServlet {
             response.setContentType("application/json;charset=utf-8");
             response.getWriter().write(JSON.toJSONString(resultSet));
         } catch (Exception e) {
+            e.printStackTrace();
             SqlSessionUtil.close();
             response.sendRedirect("/ShoppingSystem/login.html");
         }
@@ -516,6 +550,7 @@ public class UserServlet extends BaseServlet {
             response.setContentType("application/json;charset=utf-8");
             response.getWriter().write(JSON.toJSONString(resultSet));
         } catch (Exception e) {
+            e.printStackTrace();
             SqlSessionUtil.close();
             response.sendRedirect("/ShoppingSystem/login.html");
         }
@@ -537,6 +572,7 @@ public class UserServlet extends BaseServlet {
             response.setContentType("application/json;charset=utf-8");
             response.getWriter().write(JSON.toJSONString(resultSet));
         } catch (Exception e) {
+            e.printStackTrace();
             SqlSessionUtil.close();
             response.sendRedirect("/ShoppingSystem/login.html");
         }
@@ -558,6 +594,7 @@ public class UserServlet extends BaseServlet {
             response.setContentType("application/json;charset=utf-8");
             response.getWriter().write(JSON.toJSONString(resultSet));
         } catch (Exception e) {
+            e.printStackTrace();
             SqlSessionUtil.close();
             response.sendRedirect("/ShoppingSystem/login.html");
         }
@@ -583,6 +620,7 @@ public class UserServlet extends BaseServlet {
             response.setContentType("application/json;charset=utf-8");
             response.getWriter().write(JSON.toJSONString(resultSet));
         } catch (Exception e) {
+            e.printStackTrace();
             SqlSessionUtil.close();
             response.sendRedirect("/ShoppingSystem/login.html");
         }
@@ -604,6 +642,7 @@ public class UserServlet extends BaseServlet {
             response.setContentType("application/json;charset=utf-8");
             response.getWriter().write(JSON.toJSONString(resultSet));
         } catch (Exception e) {
+            e.printStackTrace();
             SqlSessionUtil.close();
             response.sendRedirect("/ShoppingSystem/login.html");
         }
@@ -627,7 +666,72 @@ public class UserServlet extends BaseServlet {
             response.getWriter().write(JSON.toJSONString(resultSet));
         } catch (Exception e) {
             SqlSessionUtil.close();
+            e.printStackTrace();
             response.sendRedirect("/ShoppingSystem/login.html");
         }
     }
+
+    /**
+     * 修改个人信息
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    public void getCode(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            ServletOutputStream outputStream = response.getOutputStream();
+            HttpSession session = request.getSession();
+            String checkCode = CheckCodeUtil.outputVerifyImage(100,50,outputStream,4);
+            session.setAttribute("checkCode",checkCode);
+        } catch (Exception e) {
+            SqlSessionUtil.close();
+            e.printStackTrace();
+            response.sendRedirect("/ShoppingSystem/login.html");
+        }
+    }
+
+    /**
+     * 查看用户信息
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    public void selectMessages(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            String authorization = request.getHeader("Authorization");
+            Claims claims = JwtUtil.parseJWT(authorization);
+            Integer id = (Integer) claims.get("id");
+            ResultSet resultSet = userService.selectMessage(id);
+            response.setStatus(200);
+            response.setContentType("application/json;charset=utf-8");
+            response.getWriter().write(JSON.toJSONString(resultSet));
+        } catch (Exception e) {
+            e.printStackTrace();
+            SqlSessionUtil.close();
+            response.sendRedirect("/ShoppingSystem/login.html");
+        }
+    }
+
+    /**
+     * 删除用户信息
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    public void deleteMessage(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            BufferedReader reader = request.getReader();
+            String s = reader.readLine();
+            UserMessage userMessage = JSON.parseObject(s, UserMessage.class);
+            ResultSet resultSet = userService.deleteMessage(userMessage);
+            response.setStatus(200);
+            response.setContentType("application/json;charset=utf-8");
+            response.getWriter().write(JSON.toJSONString(resultSet));
+        } catch (Exception e) {
+            e.printStackTrace();
+            SqlSessionUtil.close();
+            response.sendRedirect("/ShoppingSystem/login.html");
+        }
+    }
+
 }

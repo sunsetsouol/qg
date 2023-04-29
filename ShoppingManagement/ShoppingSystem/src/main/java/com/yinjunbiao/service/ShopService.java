@@ -2,6 +2,7 @@ package com.yinjunbiao.service;
 
 import com.yinjunbiao.entity.PushGood;
 import com.yinjunbiao.entity.Shop;
+import com.yinjunbiao.entity.ShopMessage;
 import com.yinjunbiao.entity.Tweets;
 import com.yinjunbiao.pojo.RefundApply;
 import com.yinjunbiao.pojo.ResultSet;
@@ -33,4 +34,8 @@ public interface ShopService {
     ResultSet selectTweets(Integer shopId);
 
     ResultSet deleteTweets(ShopTweets shopTweets);
+
+    ResultSet selectMessage(Integer shopId);
+
+    ResultSet deleteMessage(ShopMessage shopMessage);
 }

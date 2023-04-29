@@ -15,6 +15,10 @@ public interface ConsultationMapper {
     @ResultMap(id = "consultationResultMap")
     List<Consultation> selectByUserId(@Param("userId")Integer userId);
 
+    @Select(sql = "select * from consultation where id = #{id}")
+    @ResultMap(id = "consultationResultMap")
+    Consultation selectById(@Param("id")Long id);
+
     @Select(sql = "select * from consultation where goods_id = #{goodsId}")
     @ResultMap(id = "consultationResultMap")
     List<Consultation> selectByGoodsId(@Param("goodsId")Long goodsId);

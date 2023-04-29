@@ -15,9 +15,9 @@ public interface ReplyMapper {
     @ResultMap(id = "replyResultMap")
     List<Reply> selectByCId(@Param("consultationId")Long consultationId);
 
-    @Select(sql = "select * from reply where user_id = #{userId}")
+    @Select(sql = "select * from reply where id = #{id}")
     @ResultMap(id = "replyResultMap")
-    List<Reply> selectByUId(@Param("userId")Integer userId);
+    Reply selectById(@Param("id")Long id);
 
     @Insert(sql = "insert into reply values(null,#{consultationId},#{reply},#{userId})")
     @ResultMap(id = "replyResultMap")

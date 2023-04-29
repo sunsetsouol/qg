@@ -107,8 +107,6 @@ public class GoodsServlet extends BaseServlet {
      */
     public void selectReply(HttpServletRequest request, HttpServletResponse response) throws IOException{
         try{
-            String authorization = request.getHeader("Authorization");
-            Claims claims = JwtUtil.parseJWT(authorization);
             BufferedReader reader = request.getReader();
             String s = reader.readLine();
             GoodsConsultations goodsConsultations = JSON.parseObject(s, GoodsConsultations.class);

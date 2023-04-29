@@ -18,7 +18,6 @@ public class BaseServlet extends HttpServlet {
         String requestURI = req.getRequestURI();
         String methodName = requestURI.substring(requestURI.lastIndexOf("/") + 1);
         Class<? extends BaseServlet> aClass = this.getClass();
-
         try {
             Method declaredMethod = aClass.getDeclaredMethod(methodName, HttpServletRequest.class, HttpServletResponse.class);
             declaredMethod.invoke(this, req, resp);

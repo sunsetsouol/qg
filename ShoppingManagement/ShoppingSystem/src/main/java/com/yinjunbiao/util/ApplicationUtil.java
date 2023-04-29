@@ -20,6 +20,8 @@ public class ApplicationUtil {
         ApplicationContext.registerFactory(new MapperBeanFactory(SubscribleMapper.class));
         ApplicationContext.registerFactory(new MapperBeanFactory(TweetsMapper.class));
         ApplicationContext.registerFactory(new MapperBeanFactory(OrdersMapper.class));
+        ApplicationContext.registerFactory(new MapperBeanFactory(ShopMessageMapper.class));
+        ApplicationContext.registerFactory(new MapperBeanFactory(UserMessageMapper.class));
         applicationContext = new ApplicationContext(UserServlet.class);
     }
 

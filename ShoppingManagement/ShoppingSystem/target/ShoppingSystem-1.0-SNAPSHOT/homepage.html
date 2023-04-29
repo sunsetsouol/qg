@@ -69,16 +69,58 @@
 
     </el-form>
 
-    <el-button type="primary" plain @click="Manager">管理员入口</el-button>
-    <el-button type="primary" plain @click="MyShop">我的店铺</el-button>
+    <el-button type="primary" icon="el-icon-s-custom" plain @click="Manager">管理员入口</el-button>
+    <el-button type="primary" icon="el-icon-s-shop" plain @click="MyShop">我的店铺</el-button>
 
 
-    <el-button type="primary" icon="el-icon-shopping-cart-full" @click="personalMessage">修改个人信息</el-button>
+    <el-button type="primary" icon="el-icon-milk-tea" @click="logout">退出登录</el-button>
+    <el-button type="primary" icon="el-icon-user-solid" @click="personalMessage">修改个人信息</el-button>
     <el-button type="primary" icon="el-icon-shopping-cart-full" @click="searchMyCart">购物车</el-button>
     <el-button type="primary" icon="el-icon-shopping-bag-1" @click="searchMyOrders">我的订单</el-button>
-    <el-button type="primary" icon="el-icon-shopping-bag-1" @click="selectSubscrible">查看我的关注</el-button>
-    <el-button type="primary" icon="el-icon-shopping-bag-1" @click="selectTweets">店铺推文</el-button>
+    <el-button type="primary" icon="el-icon-star-on" @click="selectSubscrible">查看我的关注</el-button>
+    <el-button type="primary" icon="el-icon-chat-line-square" @click="selectTweets">店铺推文</el-button>
+    <el-button type="primary" icon="el-icon-message" @click="selectMessage">消息通知</el-button>
 
+
+    <el-dialog
+            title="搜索详情"
+            :visible.sync="dialogUserMessage"
+            width="30%">
+        <template>
+            <el-table
+                    :data="userMessage"
+                    style="width: 100%"
+                    :row-class-name="tableRowClassName"
+                    @selection-change="handleSelectionChange"
+            >
+
+                <el-table-column
+                        type="index"
+                        width="50">
+                </el-table-column>
+
+                <el-table-column
+                        prop="message"
+                        label="内容"
+                        align="center"
+                >
+                </el-table-column>
+
+                <el-table-column
+                        align="center"
+                        label="删除">
+                    <template slot-scope="scope">
+                        <el-row>
+                            <el-button type="primary" @click="deleteMessage(scope.row)">删除</el-button>
+                        </el-row>
+                    </template>
+                </el-table-column>
+
+
+            </el-table>
+        </template>
+        <el-button type="primary" @click="dialogUserMessage = false">确 定</el-button>
+    </el-dialog>
 
     <el-dialog
             title="修改信息"
@@ -583,6 +625,53 @@
             })
         },
         methods: {
+            logout(){
+                var _this = this;
+                axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/ShoppingSystem/user/logout"
+                }).then(function (resp) {
+                    localStorage.clear();
+                    window.open("login.html","_self");
+                })
+            },
+            deleteMessage(row){
+                var _this = this;
+                axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/ShoppingSystem/user/deleteMessage",
+                    data:row
+                }).then(function (resp) {
+                    if (resp.data.code == 1) {
+                        _this.selectMessage();
+                    }else {
+                        _this.$message({
+                            type: 'info',
+                            message: '删除失败'
+                        });
+                    }
+                })
+            },
+            selectMessage(){
+                var _this = this;
+                axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/ShoppingSystem/user/selectMessages"
+                }).then(function (resp) {
+                    if (resp.data.code == 1) {
+                        _this.userMessage = resp.data.data;
+                        _this.dialogUserMessage = true;
+                    }else {
+                        _this.$message({
+                            type: 'info',
+                            message: '查找失败'
+                        });
+                    }
+                })
+            },
             searchShopGoods(row){
                 var _this = this;
                 axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
@@ -811,7 +900,7 @@
                             type: 'info',
                             message: '发送成功'
                         });
-
+                    _this.dialogReply = false;
                     } else {
                         _this.$message({
                             type: 'info',
@@ -854,6 +943,8 @@
                             message: '发送成功',
                             type: 'success'
                         });
+                        _this.dialogAsk = false;
+                        _this.dialogConsultation = false;
                     } else {
                         _this.$message({
                             message: '发送失败',
@@ -937,39 +1028,39 @@
                 this.dialogVisible = true;
             },
             buy() {
-                this.$confirm('请付款', '付款', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning'
-                }).then(() => {
-                    this.$message({
-                        type: 'success',
-                        message: '下单中'
-
+                if (this.orders.number > 0) {
+                    this.$confirm('请付款', '付款', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        this.$message({
+                            type: 'success',
+                            message: '下单中'
+                        });
+                        var _this = this;
+                        axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
+                        axios({
+                            method: "post",
+                            url: "http://localhost:8080/ShoppingSystem/user/buy",
+                            data: this.orders
+                        }).then(function (resp) {
+                            if (resp.data.code == 1) {
+                                _this.dialogVisible = false;
+                                _this.dialogSuccess = true;
+                            } else {
+                                _this.dialogVisible = false;
+                                _this.dialogError = true;
+                            }
+                            _this.selectAll();
+                        })
+                    }).catch(() => {
+                        this.$message({
+                            type: 'info',
+                            message: '已取消下单'
+                        });
                     });
-                    var _this = this;
-                    axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
-                    axios({
-                        method: "post",
-                        url: "http://localhost:8080/ShoppingSystem/user/buy",
-                        data: this.orders
-                    }).then(function (resp) {
-                        if (resp.data.code == 1) {
-                            _this.dialogVisible = false;
-                            _this.dialogSuccess = true;
-                        } else {
-                            _this.dialogVisible = false;
-                            _this.dialogError = true;
-                        }
-                        _this.selectAll();
-                    })
-                }).catch(() => {
-                    this.$message({
-                        type: 'info',
-                        message: '已取消下单'
-                    });
-                });
-
+                }
             },
             addCart() {
                 if (this.orders.number > 0) {
@@ -1064,8 +1155,9 @@
                 dialogTweets: false,
                 dialogSubscrible: false,
                 dialogMessage:false,
+                dialogUserMessage:false,
 
-                headshot: "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
+                headshot: "https://souln.oss-cn-guangzhou.aliyuncs.com/java/image-20230123103647261.png",
                 sizeList: ["large", "medium", "small"],
 
                 pageSize: 20,
@@ -1073,7 +1165,11 @@
                 currentPage: 1,
 
                 totalCount: '',
-                // 品牌模型数据
+
+                userMessage:[{
+                   message:'',
+                   id:''
+                }],
                 personal:{
                     id:'',
                     userName:'',

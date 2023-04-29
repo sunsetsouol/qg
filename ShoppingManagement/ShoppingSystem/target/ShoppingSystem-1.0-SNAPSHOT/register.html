@@ -61,6 +61,12 @@
             <el-switch v-model="ruleForm.isPrivate" active-text="私密" :active-value="1" inactive-text="公开" :inactive-value="0"></el-switch>
         </el-form-item>
 
+        <el-form-item label="验证码" prop="checkCode" align="center">
+            <el-row>
+                <el-input type="text" v-model="ruleForm.checkCode" autocomplete="off" ></el-input>
+                <img src="" id="checkCodePicture" @click="changeVerifyCode" width="100px" height="50px">
+            </el-row>
+        </el-form-item>
 
         <el-form-item>
             <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
@@ -72,6 +78,9 @@
 
     new Vue ({
         el:"#app",
+        mounted(){
+            document.getElementById("checkCodePicture").src = "http://localhost:8080/ShoppingSystem/user/getCode?"+new Date().getMilliseconds();
+        },
         data() {
             var checkName = (rule, value, callback) => {
                 if (!value) {
@@ -130,6 +139,7 @@
             };
             return {
                 ruleForm: {
+                    checkCode: '',
                     password: '',
                     checkPassword: '',
                     userName: '',
@@ -157,6 +167,9 @@
             };
         },
         methods:{
+            changeVerifyCode(){
+                document.getElementById("checkCodePicture").src = "http://localhost:8080/ShoppingSystem/user/getCode?"+new Date().getMilliseconds();
+            },
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
                     var _this = this;
@@ -167,16 +180,24 @@
                                     confirmButtonText: '确定'
                                 });
                             }else{
-                                _this.$alert(resp.data.msg, '注册失败', {
-                                    confirmButtonText: '确定',
-                                    callback: action => {
-                                        this.$resp.data.data({
-                                            type: 'info',
-                                            message: `action: ${ action }`
-                                        });
-                                    }
-                                });
+                                if (resp.data.data == 'checkCode'){
+                                    this.$message({
+                                        type: 'success',
+                                        message: '验证码错误'
+                                    });
+                                }else {
+                                    _this.$alert(resp.data.msg, '注册失败', {
+                                        confirmButtonText: '确定',
+                                        callback: action => {
+                                            this.$resp.data.data({
+                                                type: 'info',
+                                                message: `action: ${ action }`
+                                            });
+                                        }
+                                    });
+                                }
                             }
+                            _this.changeVerifyCode();
                         });
                     } else {
                         console.log('error submit!!');

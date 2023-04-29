@@ -27,16 +27,6 @@ public interface UserService {
 
     ResultSet selectMyOrders(Integer userId,Integer status,Integer currentPage, Integer pageSize);
 
-    ResultSet selectSub(Subscrible subscrible);
-
-    ResultSet sendConsultation(Consultation consultation);
-
-    ResultSet deleteConsultation(Long id);
-
-    ResultSet sendReply(Reply reply);
-
-    ResultSet deleteReply(Long id);
-
     ResultSet selectMyShop(Integer id);
 
     ResultSet addCart(Cart cart);
@@ -64,4 +54,8 @@ public interface UserService {
     ResultSet selectPersonal(Integer id);
 
     ResultSet updatePersonal(User user);
+
+    ResultSet selectMessage(Integer id);
+
+    ResultSet deleteMessage(UserMessage userMessage);
 }

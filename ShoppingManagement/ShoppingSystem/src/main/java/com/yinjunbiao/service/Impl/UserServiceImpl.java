@@ -12,6 +12,7 @@ import com.yinjunbiao.mapper.*;
 import com.yinjunbiao.pojo.*;
 import com.yinjunbiao.service.UserService;
 import com.yinjunbiao.util.CONST;
+import com.yinjunbiao.util.Md5Util;
 import com.yinjunbiao.util.SqlSessionUtil;
 import com.yinjunbiao.util.UploadUtil;
 
@@ -65,6 +66,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private TweetsMapper tweetsMapper;
 
+    @Autowired
+    private UserMessageMapper userMessageMapper;
+
 
     static {
 
@@ -103,7 +107,7 @@ public class UserServiceImpl implements UserService {
                     cnt = userMapper.selectByPhone(user.getPhone()).getCnt();
                     if (cnt > 0) {
                         select = userMapper.selectByPhone(user.getPhone());
-                        if (select != null && select.getPassword().equals(user.getPassword())) {
+                        if (select != null && Md5Util.matches(user.getPassword(), select.getPassword())) {
                             resultSet = ResultSet.success(select, "登录成功");
                         } else {
                             resultSet = ResultSet.error(select, "账号不存在或密码错误");
@@ -127,7 +131,7 @@ public class UserServiceImpl implements UserService {
     public ResultSet getHeadshot(Integer id) {
         User user = userMapper.selectById(id);
         SqlSessionUtil.close();
-        return ResultSet.success(user.getHeadshot(),null);
+        return ResultSet.success(user.getHeadshot(), null);
     }
 
     /**
@@ -148,12 +152,13 @@ public class UserServiceImpl implements UserService {
         int res;
         if (userMapper.selectByPhone(user.getPhone()) != null) {
             resultSet = ResultSet.error("phone", "手机号已被注册");
+        } else if (user.getUserName().length() > 20 || user.getPassword().length() > 20 || user.getAddress().length() > 50) {
+            resultSet = ResultSet.error(null, "账号跟密码长度不能超过20个字符,地址不能超过五十个字符");
         } else {
+            user.setPassword(Md5Util.encode(user.getPassword()));
             synchronized (userMapper) {
                 if (userMapper.selectByPhone(user.getPhone()) != null) {
                     resultSet = ResultSet.error("phone", "手机号已被注册");
-                } else if (user.getUserName().length() > 20 || user.getPassword().length() > 20 || user.getAddress().length() > 50) {
-                    resultSet = ResultSet.error(null, "账号跟密码长度不能超过20个字符,地址不能超过五十个字符");
                 } else {
                     res = userMapper.insert(user.getPhone(), user.getUserName(), user.getAddress(), user.getPassword(), user.getIsPrivate());
                     if (res == 1) {
@@ -181,10 +186,10 @@ public class UserServiceImpl implements UserService {
         int res = 0;
         if (select == null) {
             resultSet = ResultSet.error("phone", "该手机号尚未注册");
-        } else if (select.getPassword().equals(user.getPassword())) {
+        } else if (Md5Util.matches(user.getPassword(),select.getPassword())) {
             resultSet = ResultSet.error("password", "不能修改与原来相同的密码");
         } else {
-            res = userMapper.updatePassword(user.getPassword(), select.getId());
+            res = userMapper.updatePassword(Md5Util.encode(user.getPassword()), select.getId());
         }
         if (res == 1) {
             resultSet = ResultSet.success(null, "修改成功");
@@ -211,7 +216,7 @@ public class UserServiceImpl implements UserService {
         }
         //密码验证
         User select = userMapper.selectById(user.getId());
-        if (!user.getPassword().equals(select.getPassword())) {
+        if (!Md5Util.matches(user.getPassword(),select.getPassword())) {
             resultSet = ResultSet.error("password", "密码错误");
         } else if (select == null || select.getPhone().equals(user.getPhone())) {
             resultSet = ResultSet.error("phone", "不能修改与原来相同的手机号");
@@ -225,6 +230,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 改头像
+     *
      * @param inputStream
      * @param id
      * @return
@@ -247,8 +253,6 @@ public class UserServiceImpl implements UserService {
     }
 
 
-
-
     /**
      * 查找购物车用户的
      *
@@ -257,11 +261,13 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public ResultSet selectMyShoppingCart(Integer id, Integer currentPage, Integer pageSize) {
-        List<Cart> carts = cartMapper.selectByUserId(id,(currentPage-1)*pageSize,pageSize);
+        List<Cart> carts = cartMapper.selectByUserId(id, (currentPage - 1) * pageSize, pageSize);
         List<ShoppingCart> shoppingCarts = new ArrayList<>();
-        for (Cart cart : carts) {
-            Goods goods = goodsMapper.selectById(cart.getGoodsId());
-            shoppingCarts.add(new ShoppingCart(cart.getId(), goods.getName(), cart.getNumber(), goods.getPicture(), goods.getPrice(), goods.getShopName()));
+        if (carts != null){
+            for (Cart cart : carts) {
+                Goods goods = goodsMapper.selectById(cart.getGoodsId());
+                shoppingCarts.add(new ShoppingCart(cart.getId(), goods.getName(), cart.getNumber(), goods.getPicture(), goods.getPrice(), goods.getShopName()));
+            }
         }
         SqlSessionUtil.commit();
         SqlSessionUtil.close();
@@ -315,8 +321,11 @@ public class UserServiceImpl implements UserService {
     public ResultSet newOrders(Orders orders) {
         ResultSet resultSet = null;
         Goods goods = goodsMapper.selectById(orders.getGoodsId());
-        if (shopMapper.selectById(goods.getShopId()).getBossId().equals(orders.getUserId())){
-            return  ResultSet.error(null,"不能购买自己的商品");
+        if (shopMapper.selectById(goods.getShopId()).getBossId().equals(orders.getUserId())) {
+            return ResultSet.error(null, "不能购买自己的商品");
+        }
+        if (orders.getNumber() == 0){
+            return ResultSet.error(null,"不能买0件");
         }
         if (orders.getNumber() <= goods.getInventory()) {
             synchronized (goodsMapper) {
@@ -356,7 +365,7 @@ public class UserServiceImpl implements UserService {
                     if (userMapper.selectById(apply.getUserId()).getIdentify() != 1) {
                         apply1 = applyMapper.selectByUserId(apply.getUserId());
                         if (apply1 == null || apply1.getStatus() != 0) {
-                            applyMapper.insert(apply.getUserId(), apply.getShopName(),apply.getDescription());
+                            applyMapper.insert(apply.getUserId(), apply.getShopName(), apply.getDescription());
                             resultSet = ResultSet.success(null, "申请成功");
                             SqlSessionUtil.commit();
                         }
@@ -386,17 +395,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResultSet selectMyOrders(Integer userId, Integer status,Integer currentPage, Integer pageSize) {
-        List<Orders> orders = ordersMapper.selectByUserId(userId, status,(currentPage-1)*pageSize,pageSize);
+    public ResultSet selectMyOrders(Integer userId, Integer status, Integer currentPage, Integer pageSize) {
+        List<Orders> orders = ordersMapper.selectByUserId(userId, status, (currentPage - 1) * pageSize, pageSize);
         List<ShopOrders> shopOrders = new ArrayList<>();
-        if (orders == null) {
-            return ResultSet.success(null, "没有订单");
-        }
-        for (Orders order : orders) {
-            Goods goods = goodsMapper.selectById(order.getGoodsId());
-            if (goods != null){
-                ShopOrders shopOrder = new ShopOrders(order.getId(), CONST.dateFormat.format(order.getTime()), order.getSendAddress(), order.getReceiveAddress(), goods.getName(), order.getStatus(), userMapper.selectById(order.getUserId()).getUserName(), order.getNumber(), goods.getShopName(), goods.getPrice());
-                shopOrders.add(shopOrder);
+        if (orders != null){
+            for (Orders order : orders) {
+                Goods goods = goodsMapper.selectById(order.getGoodsId());
+                if (goods != null) {
+                    ShopOrders shopOrder = new ShopOrders(order.getId(), CONST.dateFormat.format(order.getTime()), order.getSendAddress(), order.getReceiveAddress(), goods.getName(), order.getStatus(), userMapper.selectById(order.getUserId()).getUserName(), order.getNumber(), goods.getShopName(), goods.getPrice());
+                    shopOrders.add(shopOrder);
+                }
             }
         }
         SqlSessionUtil.close();
@@ -429,26 +437,28 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResultSet buyCarts(Long[] ids) {
         ResultSet resultSet = null;
-        for (Long id : ids) {
-            Cart cart = cartMapper.selectById(id);
-            Goods goods = goodsMapper.selectById(cart.getGoodsId());
-            if (goods.getInventory() >= cart.getNumber()) {
-                synchronized (ordersMapper) {
-                    goods = goodsMapper.selectById(cart.getGoodsId());
-                    if (cart.getUserId().equals(shopMapper.selectById(goods.getShopId()).getBossId())){
-                        resultSet = ResultSet.error(null,"不可以购买自己的店铺的商品");
+        if (ids != null){
+            for (Long id : ids) {
+                Cart cart = cartMapper.selectById(id);
+                Goods goods = goodsMapper.selectById(cart.getGoodsId());
+                if (goods.getInventory() >= cart.getNumber()) {
+                    synchronized (ordersMapper) {
+                        goods = goodsMapper.selectById(cart.getGoodsId());
+                        if (cart.getUserId().equals(shopMapper.selectById(goods.getShopId()).getBossId())) {
+                            resultSet = ResultSet.error(null, "不可以购买自己的店铺的商品");
+                        }
+                        if (goods.getInventory() >= cart.getNumber()) {
+                            ordersMapper.insert(System.currentTimeMillis(), userMapper.selectById(shopMapper.selectById(cart.getShopId()).getBossId()).getAddress(), userMapper.selectById(cart.getUserId()).getAddress(), cart.getGoodsId(), cart.getShopId(), cart.getUserId(), cart.getNumber(), cart.getSinglePrice());
+                            cartMapper.deleteById(cart.getId());
+                        } else {
+                            resultSet = ResultSet.error(null, "库存不足");
+                            break;
+                        }
                     }
-                    if (goods.getInventory() >= cart.getNumber()) {
-                        ordersMapper.insert(System.currentTimeMillis(), userMapper.selectById(shopMapper.selectById(cart.getShopId()).getBossId()).getAddress(), userMapper.selectById(cart.getUserId()).getAddress(), cart.getGoodsId(), cart.getShopId(), cart.getUserId(), cart.getNumber(), cart.getSinglePrice());
-                        cartMapper.deleteById(cart.getId());
-                    } else {
-                        resultSet = ResultSet.error(null,"库存不足");
-                        break;
-                    }
+                } else {
+                    resultSet = ResultSet.error();
+                    break;
                 }
-            } else {
-                resultSet = ResultSet.error();
-                break;
             }
         }
         if (resultSet == null) {
@@ -511,6 +521,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 举报商品
+     *
      * @param report
      * @return
      */
@@ -535,6 +546,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 查看关注店铺的推文
+     *
      * @param id
      * @return
      */
@@ -542,12 +554,12 @@ public class UserServiceImpl implements UserService {
     public ResultSet selectTweets(Integer id) {
         List<Subscrible> subscribles = subscribleMapper.selectbyUserId(id);
         List<ShopTweets> tweets = new ArrayList<>();
-        if (subscribles != null){
+        if (subscribles != null) {
             for (Subscrible subscrible : subscribles) {
                 List<Tweets> tweets1 = tweetsMapper.selectByShopId(subscrible.getShopId());
-                if (tweets1 != null){
+                if (tweets1 != null) {
                     for (Tweets tweets2 : tweets1) {
-                        tweets.add(new ShopTweets(tweets2.getId(),tweets2.getShopId(),shopMapper.selectById(tweets2.getShopId()).getName(),tweets2.getTweets()));
+                        tweets.add(new ShopTweets(tweets2.getId(), tweets2.getShopId(), shopMapper.selectById(tweets2.getShopId()).getName(), tweets2.getTweets()));
                     }
                 }
             }
@@ -560,11 +572,12 @@ public class UserServiceImpl implements UserService {
         });
         SqlSessionUtil.commit();
         SqlSessionUtil.close();
-        return ResultSet.success(tweets,null);
+        return ResultSet.success(tweets, null);
     }
 
     /**
      * 查找关注店铺
+     *
      * @param id
      * @return
      */
@@ -572,9 +585,9 @@ public class UserServiceImpl implements UserService {
     public ResultSet selectSubscrible(Integer id) {
         List<Subscrible> subscribles = subscribleMapper.selectbyUserId(id);
         List<UserSubscrible> userSubscribles = new ArrayList<>();
-        if (subscribles != null){
+        if (subscribles != null) {
             for (Subscrible subscrible : subscribles) {
-                userSubscribles.add(new UserSubscrible(subscrible.getId(),subscrible.getShopId(),shopMapper.selectById(subscrible.getShopId()).getName()));
+                userSubscribles.add(new UserSubscrible(subscrible.getId(), subscrible.getShopId(), shopMapper.selectById(subscrible.getShopId()).getName()));
             }
         }
         SqlSessionUtil.close();
@@ -584,16 +597,17 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 取关
+     *
      * @param userSubscrible
      * @param id
      * @return
      */
     @Override
     public ResultSet unfollow(UserSubscrible userSubscrible, Integer id) {
-        subscribleMapper.deleteByUASId(id,userSubscrible.getShopId());
-        synchronized (shopMapper){
+        subscribleMapper.deleteByUASId(id, userSubscrible.getShopId());
+        synchronized (shopMapper) {
             Shop shop = shopMapper.selectById(userSubscrible.getShopId());
-            shopMapper.updateFans(shop.getFans() - 1,userSubscrible.getShopId());
+            shopMapper.updateFans(shop.getFans() - 1, userSubscrible.getShopId());
         }
         SqlSessionUtil.commit();
         SqlSessionUtil.close();
@@ -603,6 +617,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 查看个人信息
+     *
      * @param id
      * @return
      */
@@ -612,11 +627,11 @@ public class UserServiceImpl implements UserService {
         User user = userMapper.selectById(id);
         SqlSessionUtil.commit();
         SqlSessionUtil.close();
-        if (user != null){
+        if (user != null) {
             user.setPassword(null);
             user.setPhone(null);
-            resultSet = ResultSet.success(user,null);
-        }else {
+            resultSet = ResultSet.success(user, null);
+        } else {
             resultSet = ResultSet.error();
         }
         return resultSet;
@@ -625,6 +640,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 修改个人信息
+     *
      * @param user
      * @return
      */
@@ -637,8 +653,8 @@ public class UserServiceImpl implements UserService {
                 resultSet = ResultSet.error("userName", "用户名或地址含有敏感字");
             }
         }
-        if (resultSet == null){
-            userMapper.updateMessage(user.getUserName(),user.getAddress(), user.getIsPrivate(),user.getId());
+        if (resultSet == null) {
+            userMapper.updateMessage(user.getUserName(), user.getAddress(), user.getIsPrivate(), user.getId());
             SqlSessionUtil.commit();
             SqlSessionUtil.close();
             resultSet = ResultSet.success();
@@ -646,52 +662,36 @@ public class UserServiceImpl implements UserService {
         return resultSet;
     }
 
-
-
+    /**
+     * 查找用户信息
+     * @param id
+     * @return
+     */
     @Override
-    public ResultSet selectSub(Subscrible subscrible) {
-        Subscrible select = subscribleMapper.selectByUASId(subscrible.getUserId(), subscrible.getShopId());
+    public ResultSet selectMessage(Integer id) {
+        List<UserMessage> userMessages = userMessageMapper.selectByUserId(id);
+        SqlSessionUtil.commit();
+        SqlSessionUtil.close();
+        return ResultSet.success(userMessages,null);
+    }
+
+    /**
+     * 删除用户信息
+     * @param userMessage
+     * @return
+     */
+    @Override
+    public ResultSet deleteMessage(UserMessage userMessage) {
         ResultSet resultSet = null;
-        if (select == null) {
-            resultSet = ResultSet.error();
-        }
-        if (resultSet == null) {
+        if (userMessageMapper.deleteById(userMessage.getId()) == 1) {
             resultSet = ResultSet.success();
+            SqlSessionUtil.commit();
+        }else {
+            resultSet = ResultSet.error();
+            SqlSessionUtil.rollback();
         }
         SqlSessionUtil.close();
         return resultSet;
-    }
-
-
-
-    @Override
-    public ResultSet sendConsultation(Consultation consultation) {
-        consultationMapper.insert(consultation.getGoodsId(), consultation.getConsultation(), consultation.getUserId());
-        SqlSessionUtil.commit();
-        SqlSessionUtil.close();
-        return ResultSet.success();
-    }
-
-    @Override
-    public ResultSet deleteConsultation(Long id) {
-        int delete = consultationMapper.deleteById(id);
-        SqlSessionUtil.commit();
-        SqlSessionUtil.close();
-        return delete == 1 ? ResultSet.success(null, "删除成功") : ResultSet.error(null, "评论不存在，可能已经被删除");
-    }
-
-    @Override
-    public ResultSet sendReply(Reply reply) {
-        int insert = replyMapper.insert(reply.getConsultationId(), reply.getReply(), reply.getUserId());
-        SqlSessionUtil.commit();
-        SqlSessionUtil.close();
-        return insert == 1 ? ResultSet.success(null, "发送成功") : ResultSet.error(null, "发送异常");
-    }
-
-    @Override
-    public ResultSet deleteReply(Long id) {
-        int delete = replyMapper.deleteById(id);
-        return delete == 1 ? ResultSet.success(null, "删除成功") : ResultSet.error(null, "回复不存在，可能已经删除");
     }
 
 

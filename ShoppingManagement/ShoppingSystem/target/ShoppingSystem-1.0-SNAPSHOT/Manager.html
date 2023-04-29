@@ -567,6 +567,7 @@
                                 type: 'info',
                                 message: '删除成功'
                             });
+                            _this.dialogConsultation = false;
                         } else {
                             _this.$message({
                                 type: 'info',
@@ -603,6 +604,7 @@
                                 type: 'info',
                                 message: '删除成功'
                             });
+                            _this.dialogReply = false;
                         } else {
                             _this.$message({
                                 type: 'info',
@@ -645,6 +647,7 @@
                                 message: '已取消'
                             });
                         }
+                        _this.selectGoods();
                     })
                 }).catch(() => {
                     this.$message({
@@ -736,22 +739,6 @@
                 this.ask.goodsId = this.consultation.goodsId;
                 this.dialogAsk = true;
             },
-            deleteGoods(row) {
-                var _this = this;
-                axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
-                axios({
-                    method: "post",
-                    url: "http://localhost:8080/ShoppingSystem/manager/deleteGoods",
-                    data: row
-                }).then(function (resp) {
-                    if (resp.data.code == 1) {
-                        _this.$message({
-                            message: '删除成功',
-                            type: 'success'
-                        });
-                    }
-                })
-            },
             searchConsultation(row) {
                 var _this = this;
                 axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
@@ -780,7 +767,6 @@
                 this.currentPage = val;
                 this.selectGoods();
             },
-
             onSubmit() {
                 var _this = this;
                 if (this.goods.name.length > 0) {

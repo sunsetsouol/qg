@@ -46,6 +46,12 @@ public class ManagerServiceImpl implements ManagerService {
     @Autowired
     private ConsultationMapper consultationMapper;
 
+    @Autowired
+    private UserMessageMapper userMessageMapper;
+
+    @Autowired
+    private ShopMessageMapper shopMessageMapper;
+
 
 
     /**
@@ -55,15 +61,23 @@ public class ManagerServiceImpl implements ManagerService {
      */
     @Override
     public ResultSet deleteGoods(Long id) {
-        if (goodsMapper.selectById(id) == null) {
-            ResultSet.error();
-        }
+        ResultSet resultSet = null;
+        Goods goods = goodsMapper.selectById(id);
         cartMapper.deleteByGoodsId(id);
         ordersMapper.deleteByGoodsId(id);
-        goodsMapper.deleteById(id);
-        SqlSessionUtil.commit();
+        synchronized (goodsMapper){
+            if (goodsMapper.deleteById(id) == 1) {
+                shopMessageMapper.insert(goods.getShopId(),"商品\""+goods.getName()+"\"已被下架");
+                reportMapper.updateStatusByGoodsId(1,goods.getId());
+                SqlSessionUtil.commit();
+                resultSet = ResultSet.success();
+            }else {
+                SqlSessionUtil.rollback();
+                resultSet= ResultSet.error();
+            }
+        }
         SqlSessionUtil.close();
-        return ResultSet.success();
+        return resultSet;
     }
 
     /**
@@ -73,10 +87,23 @@ public class ManagerServiceImpl implements ManagerService {
      */
     @Override
     public ResultSet deleteReply(GoodsReply goodsReply) {
-        replyMapper.deleteById(goodsReply.getId());
-        SqlSessionUtil.commit();
+        Reply reply = replyMapper.selectById(goodsReply.getId());
+        ResultSet resultSet = null;
+        if (reply != null){
+            synchronized (replyMapper){
+                if (replyMapper.deleteById(goodsReply.getId()) == 1) {
+                    userMessageMapper.insert(reply.getUserId(),"你的回复\""+reply.getReply()+"\"已被删除");
+                    SqlSessionUtil.commit();
+                    resultSet = ResultSet.success();
+                }
+            }
+        }
+        if (resultSet == null){
+            resultSet =ResultSet.error();
+            SqlSessionUtil.rollback();
+        }
         SqlSessionUtil.close();
-        return ResultSet.success();
+        return resultSet;
     }
 
     /**
@@ -86,11 +113,24 @@ public class ManagerServiceImpl implements ManagerService {
      */
     @Override
     public ResultSet deleteConsultations(GoodsConsultations goodsConsultations) {
-        replyMapper.deleteByConsultationId(goodsConsultations.getId());
-        consultationMapper.deleteById(goodsConsultations.getId());
-        SqlSessionUtil.commit();
+        ResultSet resultSet = null;
+        Consultation consultation = consultationMapper.selectById(goodsConsultations.getId());
+        if (consultation != null){
+            synchronized (consultationMapper){
+                replyMapper.deleteByConsultationId(goodsConsultations.getId());
+                if (consultationMapper.deleteById(goodsConsultations.getId()) == 1) {
+                    userMessageMapper.insert(consultation.getUserId(),"你的评论\""+consultation.getConsultation()+"\"已被删除");
+                    SqlSessionUtil.commit();
+                    resultSet = ResultSet.success();
+                }
+            }
+        }
+        if (resultSet == null){
+            resultSet = ResultSet.error();
+            SqlSessionUtil.rollback();
+        }
         SqlSessionUtil.close();
-        return ResultSet.success();
+        return resultSet;
     }
 
     @Override
@@ -222,8 +262,10 @@ public class ManagerServiceImpl implements ManagerService {
         ResultSet resultSet = null;
         if (reports != null && reports.size() > 0){
             List<GoodsReport> goodsReports = new ArrayList<>();
-            for (Report report : reports) {
-                goodsReports.add(new GoodsReport(report.getId(),report.getGoodsId(),goodsMapper.selectById(report.getGoodsId()).getName(),report.getDescription()));
+            if (reports != null){
+                for (Report report : reports) {
+                    goodsReports.add(new GoodsReport(report.getId(),report.getGoodsId(),goodsMapper.selectById(report.getGoodsId()).getName(),report.getDescription()));
+                }
             }
             resultSet = ResultSet.success(goodsReports,"查找成功");
             SqlSessionUtil.commit();
@@ -246,10 +288,22 @@ public class ManagerServiceImpl implements ManagerService {
         if (goodsMapper.selectById(report.getGoodsId()) == null) {
             ResultSet.error();
         }
+        ResultSet resultSet = null;
+        Goods goods = goodsMapper.selectById(report.getGoodsId());
         cartMapper.deleteByGoodsId(report.getGoodsId());
         ordersMapper.deleteByGoodsId(report.getGoodsId());
-        goodsMapper.deleteById(report.getGoodsId());
-        reportMapper.updateStatus(1,report.getGoodsId());
+        synchronized (goodsMapper){
+            if (goodsMapper.deleteById(report.getGoodsId()) == 1) {
+                shopMessageMapper.insert(goods.getShopId(),"商品\""+goods.getName()+"\"已被下架");
+                reportMapper.updateStatusByGoodsId(1,goods.getId());
+                SqlSessionUtil.commit();
+                resultSet = ResultSet.success();
+            }else {
+                SqlSessionUtil.rollback();
+                resultSet= ResultSet.error();
+            }
+        }
+
         SqlSessionUtil.commit();
         SqlSessionUtil.close();
         return ResultSet.success();
@@ -262,7 +316,7 @@ public class ManagerServiceImpl implements ManagerService {
      */
     @Override
     public ResultSet disagreeReport(Report report) {
-        reportMapper.updateStatus(2,report.getGoodsId());
+        reportMapper.updateStatusByGoodsId(2,report.getGoodsId());
         SqlSessionUtil.commit();
         SqlSessionUtil.close();
         return ResultSet.success();

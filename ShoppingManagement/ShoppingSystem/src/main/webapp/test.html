@@ -61,29 +61,38 @@
 <script src="js/axios-0.18.0.js"></script>
 
 <div id="app">
-    <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="loginForm" enctype="multipart/form-data">
+    <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="70px" class="loginForm" enctype="multipart/form-data">
         <h1 class="title">注册</h1>
         <el-form-item label="用户名" prop="userName">
             <el-input v-model="ruleForm.userName"></el-input>
         </el-form-item>
-        <el-form-item label="密码" prop="password">
+        <el-form-item label="密码" prop="password" align="center">
             <el-input type="password" v-model="ruleForm.password" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="确认密码" prop="checkPassword">
+        <el-form-item label="确认密码" prop="checkPassword" align="center">
             <el-input type="password" v-model="ruleForm.checkPassword" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="手机号" prop="phone">
+        <el-form-item label="手机号" prop="phone" align="center">
             <el-input type="text" v-model="ruleForm.phone" autocomplete="off"></el-input>
         </el-form-item>
 
 
-        <el-form-item label="地址" prop="address">
+        <el-form-item label="地址" prop="address" align="center">
             <el-input type="text" v-model="ruleForm.address" autocomplete="off"></el-input>
         </el-form-item>
 
-        <el-form-item label="个人信息" prop="isPrivate">
+        <el-form-item label="个人信息" prop="isPrivate" align="center">
             <el-switch v-model="ruleForm.isPrivate" active-text="私密" :active-value="1" inactive-text="公开" :inactive-value="0"></el-switch>
         </el-form-item>
+
+        <el-form-item label="验证码" prop="checkCode" align="center">
+            <el-row>
+            <el-input type="text" v-model="ruleForm.checkCode" autocomplete="off" ></el-input>
+            <img src="" id="checkCodePicture" @click="changeVerifyCode" width="100px" height="50px">
+            </el-row>
+        </el-form-item>
+
+
         <el-upload
                 class="avatar-uploader"
                 action="http://localhost:8080/ShoppingSystem/manager/test"
@@ -163,6 +172,8 @@
             return {
                 imageUrl: '',
                 ruleForm: {
+                    checkCodePic:'',
+                    checkCode:'',
                     password: '',
                     checkPassword: '',
                     userName: '',
@@ -190,6 +201,9 @@
             };
         },
         methods:{
+            changeVerifyCode(){
+                document.getElementById("checkCodePicture").src = "http://localhost:8080/ShoppingSystem/user/getCode?"+new Date().getMilliseconds();
+            },
             handleAvatarSuccess(res, file) {
                 this.imageUrl = URL.createObjectURL(file.raw);
                 var _this = this;

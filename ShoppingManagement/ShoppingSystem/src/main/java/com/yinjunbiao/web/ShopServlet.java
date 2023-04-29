@@ -4,9 +4,7 @@ package com.yinjunbiao.web;
 import com.alibaba.fastjson.JSON;
 import com.yinjunbiao.MySpring.Annotation.Autowired;
 import com.yinjunbiao.MySpring.Annotation.Scope;
-import com.yinjunbiao.entity.PushGood;
-import com.yinjunbiao.entity.Shop;
-import com.yinjunbiao.entity.Tweets;
+import com.yinjunbiao.entity.*;
 import com.yinjunbiao.mapper.OrdersMapper;
 import com.yinjunbiao.pojo.RefundApply;
 import com.yinjunbiao.pojo.ResultSet;
@@ -16,6 +14,7 @@ import com.yinjunbiao.service.OrdersService;
 import com.yinjunbiao.service.ShopService;
 import com.yinjunbiao.util.ApplicationUtil;
 import com.yinjunbiao.util.JwtUtil;
+import com.yinjunbiao.util.SqlSessionUtil;
 import io.jsonwebtoken.Claims;
 
 import javax.servlet.ServletException;
@@ -269,5 +268,45 @@ public class ShopServlet extends BaseServlet {
         response.setContentType("application/json;charset=utf-8");
         response.getWriter().write(JSON.toJSONString(resultSet));
     }
+    /**
+     * 查看商店信息
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    public void selectMessages(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            Integer shopId = Integer.valueOf(request.getParameter("shopId"));
+            ResultSet resultSet = shopService.selectMessage(shopId);
+            response.setStatus(200);
+            response.setContentType("application/json;charset=utf-8");
+            response.getWriter().write(JSON.toJSONString(resultSet));
+        } catch (Exception e) {
+            e.printStackTrace();
+            SqlSessionUtil.close();
+            response.sendRedirect("/ShoppingSystem/login.html");
+        }
+    }
 
+    /**
+     * 删除店铺信息
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    public void deleteMessage(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            BufferedReader reader = request.getReader();
+            String s = reader.readLine();
+            ShopMessage shopMessage = JSON.parseObject(s, ShopMessage.class);
+            ResultSet resultSet = shopService.deleteMessage(shopMessage);
+            response.setStatus(200);
+            response.setContentType("application/json;charset=utf-8");
+            response.getWriter().write(JSON.toJSONString(resultSet));
+        } catch (Exception e) {
+            e.printStackTrace();
+            SqlSessionUtil.close();
+            response.sendRedirect("/ShoppingSystem/login.html");
+        }
+    }
 }

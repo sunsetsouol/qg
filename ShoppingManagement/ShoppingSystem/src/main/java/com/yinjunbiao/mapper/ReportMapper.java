@@ -21,7 +21,11 @@ public interface ReportMapper {
 
     @Update(sql = "update report set status = #{status} where goods_id = #{goodsId}")
     @ResultMap(id = "reportResultMap")
-    int updateStatus(@Param("status")Integer status,@Param("goodsId")Long id);
+    int updateStatusByGoodsId(@Param("status")Integer status,@Param("goodsId")Long goodsId);
+
+    @Update(sql = "update report set status = #{status} where id = #{id}")
+    @ResultMap(id = "reportResultMap")
+    int updateStatusById(@Param("status")Integer status,@Param("id")Long id);
 
     @Insert(sql = "insert into report values(null,#{goodsId},#{userId},0,#{description})")
     @ResultMap(id = "reportResultMap")

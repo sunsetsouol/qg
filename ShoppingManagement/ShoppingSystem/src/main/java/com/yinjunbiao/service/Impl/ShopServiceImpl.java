@@ -42,6 +42,9 @@ public class ShopServiceImpl implements ShopService {
     @Autowired
     private ShopMapper shopMapper;
 
+    @Autowired
+    private ShopMessageMapper shopMessageMapper;
+
     /**
      * 添加商品
      * @param pushGood
@@ -77,13 +80,12 @@ public class ShopServiceImpl implements ShopService {
     public ResultSet selectRefund(Integer shopId,Integer currentPage, Integer pageSize) {
         List<Refund> refunds = refundMapper.selectApplyingByShopId(shopId,(currentPage-1)*pageSize,pageSize);
         List<RefundApply> refundApplies = new ArrayList<>();
-        if (refunds == null){
-            return ResultSet.error();
-        }
-        for (Refund refund : refunds) {
-            Orders orders = ordersMapper.select(refund.getOrderId());
-            RefundApply refundApply = new RefundApply(refund.getId(),refund.getOrderId(), CONST.dateFormat.format(refund.getTime()),refund.getCause(),refund.getDescription(),userMapper.selectById(orders.getUserId()).getUserName(),goodsMapper.selectById(orders.getGoodsId()).getName() );
-            refundApplies.add(refundApply);
+        if (refunds != null){
+            for (Refund refund : refunds) {
+                Orders orders = ordersMapper.select(refund.getOrderId());
+                RefundApply refundApply = new RefundApply(refund.getId(),refund.getOrderId(), CONST.dateFormat.format(refund.getTime()),refund.getCause(),refund.getDescription(),userMapper.selectById(orders.getUserId()).getUserName(),goodsMapper.selectById(orders.getGoodsId()).getName() );
+                refundApplies.add(refundApply);
+            }
         }
         SqlSessionUtil.commit();
         SqlSessionUtil.close();
@@ -220,8 +222,10 @@ public class ShopServiceImpl implements ShopService {
         SqlSessionUtil.commit();
         SqlSessionUtil.close();
         List<ShopTweets> tweetsList = new ArrayList<>();
-        for (Tweets tweet : tweets) {
-            tweetsList.add(new ShopTweets(tweet.getId(),tweet.getShopId(),shopMapper.selectById(tweet.getShopId()).getName(),tweet.getTweets()));
+        if (tweets != null){
+            for (Tweets tweet : tweets) {
+                tweetsList.add(new ShopTweets(tweet.getId(),tweet.getShopId(),shopMapper.selectById(tweet.getShopId()).getName(),tweet.getTweets()));
+            }
         }
         return ResultSet.success(tweetsList,null);
     }
@@ -237,5 +241,37 @@ public class ShopServiceImpl implements ShopService {
         SqlSessionUtil.commit();
         SqlSessionUtil.close();
         return ResultSet.success();
+    }
+
+    /**
+     * 查看店铺信息
+     * @param shopId
+     * @return
+     */
+    @Override
+    public ResultSet selectMessage(Integer shopId) {
+        List<ShopMessage> shopMessages = shopMessageMapper.selectByShopId(shopId);
+        SqlSessionUtil.commit();
+        SqlSessionUtil.close();
+        return ResultSet.success(shopMessages,null);
+    }
+
+    /**
+     * 删除店铺信息
+     * @param shopMessage
+     * @return
+     */
+    @Override
+    public ResultSet deleteMessage(ShopMessage shopMessage) {
+        ResultSet resultSet = null;
+        if (shopMessageMapper.deleteById(shopMessage.getId()) == 1) {
+            resultSet = ResultSet.success();
+            SqlSessionUtil.commit();
+        }else {
+            resultSet = ResultSet.error();
+            SqlSessionUtil.rollback();
+        }
+        SqlSessionUtil.close();
+        return resultSet;
     }
 }

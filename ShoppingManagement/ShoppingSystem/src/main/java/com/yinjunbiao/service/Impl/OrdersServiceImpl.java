@@ -81,13 +81,12 @@ public class OrdersServiceImpl implements OrdersService {
     public ResultSet selectOrdersByShopId(Integer shopId, Integer status, Integer currentPage, Integer pageSize) {
         List<Orders> orders = ordersMapper.selectByShopId(shopId, status, (currentPage-1)*pageSize, pageSize);
         List<ShopOrders> shopOrders = new ArrayList<>();
-        if (orders == null){
-            return ResultSet.error();
-        }
-        for (Orders order : orders) {
-            Goods goods = goodsMapper.selectById(order.getGoodsId());
-            ShopOrders shopOrder = new ShopOrders(order.getId(), CONST.dateFormat.format(order.getTime()), order.getSendAddress(), order.getReceiveAddress(), goods.getName(), order.getStatus(), userMapper.selectById(order.getUserId()).getUserName(), order.getNumber(), goods.getShopName(), goods.getPrice());
-            shopOrders.add(shopOrder);
+        if (orders != null){
+            for (Orders order : orders) {
+                Goods goods = goodsMapper.selectById(order.getGoodsId());
+                ShopOrders shopOrder = new ShopOrders(order.getId(), CONST.dateFormat.format(order.getTime()), order.getSendAddress(), order.getReceiveAddress(), goods.getName(), order.getStatus(), userMapper.selectById(order.getUserId()).getUserName(), order.getNumber(), goods.getShopName(), goods.getPrice());
+                shopOrders.add(shopOrder);
+            }
         }
         SqlSessionUtil.close();
         ResultSet resultSet = ResultSet.success(shopOrders, null);
