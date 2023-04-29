@@ -21,11 +21,11 @@ public interface UserService {
 
     ResultSet applyShop(Apply apply);
 
-    ResultSet selectMyShoppingCart(Integer id);
+    ResultSet selectMyShoppingCart(Integer id, Integer currentPage, Integer pageSize);
 
     ResultSet changeShoppingCart(Cart cart);
 
-    ResultSet selectMyOrders(Integer userId,Integer status);
+    ResultSet selectMyOrders(Integer userId,Integer status,Integer currentPage, Integer pageSize);
 
     ResultSet selectSub(Subscrible subscrible);
 

@@ -11,9 +11,9 @@ import java.util.List;
 @Component("cartMapper")
 public interface CartMapper {
 
-    @Select(sql = "select * from cart where user_id = #{userId}")
+    @Select(sql = "select * from cart where user_id = #{userId} limit #{begin},#{size}")
     @ResultMap(id = "cartResultMap")
-    List<Cart> selectByUserId(@Param("userId")Integer userId);
+    List<Cart> selectByUserId(@Param("userId")Integer userId,@Param("begin")Integer begin,@Param("size")Integer size);
 
     @Select(sql = "select * from cart where user_id = #{userId} and goods_id = #{goodsId}")
     @ResultMap(id = "cartResultMap")

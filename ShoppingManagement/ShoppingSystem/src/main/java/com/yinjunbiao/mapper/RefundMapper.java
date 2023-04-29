@@ -28,9 +28,9 @@ public interface RefundMapper {
     @ResultMap(id = "refundResultMap")
     Refund selectFailedByShopId(@Param("shopId")Integer shopId);
 
-    @Select(sql = "select * from refund where status = 0 and shop_id = #{shopId} order by time desc")
+    @Select(sql = "select * from refund where status = 0 and shop_id = #{shopId} order by time desc limit #{begin}, #{size}")
     @ResultMap(id = "refundResultMap")
-    List<Refund> selectApplyingByShopId(@Param("shopId")Integer shopId);
+    List<Refund> selectApplyingByShopId(@Param("shopId")Integer shopId,@Param("begin")Integer begin,@Param("size")Integer size);
 
     @Insert(sql = "insert into refund values(null,#{orderedId},#{cause},0,#{description},#{time},#{shopId})")
     @ResultMap(id = "refundResultMap")

@@ -191,14 +191,12 @@
             // 复选框选中后执行的方法
             handleSelectionChange(val) {
                 this.multipleSelection = val;
-
                 console.log(this.multipleSelection)
             },
-
             handleCurrentChange(val) {
                 // console.log(`当前页: ${val}`);
                 this.currentPage = val;
-                this.selectAll();
+                this.refunding();
             },
 
 

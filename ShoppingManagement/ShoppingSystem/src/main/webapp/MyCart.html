@@ -85,13 +85,19 @@
         </el-table>
     </template>
 
+    <el-pagination
+            @current-change="handleCurrentChange"
+            :current-page="currentPage"
+            layout="total, prev, pager, next, jumper"
+            :total="totalCount">
+    </el-pagination>
 
 </div>
 
 
 <script src="js/vue.js"></script>
-<script src="element-ui/lib/index.js"></script>
-<link rel="stylesheet" href="element-ui/lib/theme-chalk/index.css">
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
 <script src="js/axios-0.18.0.js"></script>
 <script>
     new Vue({
@@ -238,7 +244,7 @@
                 axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
                 axios({
                     method:"post",
-                    url:"http://localhost:8080/ShoppingSystem/user/searchMyCart"
+                    url:"http://localhost:8080/ShoppingSystem/user/searchMyCart?currentPage="+_this.currentPage+"&pageSize="+_this.pageSize
                 }).then(function (resp){
                     _this.tableData = resp.data.data;
                 })
@@ -252,6 +258,10 @@
                 }
                 return '';
             },
+            handleCurrentChange(val) {
+                this.currentPage = val;
+                this.selectMyCart();
+            },
             handleSelectionChange(val) {
                 this.multipleSelection = val;
             },
@@ -262,6 +272,11 @@
 
                 dialogVisible: false,
 
+                pageSize: 20,
+                // 当前页码
+                currentPage: 1,
+
+                totalCount: '',
                 //被选中的id数组
                 selectedIds:[],
                 // 复选框选中数据集合

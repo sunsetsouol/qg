@@ -256,8 +256,8 @@ public class UserServiceImpl implements UserService {
      * @return 返回购物车信息
      */
     @Override
-    public ResultSet selectMyShoppingCart(Integer id) {
-        List<Cart> carts = cartMapper.selectByUserId(id);
+    public ResultSet selectMyShoppingCart(Integer id, Integer currentPage, Integer pageSize) {
+        List<Cart> carts = cartMapper.selectByUserId(id,(currentPage-1)*pageSize,pageSize);
         List<ShoppingCart> shoppingCarts = new ArrayList<>();
         for (Cart cart : carts) {
             Goods goods = goodsMapper.selectById(cart.getGoodsId());
@@ -386,8 +386,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResultSet selectMyOrders(Integer userId, Integer status) {
-        List<Orders> orders = ordersMapper.selectByUserId(userId, status);
+    public ResultSet selectMyOrders(Integer userId, Integer status,Integer currentPage, Integer pageSize) {
+        List<Orders> orders = ordersMapper.selectByUserId(userId, status,(currentPage-1)*pageSize,pageSize);
         List<ShopOrders> shopOrders = new ArrayList<>();
         if (orders == null) {
             return ResultSet.success(null, "没有订单");

@@ -124,14 +124,19 @@
 
         </el-table>
     </template>
-
+    <el-pagination
+            @current-change="handleCurrentChange"
+            :current-page="currentPage"
+            layout="total, prev, pager, next, jumper"
+            :total="totalCount">
+    </el-pagination>
 
 </div>
 
 
 <script src="js/vue.js"></script>
-<script src="element-ui/lib/index.js"></script>
-<link rel="stylesheet" href="element-ui/lib/theme-chalk/index.css">
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
 <script src="js/axios-0.18.0.js"></script>
 <script>
     new Vue({
@@ -234,70 +239,61 @@
             },
 
             selectNotSend(){
-                var _this = this;
-                axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
-                axios({
-                    method:"post",
-                    url:"http://localhost:8080/ShoppingSystem/user/myOrders",
-                    data:"status=1"
-                }).then(function (resp){
-                    _this.tableData = resp.data.data;
-                })
+                this.currentPage = 1;
+                this.status = 1;
+                this.select();
 
             },
             selectSended(){
-                var _this = this;
-                axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
-                axios({
-                    method:"post",
-                    url:"http://localhost:8080/ShoppingSystem/user/myOrders",
-                    data:"status=2"
-                }).then(function (resp){
-                    _this.tableData = resp.data.data;
-                })
+                this.currentPage = 1;
+                this.status = 2;
+                this.select();
 
             },
             selectReceive(){
-                var _this = this;
-                axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
-                axios({
-                    method:"post",
-                    url:"http://localhost:8080/ShoppingSystem/user/myOrders",
-                    data:"status=3"
-                }).then(function (resp){
-                    _this.tableData = resp.data.data;
-                })
+                this.currentPage = 1;
+               this.status = 3;
+               this.select();
 
             },
             selectRefunding(){
+                this.currentPage = 1;
+                this.status = 4;
+                this.select();
+            },
+            selectRefunded(){
+                this.currentPage = 1;
+                this.status = 5;
+                this.select();
+            },
+            select(){
                 var _this = this;
                 axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
                 axios({
                     method:"post",
-                    url:"http://localhost:8080/ShoppingSystem/user/myOrders",
-                    data:"status=4"
+                    url:"http://localhost:8080/ShoppingSystem/user/myOrders?currentPage="+_this.currentPage+"&pageSize="+_this.pageSize+"&status="+_this.status
                 }).then(function (resp){
                     _this.tableData = resp.data.data;
                 })
             },
-            selectRefunded(){
-                var _this = this;
-                axios.defaults.headers.common['Authorization']=localStorage.getItem('Authorization');
-                axios({
-                    method:"post",
-                    url:"http://localhost:8080/ShoppingSystem/user/myOrders",
-                    data:"status=5"
-                }).then(function (resp){
-                    _this.tableData = resp.data.data;
-                })
-            }
-
+            handleCurrentChange(val) {
+                this.currentPage = val;
+                this.select();
+            },
         },
+
         data() {
             return {
 
                 dialogVisible: false,
+                sizeList: ["large", "medium", "small"],
 
+                pageSize: 20,
+                // 当前页码
+                currentPage: 1,
+
+                status:1,
+                totalCount: '',
                 refund:{
                   orderId:'',
                   cause:'',

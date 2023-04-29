@@ -423,31 +423,28 @@
 
             },
             selectNotSend() {
-                var _this = this;
-                axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
-                axios({
-                    method: "post",
-                    url: "http://localhost:8080/ShoppingSystem/shop/selectOrders?status=1&currentPage=" + this.currentPage + "&pageSize=" + this.pageSize,
-                    data: "shopId=" + localStorage.getItem('shopId')
-                }).then(function (resp) {
-                    _this.tableData = resp.data.data;
-                    _this.totalCount = resp.data.length;
-                })
-
+                this.status = 1;
+                this.currentPage = 1;
+                this.select();
             },
             selectSended() {
+                this.status = 2;
+                this.currentPage = 1;
+                this.select();
+            },
+
+            select(){
                 var _this = this;
                 axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
                 axios({
                     method: "post",
-                    url: "http://localhost:8080/ShoppingSystem/shop/selectOrders?status=2&currentPage=" + this.currentPage + "&pageSize=" + this.pageSize,
+                    url: "http://localhost:8080/ShoppingSystem/shop/selectOrders?status=" + _this.status + "&currentPage=" + this.currentPage + "&pageSize=" + this.pageSize,
                     data: "shopId=" + localStorage.getItem('shopId')
                 }).then(function (resp) {
                     _this.tableData = resp.data.data;
                     _this.totalCount = resp.data.length;
                 })
             },
-
             tableRowClassName({row, rowIndex}) {
                 if (rowIndex === 1) {
                     return 'warning-row';
@@ -459,7 +456,6 @@
             // 复选框选中后执行的方法
             handleSelectionChange(val) {
                 this.multipleSelection = val;
-
                 console.log(this.multipleSelection)
             },
             // 添加数据
@@ -486,11 +482,10 @@
                     });
                 }
             },
-
             handleCurrentChange(val) {
                 // console.log(`当前页: ${val}`);
                 this.currentPage = val;
-                this.selectAll();
+                this.select();
             },
             handleAvatarSuccess(res, file) {
                 this.imageUrl = URL.createObjectURL(file.raw);
@@ -514,6 +509,7 @@
         data() {
             return {
                 shopId: localStorage.getItem("shopId"),
+
                 pageSize: 20,
                 // 当前页码
                 currentPage: 1,
@@ -527,6 +523,7 @@
                 dialogPushing:false,
                 dialogShopTweets:false,
 
+                status:1,
                 shopTweets:[{
                    id:'',
                    tweets:''

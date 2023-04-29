@@ -26,9 +26,9 @@ public interface OrdersMapper {
     @ResultMap(id = "ordersResultMap")
     Orders select(@Param("id")Long id);
 
-    @Select(sql = "select * from orders where user_id = #{userId} and status = #{status}")
+    @Select(sql = "select * from orders where user_id = #{userId} and status = #{status} limit #{begin}, #{size}")
     @ResultMap(id = "ordersResultMap")
-    List<Orders> selectByUserId(@Param("userId")Integer userId,@Param("status")Integer status);
+    List<Orders> selectByUserId(@Param("userId")Integer userId,@Param("status")Integer status,@Param("begin")Integer begin,@Param("size")Integer size);
 
 
     @Select(sql = "select * from orders where shop_id = #{shopId} and status = #{status} limit #{begin},#{size} ")

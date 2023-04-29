@@ -17,7 +17,7 @@ public interface ShopService {
 
     ResultSet disagree(RefundApply refundApply);
 
-    ResultSet selectRefund(Integer shopId);
+    ResultSet selectRefund(Integer shopId,Integer currentPage, Integer pageSize);
 
     ResultSet sendTweets(Tweets tweets);
 

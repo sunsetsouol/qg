@@ -108,8 +108,10 @@ public class ShopServlet extends BaseServlet {
      * @throws IOException
      */
     public void selectRefund(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        Integer currentPage = Integer.valueOf(request.getParameter("currentPage"));
+        Integer pageSize = Integer.valueOf(request.getParameter("pageSize"));
         Integer shopId = Integer.valueOf(request.getParameter("shopId"));
-        ResultSet resultSet = shopService.selectRefund(shopId);
+        ResultSet resultSet = shopService.selectRefund(shopId,currentPage,pageSize);
         response.setStatus(200);
         response.setContentType("application/json;charset=utf-8");
         response.getWriter().write(JSON.toJSONString(resultSet));

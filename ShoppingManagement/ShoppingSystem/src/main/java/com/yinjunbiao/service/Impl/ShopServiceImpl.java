@@ -74,8 +74,8 @@ public class ShopServiceImpl implements ShopService {
      * @return
      */
     @Override
-    public ResultSet selectRefund(Integer shopId) {
-        List<Refund> refunds = refundMapper.selectApplyingByShopId(shopId);
+    public ResultSet selectRefund(Integer shopId,Integer currentPage, Integer pageSize) {
+        List<Refund> refunds = refundMapper.selectApplyingByShopId(shopId,(currentPage-1)*pageSize,pageSize);
         List<RefundApply> refundApplies = new ArrayList<>();
         if (refunds == null){
             return ResultSet.error();

@@ -288,10 +288,12 @@ public class UserServlet extends BaseServlet {
      */
     public void searchMyCart(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
+            Integer currentPage = Integer.valueOf(request.getParameter("currentPage"));
+            Integer pageSize = Integer.valueOf(request.getParameter("pageSize"));
             String authorization = request.getHeader("Authorization");
             Claims claims = JwtUtil.parseJWT(authorization);
             Integer id = (Integer) claims.get("id");
-            ResultSet resultSet = userService.selectMyShoppingCart(id);
+            ResultSet resultSet = userService.selectMyShoppingCart(id,currentPage,pageSize);
             response.setStatus(200);
             response.setContentType("application/json;charset=utf-8");
             response.getWriter().write(JSON.toJSONString(resultSet));
@@ -333,15 +335,18 @@ public class UserServlet extends BaseServlet {
      */
     public void myOrders(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
+            Integer status = Integer.valueOf(request.getParameter("status"));
+            Integer currentPage = Integer.valueOf(request.getParameter("currentPage"));
+            Integer pageSize = Integer.valueOf(request.getParameter("pageSize"));
             String authorization = request.getHeader("Authorization");
             Claims claims = JwtUtil.parseJWT(authorization);
             Integer id = (Integer) claims.get("id");
-            Integer status = Integer.valueOf(request.getParameter("status"));
-            ResultSet resultSet = userService.selectMyOrders(id,status);
+            ResultSet resultSet = userService.selectMyOrders(id,status,currentPage,pageSize);
             response.setStatus(200);
             response.setContentType("application/json;charset=utf-8");
             response.getWriter().write(JSON.toJSONString(resultSet));
         } catch (Exception e) {
+            e.printStackTrace();
             SqlSessionUtil.close();
             response.sendRedirect("/ShoppingSystem/login.html");
         }
