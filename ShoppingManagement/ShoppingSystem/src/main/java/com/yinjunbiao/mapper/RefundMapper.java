@@ -48,4 +48,8 @@ public interface RefundMapper {
     @ResultMap(id = "refundResultMap")
     int updateCause(@Param("cause")Integer cause,@Param("id")Long id);
 
+    @Delete(sql = "delete from refund where order_id = #{orderId}")
+    @ResultMap(id = "refundResultMap")
+    int deleteByOrderId(@Param("orderId")Long orderId);
+
 }

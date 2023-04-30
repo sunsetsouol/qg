@@ -3,7 +3,6 @@ package com.yinjunbiao.service.Impl;
 import com.yinjunbiao.MySpring.Annotation.Autowired;
 import com.yinjunbiao.MySpring.Annotation.Component;
 import com.yinjunbiao.MySpring.Annotation.Scope;
-import com.yinjunbiao.entity.Cart;
 import com.yinjunbiao.entity.Goods;
 import com.yinjunbiao.entity.Orders;
 import com.yinjunbiao.entity.Refund;
@@ -40,33 +39,44 @@ public class OrdersServiceImpl implements OrdersService {
     private RefundMapper refundMapper;
 
 
+
     /**
-     * 购买
+     * 生成订单(购买
      *
      * @param orders
      * @return
      */
     @Override
-    public ResultSet buy(Orders orders) {
+    public ResultSet newOrders(Orders orders) {
         ResultSet resultSet = null;
         Goods goods = goodsMapper.selectById(orders.getGoodsId());
-        if (orders.getNumber() > goods.getInventory()) {
-            resultSet = ResultSet.error(null, "库存不足");
-        } else {
-            synchronized (ordersMapper) {
+        if (shopMapper.selectById(goods.getShopId()).getBossId().equals(orders.getUserId())) {
+            return ResultSet.error(null, "不能购买自己的商品");
+        }
+        if (orders.getNumber() == 0){
+            return ResultSet.error(null,"不能买0件");
+        }
+        if (orders.getNumber() <= goods.getInventory()) {
+            synchronized (goodsMapper) {
                 goods = goodsMapper.selectById(orders.getGoodsId());
-                if (orders.getNumber() > goods.getInventory()) {
-                    resultSet = ResultSet.error(null, "库存不足");
-                } else {
-                    ordersMapper.insert(System.currentTimeMillis(), userMapper.selectById(shopMapper.selectById(orders.getShopId()).getBossId()).getAddress(), userMapper.selectById(orders.getUserId()).getAddress(), orders.getGoodsId(), orders.getShopId(), orders.getUserId(), orders.getNumber(), orders.getSinglePrice());
+                if (orders.getNumber() <= goods.getInventory()) {
+                    //插入订单同时库存减
+                    ordersMapper.insert(System.currentTimeMillis(), userMapper.selectById(shopMapper.selectById(goods.getShopId()).getBossId()).getAddress(), userMapper.selectById(orders.getUserId()).getAddress(), orders.getGoodsId(), orders.getShopId(), orders.getUserId(), orders.getNumber(), orders.getSinglePrice());
+                    goodsMapper.updateInventory(goods.getInventory() - orders.getNumber(), orders.getGoodsId());
                     resultSet = ResultSet.success();
                 }
             }
         }
-        SqlSessionUtil.commit();
+        if (resultSet == null) {
+            SqlSessionUtil.rollback();
+            resultSet = ResultSet.error(null, "库存不足");
+        } else {
+            SqlSessionUtil.commit();
+        }
         SqlSessionUtil.close();
         return resultSet;
     }
+
 
     /**
      * 根据店铺id查询订单

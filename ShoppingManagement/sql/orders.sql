@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 80031
 File Encoding         : 65001
 
-Date: 2023-04-28 21:19:46
+Date: 2023-04-30 21:01:46
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -28,11 +28,10 @@ CREATE TABLE `orders` (
   `shop_id` int DEFAULT NULL COMMENT '店铺id',
   `user_id` int DEFAULT NULL COMMENT '消费者id',
   `status` int DEFAULT NULL COMMENT '订单状态1未发货 2已发货 3已收货 4退款中 5已退款 6退款失败',
-  `comment` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '评论',
   `number` int DEFAULT NULL COMMENT '数量',
   `single_price` int DEFAULT NULL COMMENT '单价',
   PRIMARY KEY (`id`),
   KEY `fk_order_good_id` (`goods_id`),
   KEY `fk_order_user_id` (`user_id`),
   CONSTRAINT `fk_order_user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=187 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=266 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

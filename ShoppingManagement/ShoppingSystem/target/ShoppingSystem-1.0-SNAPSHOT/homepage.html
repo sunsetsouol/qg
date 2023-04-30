@@ -494,7 +494,7 @@
             width="30%">
         <el-row>
             <el-col :sm="12" :lg="6">
-                <el-result icon="error" title="操作失败，可能是库存不足" subTitle="请根据提示进行操作">
+                <el-result icon="error" title="操作失败" subTitle="请根据提示进行操作">
                 </el-result>
             </el-col>
         </el-row>
@@ -1042,7 +1042,7 @@
                         axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
                         axios({
                             method: "post",
-                            url: "http://localhost:8080/ShoppingSystem/user/buy",
+                            url: "http://localhost:8080/ShoppingSystem/order/buy",
                             data: this.orders
                         }).then(function (resp) {
                             if (resp.data.code == 1) {

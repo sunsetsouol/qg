@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 80031
 File Encoding         : 65001
 
-Date: 2023-04-29 14:03:39
+Date: 2023-04-30 21:02:13
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -33,4 +33,4 @@ CREATE TABLE `user` (
   UNIQUE KEY `phone` (`phone`),
   UNIQUE KEY `phone_unique` (`phone`),
   UNIQUE KEY `phone_2` (`phone`)
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

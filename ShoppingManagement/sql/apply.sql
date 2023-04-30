@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 80031
 File Encoding         : 65001
 
-Date: 2023-04-28 21:19:31
+Date: 2023-04-30 21:01:34
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -28,4 +28,4 @@ CREATE TABLE `apply` (
   PRIMARY KEY (`id`),
   KEY `fk_tos_user_id` (`user_id`),
   CONSTRAINT `fk_tos_user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

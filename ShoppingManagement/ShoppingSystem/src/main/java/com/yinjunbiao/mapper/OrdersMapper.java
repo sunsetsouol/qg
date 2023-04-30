@@ -10,7 +10,7 @@ import java.util.List;
 @Mapper
 @Component("ordersMapper")
 public interface OrdersMapper {
-    @Insert(sql = "insert into orders values(null,#{time},#{sendAddress},#{receiveAddress},#{goodsId},#{shopId},#{userId},1,null,#{number},#{singlePrice})")
+    @Insert(sql = "insert into orders values(null,#{time},#{sendAddress},#{receiveAddress},#{goodsId},#{shopId},#{userId},1,#{number},#{singlePrice})")
     @ResultMap(id = "ordersResultMap")
     int insert(@Param("time")Long time,@Param("sendAddress")String sendAddress,@Param("receiveAddress")String receiveAddress,@Param("goodsId")Long goodsId,@Param("shopId")Integer shopId,@Param("userId")Integer userId,@Param("number")Integer number,@Param("singlePrice")Integer singlePrice);
 
@@ -25,6 +25,10 @@ public interface OrdersMapper {
     @Select(sql = "select * from orders where id = #{id}")
     @ResultMap(id = "ordersResultMap")
     Orders select(@Param("id")Long id);
+
+    @Select(sql = "select * from orders where goods_id = #{goodsId}")
+    @ResultMap(id = "ordersResultMap")
+    List<Orders> selectByGoodsId(@Param("goodsId")Long goodsId);
 
     @Select(sql = "select * from orders where user_id = #{userId} and status = #{status} limit #{begin}, #{size}")
     @ResultMap(id = "ordersResultMap")

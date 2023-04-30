@@ -3,7 +3,6 @@ package com.yinjunbiao.web;
 import com.alibaba.fastjson.JSON;
 import com.yinjunbiao.MySpring.Annotation.Scope;
 import com.yinjunbiao.entity.*;
-import com.yinjunbiao.mapper.UserMapper;
 import com.yinjunbiao.pojo.GoodsConsultations;
 import com.yinjunbiao.pojo.GoodsReply;
 import com.yinjunbiao.pojo.ResultSet;
@@ -11,7 +10,6 @@ import com.yinjunbiao.service.GoodsService;
 import com.yinjunbiao.service.ManagerService;
 import com.yinjunbiao.util.ApplicationUtil;
 import com.yinjunbiao.util.JwtUtil;
-import com.yinjunbiao.util.UploadUtil;
 import io.jsonwebtoken.Claims;
 
 
@@ -19,7 +17,6 @@ import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
 import java.io.*;
 
 @WebServlet("/manager/*")
@@ -70,7 +67,21 @@ public class ManagerServlet extends BaseServlet{
         response.setContentType("application/json;charset=utf-8");
         response.getWriter().write(JSON.toJSONString(resultSet));
     }
-
+    /**
+     * 同意下架商品
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    public void agreeReport(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        BufferedReader reader = request.getReader();
+        String s = reader.readLine();
+        Report report = JSON.parseObject(s, Report.class);
+        ResultSet resultSet = managerService.deleteGoods(report.getGoodsId());
+        response.setStatus(200);
+        response.setContentType("application/json;charset=utf-8");
+        response.getWriter().write(JSON.toJSONString(resultSet));
+    }
     /**
      * 删除回复
      * @param request
@@ -205,21 +216,7 @@ public class ManagerServlet extends BaseServlet{
         response.getWriter().write(JSON.toJSONString(resultSet));
     }
 
-    /**
-     * 同意下架商品
-     * @param request
-     * @param response
-     * @throws IOException
-     */
-    public void agreeReport(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        BufferedReader reader = request.getReader();
-        String s = reader.readLine();
-        Report report = JSON.parseObject(s, Report.class);
-        ResultSet resultSet = managerService.agreeReport(report);
-        response.setStatus(200);
-        response.setContentType("application/json;charset=utf-8");
-        response.getWriter().write(JSON.toJSONString(resultSet));
-    }
+
     /**
      * 不同意下架商品
      * @param request

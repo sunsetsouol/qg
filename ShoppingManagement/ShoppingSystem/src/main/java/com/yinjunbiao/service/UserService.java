@@ -31,8 +31,6 @@ public interface UserService {
 
     ResultSet addCart(Cart cart);
 
-    ResultSet newOrders(Orders orders);
-
     ResultSet delectCarts(Long[] id);
 
     ResultSet buyCarts(Long[] ids);

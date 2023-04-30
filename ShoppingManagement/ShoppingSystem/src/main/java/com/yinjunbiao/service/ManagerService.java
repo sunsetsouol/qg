@@ -29,7 +29,5 @@ public interface ManagerService {
 
     ResultSet selectReport();
 
-    ResultSet agreeReport(Report report);
-
     ResultSet disagreeReport(Report report);
 }

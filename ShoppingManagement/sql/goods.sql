@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 80031
 File Encoding         : 65001
 
-Date: 2023-04-28 21:19:42
+Date: 2023-04-30 21:01:43
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -34,4 +34,4 @@ CREATE TABLE `goods` (
   KEY `fk_shop_goods_name` (`shop_name`),
   CONSTRAINT `fk_shop_goods_id` FOREIGN KEY (`shop_id`) REFERENCES `shop` (`id`),
   CONSTRAINT `fk_shop_goods_name` FOREIGN KEY (`shop_name`) REFERENCES `shop` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=159 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=179 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

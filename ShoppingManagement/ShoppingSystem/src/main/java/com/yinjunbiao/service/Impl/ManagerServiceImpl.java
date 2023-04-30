@@ -52,6 +52,8 @@ public class ManagerServiceImpl implements ManagerService {
     @Autowired
     private ShopMessageMapper shopMessageMapper;
 
+    @Autowired
+    private RefundMapper refundMapper;
 
 
     /**
@@ -64,9 +66,16 @@ public class ManagerServiceImpl implements ManagerService {
         ResultSet resultSet = null;
         Goods goods = goodsMapper.selectById(id);
         cartMapper.deleteByGoodsId(id);
-        ordersMapper.deleteByGoodsId(id);
+
         synchronized (goodsMapper){
             if (goodsMapper.deleteById(id) == 1) {
+                List<Orders> orders = ordersMapper.selectByGoodsId(id);
+                if (orders != null){
+                    for (Orders order : orders) {
+                        refundMapper.deleteByOrderId(order.getId());
+                    }
+                }
+                ordersMapper.deleteByGoodsId(id);
                 shopMessageMapper.insert(goods.getShopId(),"商品\""+goods.getName()+"\"已被下架");
                 reportMapper.updateStatusByGoodsId(1,goods.getId());
                 SqlSessionUtil.commit();
@@ -278,36 +287,6 @@ public class ManagerServiceImpl implements ManagerService {
         return resultSet;
     }
 
-    /**
-     * 同意下架
-     * @param report
-     * @return
-     */
-    @Override
-    public ResultSet agreeReport(Report report) {
-        if (goodsMapper.selectById(report.getGoodsId()) == null) {
-            ResultSet.error();
-        }
-        ResultSet resultSet = null;
-        Goods goods = goodsMapper.selectById(report.getGoodsId());
-        cartMapper.deleteByGoodsId(report.getGoodsId());
-        ordersMapper.deleteByGoodsId(report.getGoodsId());
-        synchronized (goodsMapper){
-            if (goodsMapper.deleteById(report.getGoodsId()) == 1) {
-                shopMessageMapper.insert(goods.getShopId(),"商品\""+goods.getName()+"\"已被下架");
-                reportMapper.updateStatusByGoodsId(1,goods.getId());
-                SqlSessionUtil.commit();
-                resultSet = ResultSet.success();
-            }else {
-                SqlSessionUtil.rollback();
-                resultSet= ResultSet.error();
-            }
-        }
-
-        SqlSessionUtil.commit();
-        SqlSessionUtil.close();
-        return ResultSet.success();
-    }
 
     /**
      * 不同意下架

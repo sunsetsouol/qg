@@ -407,6 +407,8 @@
         },
         methods: {
             agreeReport(row){
+                this.agreeDeleteGoods = row;
+                this.dialogAgreeReport = true;
                 var _this = this;
                 axios.post("http://localhost:8080/ShoppingSystem/manager/agreeReport", row).then(function (resp) {
                     if (resp.data.code == 1) {
@@ -415,6 +417,7 @@
                             message: '设置成功'
                         });
                         _this.reportApply();
+                        _this.selectGoods();
                     }else {
                         _this.$message({
                             type: 'info',
@@ -814,6 +817,7 @@
                 dialogShopApply: false,
                 dialogPushApply: false,
                 dialogReport:false,
+                dialogAgreeReport:false,
 
                 circleUrl: "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
                 sizeList: ["large", "medium", "small"],
@@ -824,6 +828,13 @@
 
                 totalCount: '',
                 // 品牌模型数据
+
+                agreeDeleteGoods:{
+                    id: "",
+                    goodsId: '',
+                    goodsName: '',
+                    description:''
+                },
                 report: [{
                     id: "",
                     goodsId: '',

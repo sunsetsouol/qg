@@ -440,33 +440,40 @@
                 })
             },
             sendTweets(){
-                var _this = this;
-                this.$confirm('确认发送？', '发送推文', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning'
-                }).then(() => {
+                if (this.tweets.tweets.length>0){
+                    var _this = this;
+                    this.$confirm('确认发送？', '发送推文', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
 
-                    axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
-                    axios({
-                        method: "post",
-                        url: "http://localhost:8080/ShoppingSystem/shop/sendTweets",
-                        data: _this.tweets
-                    }).then(function (resp) {
-                        if (resp.data.code==1){
-                            _this.$message({
-                                type: 'success',
-                                message: '发送成功'
-                            });
-                        }
-                    })
-                    _this.dialogTweets = false;
-                }).catch(() => {
+                        axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
+                        axios({
+                            method: "post",
+                            url: "http://localhost:8080/ShoppingSystem/shop/sendTweets",
+                            data: _this.tweets
+                        }).then(function (resp) {
+                            if (resp.data.code==1){
+                                _this.$message({
+                                    type: 'success',
+                                    message: '发送成功'
+                                });
+                            }
+                        })
+                        _this.dialogTweets = false;
+                    }).catch(() => {
+                        this.$message({
+                            type: 'info',
+                            message: '发送失败'
+                        });
+                    });
+                }else {
                     this.$message({
                         type: 'info',
-                        message: '发送失败'
+                        message: '不能发送空的推文'
                     });
-                });
+                }
             },
             openDialogTweets(){
               this.tweets.shopId = this.shopId;
@@ -484,7 +491,7 @@
                     }).then(() => {
                         this.$message({
                             type: 'success',
-                            message: '修改成功'
+                            message: '正在申请'
                         });
                         axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
                         axios({
@@ -492,7 +499,18 @@
                             url: "http://localhost:8080/ShoppingSystem/shop/send",
                             data: row
                         }).then(function (resp) {
-                            _this.selectNotSend();
+                            if (resp.data.code == 1){
+                                _this.$message({
+                                    type: 'info',
+                                    message: '修改成功'
+                                });
+                            }else {
+                                _this.$message({
+                                    type: 'info',
+                                    message: '修改失败'
+                                });
+                            }
+                            _this.select();
                         })
                     }).catch(() => {
                         this.$message({

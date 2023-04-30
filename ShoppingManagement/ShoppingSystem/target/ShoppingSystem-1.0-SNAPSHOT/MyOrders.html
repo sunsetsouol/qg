@@ -172,7 +172,7 @@
                             axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
                             axios({
                                 method: "post",
-                                url: "http://localhost:8080/ShoppingSystem/user/refund",
+                                url: "http://localhost:8080/ShoppingSystem/order/refund",
                                 data: this.refund
                             }).then(function (resp) {
                                 if (resp.data.code == 1) {
@@ -191,7 +191,7 @@
                                         }
                                     });
                                 }
-                                _this.selectNotSend();
+                                _this.select();
                                 _this.dialogVisible = false;
                             })
 
@@ -222,7 +222,7 @@
                         axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization');
                         axios({
                             method: "post",
-                            url: "http://localhost:8080/ShoppingSystem/user/confirmReceipt",
+                            url: "http://localhost:8080/ShoppingSystem/order/confirmReceipt",
                             data: row.id
                         }).then(function (resp) {
                             if (resp.data.code == 1) {
@@ -236,7 +236,7 @@
                                     message: '设置失败'
                                 });
                             }
-                            _this.selectNotSend();
+                            _this.select();
                         })
                     }).catch(() => {
                         this.$message({

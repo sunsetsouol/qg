@@ -311,42 +311,7 @@ public class UserServiceImpl implements UserService {
         return resultSet;
     }
 
-    /**
-     * 生成订单(购买
-     *
-     * @param orders
-     * @return
-     */
-    @Override
-    public ResultSet newOrders(Orders orders) {
-        ResultSet resultSet = null;
-        Goods goods = goodsMapper.selectById(orders.getGoodsId());
-        if (shopMapper.selectById(goods.getShopId()).getBossId().equals(orders.getUserId())) {
-            return ResultSet.error(null, "不能购买自己的商品");
-        }
-        if (orders.getNumber() == 0){
-            return ResultSet.error(null,"不能买0件");
-        }
-        if (orders.getNumber() <= goods.getInventory()) {
-            synchronized (goodsMapper) {
-                goods = goodsMapper.selectById(orders.getGoodsId());
-                if (orders.getNumber() <= goods.getInventory()) {
-                    //插入订单同时库存减
-                    ordersMapper.insert(System.currentTimeMillis(), userMapper.selectById(shopMapper.selectById(goods.getShopId()).getBossId()).getAddress(), userMapper.selectById(orders.getUserId()).getAddress(), orders.getGoodsId(), orders.getShopId(), orders.getUserId(), orders.getNumber(), orders.getSinglePrice());
-                    goodsMapper.updateInventory(goods.getInventory() - orders.getNumber(), orders.getGoodsId());
-                    resultSet = ResultSet.success();
-                }
-            }
-        }
-        if (resultSet == null) {
-            SqlSessionUtil.rollback();
-            resultSet = ResultSet.error(null, "库存不足");
-        } else {
-            SqlSessionUtil.commit();
-        }
-        SqlSessionUtil.close();
-        return resultSet;
-    }
+
 
     /**
      * 申请称为商家

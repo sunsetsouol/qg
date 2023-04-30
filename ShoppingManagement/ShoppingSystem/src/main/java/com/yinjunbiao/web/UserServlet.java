@@ -10,7 +10,6 @@ import com.yinjunbiao.entity.*;
 import com.yinjunbiao.pojo.CheckCodeUser;
 import com.yinjunbiao.pojo.ResultSet;
 import com.yinjunbiao.pojo.UserSubscrible;
-import com.yinjunbiao.service.GoodsService;
 import com.yinjunbiao.service.OrdersService;
 import com.yinjunbiao.service.UserService;
 import com.yinjunbiao.util.*;
@@ -36,9 +35,6 @@ public class UserServlet extends BaseServlet {
 
     @Autowired
     private UserService userService = (UserService) ApplicationUtil.getApplicationContext().getBean("userService");
-
-    @Autowired
-    private GoodsService goodsService = ((GoodsService) ApplicationUtil.getApplicationContext().getBean("goodsService"));
 
     @Autowired
     private OrdersService ordersService = ((OrdersService) ApplicationUtil.getApplicationContext().getBean("ordersService"));
@@ -219,34 +215,7 @@ public class UserServlet extends BaseServlet {
         response.getWriter().write(JSON.toJSONString(resultSet));
     }
 
-    /**
-     * 直接购买
-     *
-     * @param request
-     * @param response
-     * @throws IOException
-     */
-    public void buy(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String token = request.getHeader("Authorization");
-        try {
-            Claims claims = JwtUtil.parseJWT(token);
-            Integer id = (Integer) claims.get("id");
-            BufferedReader reader = request.getReader();
-            String s = reader.readLine();
-            Orders orders = JSON.parseObject(s, Orders.class);
-            orders.setUserId(id);
-            ResultSet resultSet = userService.newOrders(orders);
-            if (resultSet.getCode() == 1) {
-                response.setStatus(200);
-                response.setContentType("application/json;charset=utf-8");
-                response.getWriter().write(JSON.toJSONString(resultSet));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            SqlSessionUtil.close();
-            response.sendRedirect("/ShoppingSystem/login.html");
-        }
-    }
+
 
     /**
      * 添加到购物车
@@ -431,53 +400,8 @@ public class UserServlet extends BaseServlet {
         }
     }
 
-    /**
-     * 确认收货
-     * @param request
-     * @param response
-     * @throws IOException
-     */
-    public void confirmReceipt(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        try {
-            String authorization = request.getHeader("Authorization");
-            Claims claims = JwtUtil.parseJWT(authorization);
-            BufferedReader reader = request.getReader();
-            String s = reader.readLine();
-            Long id = JSON.parseObject(s, Long.class);
-            ResultSet resultSet = ordersService.confirm(id);
-            response.setStatus(200);
-            response.setContentType("application/json;charset=utf-8");
-            response.getWriter().write(JSON.toJSONString(resultSet));
-        } catch (Exception e) {
-            e.printStackTrace();
-            SqlSessionUtil.close();
-            response.sendRedirect("/ShoppingSystem/login.html");
-        }
-    }
 
-    /**
-     * 申请退款
-     * @param request
-     * @param response
-     * @throws IOException
-     */
-    public void refund(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        try {
-            String authorization = request.getHeader("Authorization");
-            Claims claims = JwtUtil.parseJWT(authorization);
-            BufferedReader reader = request.getReader();
-            String s = reader.readLine();
-            Refund refund = JSON.parseObject(s, Refund.class);
-            ResultSet resultSet = ordersService.refund(refund);
-            response.setStatus(200);
-            response.setContentType("application/json;charset=utf-8");
-            response.getWriter().write(JSON.toJSONString(resultSet));
-        } catch (Exception e) {
-            e.printStackTrace();
-            SqlSessionUtil.close();
-            response.sendRedirect("/ShoppingSystem/login.html");
-        }
-    }
+
 
     /**
      * 搜搜用户

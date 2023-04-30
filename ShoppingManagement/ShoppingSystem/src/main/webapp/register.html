@@ -126,6 +126,8 @@
             var checkAddress = (rule, value, callback) => {
                 if(value.length >= 50){
                     callback(new Error('地址长度不能超过五十个字符'));
+                }else if (value.length == 0){
+                    callback(new Error('地址不能为空'));
                 }else {
                     callback();
                 }

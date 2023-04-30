@@ -164,6 +164,11 @@
                                 message: '支付成功'
                             });
                             _this.selectMyCart();
+                        }else {
+                            _this.$message({
+                                type:'info',
+                                message: '购买失败，货物库存不足或含有无法购买的商品'
+                            });
                         }
                     })
 

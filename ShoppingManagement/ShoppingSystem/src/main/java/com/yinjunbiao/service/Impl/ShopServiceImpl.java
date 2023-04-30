@@ -83,8 +83,10 @@ public class ShopServiceImpl implements ShopService {
         if (refunds != null){
             for (Refund refund : refunds) {
                 Orders orders = ordersMapper.select(refund.getOrderId());
-                RefundApply refundApply = new RefundApply(refund.getId(),refund.getOrderId(), CONST.dateFormat.format(refund.getTime()),refund.getCause(),refund.getDescription(),userMapper.selectById(orders.getUserId()).getUserName(),goodsMapper.selectById(orders.getGoodsId()).getName() );
-                refundApplies.add(refundApply);
+                if (orders != null){
+                    RefundApply refundApply = new RefundApply(refund.getId(),refund.getOrderId(), CONST.dateFormat.format(refund.getTime()),refund.getCause(),refund.getDescription(),userMapper.selectById(orders.getUserId()).getUserName(),goodsMapper.selectById(orders.getGoodsId()).getName() );
+                    refundApplies.add(refundApply);
+                }
             }
         }
         SqlSessionUtil.commit();
