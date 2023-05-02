@@ -414,6 +414,7 @@ public class UserServiceImpl implements UserService {
                         }
                         if (goods.getInventory() >= cart.getNumber()) {
                             ordersMapper.insert(System.currentTimeMillis(), userMapper.selectById(shopMapper.selectById(cart.getShopId()).getBossId()).getAddress(), userMapper.selectById(cart.getUserId()).getAddress(), cart.getGoodsId(), cart.getShopId(), cart.getUserId(), cart.getNumber(), cart.getSinglePrice());
+                            shopMapper.updateSales(shopMapper.selectById(cart.getShopId()).getSales()+cart.getNumber(),cart.getShopId());
                             cartMapper.deleteById(cart.getId());
                         } else {
                             resultSet = ResultSet.error(null, "库存不足");

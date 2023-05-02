@@ -62,6 +62,7 @@ public class OrdersServiceImpl implements OrdersService {
                 if (orders.getNumber() <= goods.getInventory()) {
                     //插入订单同时库存减
                     ordersMapper.insert(System.currentTimeMillis(), userMapper.selectById(shopMapper.selectById(goods.getShopId()).getBossId()).getAddress(), userMapper.selectById(orders.getUserId()).getAddress(), orders.getGoodsId(), orders.getShopId(), orders.getUserId(), orders.getNumber(), orders.getSinglePrice());
+                    shopMapper.updateSales(shopMapper.selectById(orders.getShopId()).getSales()+orders.getNumber(),orders.getShopId());
                     goodsMapper.updateInventory(goods.getInventory() - orders.getNumber(), orders.getGoodsId());
                     resultSet = ResultSet.success();
                 }
