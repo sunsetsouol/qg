@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="2" failures="0" name="TestApplyMapper" time="0.507" errors="0" skipped="0">
+<testsuite tests="2" failures="0" name="TestApplyMapper" time="0.949" errors="0" skipped="0">
   <properties>
     <property name="idea.version" value="2020.2.3"/>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
@@ -18,6 +18,8 @@
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
     <property name="user.dir" value="E:\g\Git\qg\ShoppingManagement\ShoppingSystem"/>
     <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="forkCount" value="0"/>
+    <property name="intellij.debug.agent" value="true"/>
     <property name="java.runtime.version" value="11.0.17+10-LTS-269"/>
     <property name="java.awt.graphicsenv" value="sun.awt.Win32GraphicsEnvironment"/>
     <property name="os.arch" value="amd64"/>
@@ -27,10 +29,12 @@
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="user.variant" value=""/>
     <property name="os.name" value="Windows 10"/>
+    <property name="reuseForks" value="false"/>
     <property name="maven.ext.class.path" value="E:\g\javaDevelop\idea\IntelliJ IDEA 2020.2.3\plugins\maven\lib\maven-event-listener.jar"/>
     <property name="classworlds.conf" value="E:\g\javaDevelop\idea\IntelliJ IDEA 2020.2.3\plugins\maven\lib\maven3\bin\m2.conf"/>
     <property name="sun.jnu.encoding" value="GBK"/>
     <property name="java.library.path" value="E:\g\javaDevelop\jdk11\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\Program Files\Common Files\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\Windows\System32\;C:\Program Files\MySQL\MySQL Server 8.0\bin\;E:\g\javaDevelop\jdk11;E:\g\党建(自带java，MySQL\ccpweb3\env\openjdk8\bin;E:\g\javaDevelop\jdk11;E:\g\党建(自带java，MySQL\ccpweb3\env\openjdk8\jre\bin;E:\g\Git\cmd;E:\g\bin\;E:\g\党建(自带java，MySQL\ccpweb3\MySql\bin;E:\g\党建(自带java，MySQL\ccpweb3;E:\g\党建(自带java，MySQL\ccpweb3env\Redis;E:\g\javaDevelop\apache-maven-3.6.1\bin;E:\g\党建(自带java，MySQL\ccpweb3\MySql\bin;E:\g\javaDevelop\jdk11;E:\g\党建(自带java，MySQL\ccpweb3\env\openjdk8\bin;E:\g\党建(自带java，MySQL\ccpweb3;E:\g\党建(自带java，MySQL\ccpweb3env\Redis;E:\g\javaDevelop\jdk11;E:\g\党建(自带java，MySQL\ccpweb3\env\openjdk8\jre\bin;E:\g\NodeJs\;E:\g\MySQL\MySQL Server 8.0\bin;E:\g\javaDevelop\jdk11\bin;C:\Users\28246\AppData\Local\Microsoft\WindowsApps;E:\g\DataGrip 2022.3.2\bin;;E:\g\Microsoft VS Code\bin;C:\Users\28246\AppData\Roaming\npm;."/>
+    <property name="jboss.modules.system.pkgs" value="com.intellij.rt"/>
     <property name="maven.conf" value="E:\g\javaDevelop\idea\IntelliJ IDEA 2020.2.3\plugins\maven\lib\maven3/conf"/>
     <property name="jdk.debug" value="release"/>
     <property name="java.class.version" value="55.0"/>
@@ -43,10 +47,10 @@
     <property name="file.encoding" value="UTF-8"/>
     <property name="java.specification.version" value="11"/>
     <property name="user.name" value="28246"/>
-    <property name="java.class.path" value="E:\g\javaDevelop\idea\IntelliJ IDEA 2020.2.3\plugins\maven\lib\maven3\boot\plexus-classworlds-2.6.0.jar;E:\g\javaDevelop\idea\IntelliJ IDEA 2020.2.3\plugins\maven\lib\maven3\boot\plexus-classworlds.license"/>
+    <property name="java.class.path" value="E:\g\javaDevelop\idea\IntelliJ IDEA 2020.2.3\plugins\maven\lib\maven3\boot\plexus-classworlds-2.6.0.jar;E:\g\javaDevelop\idea\IntelliJ IDEA 2020.2.3\plugins\maven\lib\maven3\boot\plexus-classworlds.license;E:\g\javaDevelop\idea\IntelliJ IDEA 2020.2.3\lib\idea_rt.jar"/>
     <property name="java.vm.specification.version" value="11"/>
     <property name="sun.arch.data.model" value="64"/>
-    <property name="sun.java.command" value="org.codehaus.classworlds.Launcher -Didea.version=2020.2.3 package"/>
+    <property name="sun.java.command" value="org.codehaus.classworlds.Launcher -Didea.version=2020.2.3 package -DforkCount=0 -DreuseForks=false"/>
     <property name="java.home" value="E:\g\javaDevelop\jdk11"/>
     <property name="user.language" value="zh"/>
     <property name="java.specification.vendor" value="Oracle Corporation"/>
@@ -64,6 +68,6 @@
     <property name="sun.desktop" value="windows"/>
     <property name="sun.cpu.isalist" value="amd64"/>
   </properties>
-  <testcase classname="TestApplyMapper" name="testInsert" time="0.474"/>
-  <testcase classname="TestApplyMapper" name="testApplyMapper" time="0.033"/>
+  <testcase classname="TestApplyMapper" name="testInsert" time="0.865"/>
+  <testcase classname="TestApplyMapper" name="testApplyMapper" time="0.084"/>
 </testsuite>
