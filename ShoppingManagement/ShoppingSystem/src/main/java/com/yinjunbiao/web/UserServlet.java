@@ -127,7 +127,6 @@ public class UserServlet extends BaseServlet {
      * @throws Exception
      */
     public void changeHeadshot(HttpServletRequest request, HttpServletResponse response) throws Exception {
-
         Part imageUrl = request.getPart("file");
         InputStream inputStream = imageUrl.getInputStream();
         try(inputStream){
